@@ -27,18 +27,18 @@ public class PlotUtil {
         }
     }
 
-    public static LineData draw(LineChart chartName, double[] values, String label, int color) {
+    public static LineDataSet getLineDataSet(double[] values, String label, int color) {
         Series series = new Series(values, label, color);
 
         LineDataSet lineDataSet = new LineDataSet(series.entries, label);
         lineDataSet.setColor(series.color);
         lineDataSet.setDrawCircles(true);
 
-        LineData lineData = chartName.getLineData();
-        lineData.removeDataSet(lineData.getDataSetCount() - 1);
-        lineData.addDataSet(lineDataSet);
+//        LineData lineData = chartName.getLineData();
+//        lineData.removeDataSet(lineData.getDataSetCount() - 1);
+//        lineData.addDataSet(lineDataSet);
 
-        return lineData;
+        return lineDataSet;
 
     }
 

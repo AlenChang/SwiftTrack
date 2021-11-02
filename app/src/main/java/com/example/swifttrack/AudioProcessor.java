@@ -1,8 +1,11 @@
 package com.example.swifttrack;
 
+import static com.example.swifttrack.ui.home.HomeViewModel.OutTypes;
+
 import android.graphics.Color;
 import android.util.Log;
 
+import com.example.swifttrack.ui.home.HomeFragment;
 import com.example.swifttrack.utils.FileUtil;
 import com.example.swifttrack.utils.PlotUtil;
 
@@ -15,6 +18,8 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import com.example.swifttrack.ui.home.HomeViewModel;
 
 public class AudioProcessor {
 
@@ -30,6 +35,8 @@ public class AudioProcessor {
     private static BufferedWriter bufferedWriter;
     private static long timestamp;
     private static boolean needSave;
+
+
 
 
     private static class Engine extends Thread {
@@ -80,14 +87,18 @@ public class AudioProcessor {
                             if (CHANNEL_MASK[0]) {
                                 getDistHistory(1, xWindow1, WINDOW_SIZE);
                                 getVelocityHistory(1, vWindow1, WINDOW_SIZE);
-                                // Log.d("channel 1", Arrays.toString(xWindow1));
+                                HomeViewModel.setLineData(xWindow1, OutTypes.LEFT_DIST);
+                                HomeViewModel.setLineData(vWindow1, OutTypes.LEFT_V);
+//                                 Log.d("C1", Arrays.toString(xWindow1));
 //                                PlotUtil.drawX1(xWindow1, "X1", Color.RED);
 //                                PlotUtil.drawV1(vWindow1, "V1", Color.BLUE);
                             }
                             if (CHANNEL_MASK[1]) {
                                 getDistHistory(2, xWindow2, WINDOW_SIZE);
                                 getVelocityHistory(2, vWindow2, WINDOW_SIZE);
-                                // Log.d("channel 2", Arrays.toString(xWindow1));
+                                HomeViewModel.setLineData(xWindow2, OutTypes.RIGHT_DIST);
+                                HomeViewModel.setLineData(vWindow2, OutTypes.RIGHT_V);
+//                                 Log.d("C2", Arrays.toString(xWindow2));
 //                                PlotUtil.drawX2(xWindow2, "X2", Color.RED);
 //                                PlotUtil.drawV2(vWindow2, "V2", Color.BLUE);
                             }
@@ -116,6 +127,8 @@ public class AudioProcessor {
             if (CHANNEL_MASK[0]) {
                 getDistHistory(1, xHistory1, frameCount);
                 getVelocityHistory(1, vHistory1, frameCount);
+                HomeViewModel.setLineData(xHistory1, OutTypes.LEFT_DIST);
+                HomeViewModel.setLineData(vHistory1, OutTypes.LEFT_V);
 //                PlotUtil.drawX1(xHistory1, "X1", Color.RED);
 //                PlotUtil.drawV1(vHistory1, "V1", Color.BLUE);
             }
@@ -123,6 +136,8 @@ public class AudioProcessor {
             if (CHANNEL_MASK[1]) {
                 getDistHistory(2, xHistory2, frameCount);
                 getVelocityHistory(2, vHistory2, frameCount);
+                HomeViewModel.setLineData(xHistory2, OutTypes.RIGHT_DIST);
+                HomeViewModel.setLineData(vHistory2, OutTypes.RIGHT_V);
 //                PlotUtil.drawX2(xHistory2, "X2", Color.RED);
 //                PlotUtil.drawV2(vHistory2, "V2", Color.BLUE);
             }
@@ -201,7 +216,7 @@ public class AudioProcessor {
         if (CHANNEL_MASK[1]) {
             reset(2);
         }
-
+        MainActivity.rxQueue.clear();
         engine = new Engine();
     }
 

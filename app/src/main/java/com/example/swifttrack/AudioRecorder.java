@@ -71,7 +71,7 @@ public class AudioRecorder {
                 if (lock.tryLock()) {
                     audioRecord.read(buffer, 0, AudioRecorder.BUFFER_SIZE, AudioRecord.READ_BLOCKING);
                     processBuffer();
-                    Log.d("RecorderThread", String.valueOf(Thread.currentThread()));
+//                    Log.d("RecorderThread", String.valueOf(Thread.currentThread()));
                     lock.unlock();
                 } else {
                     break;

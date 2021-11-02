@@ -1,5 +1,6 @@
 package com.example.swifttrack.ui.home;
 
+import android.graphics.Color;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -10,38 +11,73 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.LineData;
 
 import com.example.swifttrack.utils.PlotUtil;
+import com.github.mikephil.charting.data.LineDataSet;
+
+import org.apache.commons.math3.geometry.euclidean.twod.Line;
+
 import java.util.Random;
 
 public class HomeViewModel extends ViewModel {
 
+    public enum OutTypes {
+            LEFT_DIST, RIGHT_DIST, LEFT_V, RIGHT_V
+    }
+
     private MutableLiveData<String> mText;
-    private LineData lineData;
+
+    private static MutableLiveData<LineDataSet> xChart1; // channel 1 distance
+    private static MutableLiveData<LineDataSet> xChart2; // channel 2 distance
+    private static MutableLiveData<LineDataSet> vChart1; // channel 1 velocity
+    private static MutableLiveData<LineDataSet> vChart2; // channel 2 velocity
 
 
     public HomeViewModel() {
         mText = new MutableLiveData<>();
         mText.setValue("This is home fragment");
 
-        lineData = new LineData();
+        xChart1 = new MutableLiveData<>();
+        xChart2 = new MutableLiveData<>();
+        vChart1 = new MutableLiveData<>();
+        vChart2 = new MutableLiveData<>();
     }
 
     public LiveData<String> getText() {
         return mText;
     }
-    public LineData getLineData() {return lineData; }
-
-    public void setLineData(LineChart chartName, String label, int color) {
-
-        Log.d("Thread", String.valueOf(Thread.currentThread()));
-
-
-        Random rand = new Random();
-        double[] values = new double[500];
-        for (int i = 0; i < 500; i++){
-            values[i] = rand.nextDouble();
+    public LiveData<LineDataSet> getLiveLineData(OutTypes type) {
+        switch (type){
+            case LEFT_DIST:
+                return xChart1;
+            case RIGHT_DIST:
+                return xChart2;
+            case LEFT_V:
+                return vChart1;
+            case RIGHT_V:
+                return vChart2;
+            default:
+                return null;
         }
 
-        lineData = PlotUtil.draw(chartName, values, label, color);
+    }
+
+    public static void setLineData(double[] values, OutTypes type) {
+
+        switch (type){
+            case LEFT_DIST:
+                xChart1.postValue(PlotUtil.getLineDataSet(values, "X1", Color.RED));
+                break;
+            case RIGHT_DIST:
+                xChart2.postValue(PlotUtil.getLineDataSet(values, "X2", Color.BLUE));
+                break;
+            case LEFT_V:
+                vChart1.postValue(PlotUtil.getLineDataSet(values, "V1", Color.RED));
+                break;
+            case RIGHT_V:
+                vChart2.postValue(PlotUtil.getLineDataSet(values, "V2", Color.BLUE));
+                break;
+            default:
+                break;
+        }
 
 
 

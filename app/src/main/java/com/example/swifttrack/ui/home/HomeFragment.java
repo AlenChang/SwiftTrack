@@ -15,10 +15,19 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.swifttrack.AudioPlayer;
+import com.example.swifttrack.AudioProcessor;
+import com.example.swifttrack.AudioRecorder;
 import com.example.swifttrack.R;
 import com.example.swifttrack.databinding.FragmentHomeBinding;
+import com.example.swifttrack.utils.PlotUtil;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+
+import org.apache.commons.math3.geometry.euclidean.twod.Line;
+
+import java.util.Random;
 
 
 
@@ -31,14 +40,10 @@ public class HomeFragment extends Fragment {
         INIT, RUNNING, STOP, SAVED
     }
 
-    // ******************************
-    // A queue to to store received dataframes
-    // ******************************
-//    public static final ArrayBlockingQueue<float[]> rxQueue = new ArrayBlockingQueue<>(AudioPlayer.BUFFER_SIZE);
-//
-//    public AudioPlayer audioPlayer;
-//    public AudioRecorder audioRecorder;
-//    public AudioProcessor audioProcessor;
+    private AudioPlayer audioPlayer;
+    public AudioRecorder audioRecorder;
+    public AudioProcessor audioProcessor;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -48,71 +53,112 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // initialize chart view
+        //===================== Initialization
+        // initialization of components
+        audioPlayer = new AudioPlayer();
+        audioPlayer.init();
+
+        audioRecorder = new AudioRecorder();
+        audioRecorder.init();
+
+        audioProcessor = new AudioProcessor();
+        audioProcessor.init();
+
+        // init button state
+        switchState(State.INIT);
+
+
+        // initialization of chart data
+
+        binding.xChart1.setData(new LineData());
+        binding.xChart1.setBorderWidth(20.0f);
 
         binding.xChart2.setData(new LineData());
+        binding.xChart2.setBorderWidth(20.0f);
+
         binding.vChart1.setData(new LineData());
+        binding.vChart1.setBorderWidth(20.0f);
+
         binding.vChart2.setData(new LineData());
+        binding.vChart2.setBorderWidth(20.0f);
 
-//        { // initialize button view
-//            startButton = binding.startButton;
-//            stopButton = binding.stopButton;
-//            resetButton = binding.resetButton;
-//            saveButton = binding.saveButton;
-//        }
-        binding.xChart1.setData(homeViewModel.getLineData());
-        binding.xChart2.setData(homeViewModel.getLineData());
 
+
+        //=====================
+        // set button onclick listener
         binding.startButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+
                 switchState(State.RUNNING);
 
-                Log.d("Thread", String.valueOf(Thread.currentThread()));
-                homeViewModel.setLineData(binding.xChart1, "X1", Color.RED);
-                binding.xChart1.notifyDataSetChanged();
-                binding.xChart1.invalidate();
+                long timestamp = System.currentTimeMillis();
+                audioPlayer.setTimestamp(timestamp);
+                audioPlayer.start();
+
+                audioRecorder.setTimestamp(timestamp);
+                audioRecorder.start();
+
+                audioProcessor.setTimestamp(timestamp);
+                audioProcessor.start();
             }
         });
 
         binding.stopButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 switchState(State.STOP);
-
-                Log.d("Thread", String.valueOf(Thread.currentThread()));
-                homeViewModel.setLineData(binding.xChart2, "X2", Color.BLUE);
-                binding.xChart2.notifyDataSetChanged();
-                binding.xChart2.invalidate();
+                audioPlayer.stop();
+                audioRecorder.stop();
+                audioProcessor.stop();
             }
         });
 
         binding.resetButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 switchState(State.INIT);
-
-                Log.d("Thread", String.valueOf(Thread.currentThread()));
-                homeViewModel.setLineData(binding.vChart1, "V1", Color.RED);
-                binding.vChart1.notifyDataSetChanged();
-                binding.vChart1.invalidate();
+                audioPlayer.reset();
+                audioRecorder.reset();
+                audioProcessor.reset();
             }
         });
 
         binding.saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 switchState(State.SAVED);
-
-                Log.d("Thread", String.valueOf(Thread.currentThread()));
-                homeViewModel.setLineData(binding.vChart2, "V2", Color.RED);
-                binding.vChart2.notifyDataSetChanged();
-                binding.vChart2.invalidate();
+                audioPlayer.save();
+                audioRecorder.save();
+                audioProcessor.save();
             }
         });
 
+        //=====================
+        // set chart observer
+        homeViewModel.getLiveLineData(HomeViewModel.OutTypes.LEFT_DIST).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
+            @Override
+            public void onChanged(LineDataSet lineDataSet) {
+                setChart(binding.xChart1, lineDataSet);
+            }
+        });
 
+        homeViewModel.getLiveLineData(HomeViewModel.OutTypes.RIGHT_DIST).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
+            @Override
+            public void onChanged(LineDataSet lineDataSet) {
+                setChart(binding.xChart2, lineDataSet);
+            }
+        });
 
+        homeViewModel.getLiveLineData(HomeViewModel.OutTypes.LEFT_V).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
+            @Override
+            public void onChanged(LineDataSet lineDataSet) {
+                setChart(binding.vChart1, lineDataSet);
+            }
+        });
 
-
-
-
+        homeViewModel.getLiveLineData(HomeViewModel.OutTypes.RIGHT_V).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
+            @Override
+            public void onChanged(LineDataSet lineDataSet) {
+                setChart(binding.vChart2, lineDataSet);
+            }
+        });
 
 
 //        final TextView textView = binding.textHome;
@@ -133,6 +179,16 @@ public class HomeFragment extends Fragment {
         binding = null;
     }
 
+    // update chart
+    private void setChart(LineChart chart, LineDataSet lineDataSet){
+        LineData lineData = chart.getLineData();
+        lineData.removeDataSet(lineData.getDataSetCount() - 1);
+        lineData.addDataSet(lineDataSet);
+        chart.notifyDataSetChanged();
+        chart.invalidate();
+    }
+
+    // change state of buttons
     private void switchState(State state) {
         if (state == State.RUNNING) {
             binding.startButton.setEnabled(false);
@@ -156,5 +212,6 @@ public class HomeFragment extends Fragment {
             binding.saveButton.setEnabled(false);
         }
     }
+
 
 }
