@@ -1,0 +1,131 @@
+package com.example.swifttrack;
+
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.Menu;
+
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.navigation.NavigationView;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.swifttrack.databinding.ActivityMainBinding;
+
+import com.example.swifttrack.utils.FileUtil;
+
+import java.util.concurrent.ArrayBlockingQueue;
+
+public class MainActivity extends AppCompatActivity {
+
+    private AppBarConfiguration mAppBarConfiguration;
+    private ActivityMainBinding binding;
+
+    // ******************************
+    // required permissions
+    // ******************************
+    public static final String[] PERMISSIONS = {
+            Manifest.permission.WAKE_LOCK,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+    };
+
+    // ******************************
+    // A queue to to store received dataframes
+    // ******************************
+    public static final ArrayBlockingQueue<float[]> rxQueue = new ArrayBlockingQueue<>(AudioPlayer.BUFFER_SIZE);
+
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setupPermission();
+
+        FileUtil.init(this);
+
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        setSupportActionBar(binding.appBarMain.toolbar);
+//        binding.appBarMain.fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
+        DrawerLayout drawer = binding.drawerLayout;
+        NavigationView navigationView = binding.navView;
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        mAppBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
+                .setOpenableLayout(drawer)
+                .build();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+        NavigationUI.setupWithNavController(navigationView, navController);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
+                || super.onSupportNavigateUp();
+    }
+
+    // ******************************
+    // button actions
+    // ******************************
+    public void start(View view) {
+        Log.i("button", "press start");
+    }
+    public void stop(View view) {
+        Log.i("button", "press stop");
+    }
+    public void reset(View view) {
+        Log.i("button", "press reset");
+    }
+    public void save(View view) {
+        Log.i("button", "press save");
+    }
+
+    // ******************************
+    // setup permissions
+    // ******************************
+    private void setupPermission() {
+        while (getPermission() != PackageManager.PERMISSION_GRANTED) {
+            setupPermission();
+        }
+    }
+
+    private int getPermission() {
+        ActivityCompat.requestPermissions(this, PERMISSIONS, 1);
+
+        for (String permission : PERMISSIONS) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                return PackageManager.PERMISSION_DENIED;
+            }
+        }
+
+        return PackageManager.PERMISSION_GRANTED;
+    }
+}
