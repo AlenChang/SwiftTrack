@@ -64,16 +64,16 @@ public class HomeViewModel extends ViewModel {
 
         switch (type){
             case LEFT_DIST:
-                xChart1.postValue(PlotUtil.getLineDataSet(values, "X1", Color.RED));
+                xChart1.postValue(PlotUtil.getLineDataSet(values, "Channel 1 Distance", Color.RED));
                 break;
             case RIGHT_DIST:
-                xChart2.postValue(PlotUtil.getLineDataSet(values, "X2", Color.BLUE));
+                xChart2.postValue(PlotUtil.getLineDataSet(values, "Channel 2 Distance", Color.BLUE));
                 break;
             case LEFT_V:
-                vChart1.postValue(PlotUtil.getLineDataSet(values, "V1", Color.RED));
+                vChart1.postValue(PlotUtil.getLineDataSet(values, "Channel 1 Velocity", Color.RED));
                 break;
             case RIGHT_V:
-                vChart2.postValue(PlotUtil.getLineDataSet(values, "V2", Color.BLUE));
+                vChart2.postValue(PlotUtil.getLineDataSet(values, "Channel 2 Velocity", Color.BLUE));
                 break;
             default:
                 break;
