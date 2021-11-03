@@ -11,6 +11,7 @@ add_library(
         preprocessor.h preprocessor.cpp
         denoiser.h denoiser.cpp
         postprocessor.h postprocessor.cpp
+        histories.h
 )
 
 target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

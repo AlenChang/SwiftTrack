@@ -3,29 +3,49 @@
 
 // #include "logger_util.hpp"
 #include "matrix_util.hpp"
+#include "histories.h"
 
 class Postprocessor {
+  
 public:
     Postprocessor();
 
+    Postprocessor(bool useKalman);
+
     ~Postprocessor();
 
+    Histories & GetHistories(string history_name);
+
     void PaddingZero();
+
+    void PaddingZero(Histories &history_type);
 
     double ProcessCIRSignal(const MatrixX<complex<double>> &cir_signal);
 
     void GetPhaseHistory(double *history, int n);
 
+    void GetPhaseHistory(double *history, int n, Histories &history_type);
+
     void GetVelocityHistory(double *history, int n);
 
+    void GetVelocityHistory(double *history, int n, Histories &history_type);
+
     void GetDistHistory(double *history, int n);
+
+    void GetDistHistory(double *history, int n, Histories &history_type);
 
 private:
     void CutOffCIRSignal(const MatrixX<complex<double>> &cir_signal);
 
     void CalcPhase();
 
+    void CalcPhase(Histories &history_type);
+
     void PhaseTransform();
+
+    void PhaseTransform(Histories &history_type);
+
+    bool USE_KALMAN = false;
 
     const int N_IRS = 150;
     const double C = 34300.0;
@@ -35,6 +55,14 @@ private:
     const double PHASE_DIFF_2_THRESHOLD = 1.0 * M_PI;
 
     double prev_phase_in_wrap_;
+
+    
+    void init_history(Histories &history_type);
+
+    Histories swifttrack_history_;
+    Histories TOF_history_;
+    Histories Strata_history_;
+
 
     vector<double> phase_history_;
     vector<double> velocity_history_;
