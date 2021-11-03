@@ -6,7 +6,6 @@
 #include "preprocessor.h"
 #include "filter_util.hpp"
 #include "matrix_util.hpp"
-#include "logger_util.hpp"
 
 class Engine {
 public:

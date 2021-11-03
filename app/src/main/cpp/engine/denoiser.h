@@ -49,6 +49,7 @@ private:
 
     const int FRAME_SIZE = 480;
     const int CALI_1_FRAMES = 50;
+    const float thre_factor = 1.5;
     const int CALI_2_PERIODS = 4;
     const int CALI_2_MAX_FRAMES = 2000;
     const int MOVING_PERIOD_MIN_FRAMES = 20;

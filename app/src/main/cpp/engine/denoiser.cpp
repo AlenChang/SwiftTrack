@@ -1,6 +1,7 @@
 #include "denoiser.h"
 
 Denoiser::Denoiser() {
+    // first stage calibration -> estimate threshold to determine moving period.
     status_ = CALI_1;
 
     prev_signal_ = MatrixX<complex<double>>::Constant(1, FRAME_SIZE, complex<double>(0, 0));
@@ -76,13 +77,17 @@ void Denoiser::ProcessCalibration1() {
 void Denoiser::ProcessCalibration2() {
     CheckMoving();
 
+    // store moving flags
     calibration_2_moving_history_.push_back(is_moving_);
+    // store cir from moving periods
     calibration_2_signal_history_.push_back(signal_);
 
+    // case 1: last frame is moving and this frame is not moving
     if (prev_is_moving_ && !is_moving_) {
+        // if the minimum moving period is satisfied
         if (moving_frames_ >= MOVING_PERIOD_MIN_FRAMES) {
             calibration_2_moving_periods_++;
-        } else {
+        } else { // if not satisfied, remove the last fake period
             int k = (int) calibration_2_moving_history_.size() - 1;
             while (k >= 0 && calibration_2_moving_history_[k]) {
                 calibration_2_moving_history_[k] = !calibration_2_moving_history_[k];
@@ -92,6 +97,7 @@ void Denoiser::ProcessCalibration2() {
         moving_frames_ = 0;
     }
 
+    // case 2: compute static vector if we have enough moving data
     if (calibration_2_moving_periods_ == CALI_2_PERIODS) {
         OfflineCalcStaticSignal();
         OfflineRemoveStaticSignal();
@@ -100,6 +106,7 @@ void Denoiser::ProcessCalibration2() {
 
     prev_is_moving_ = is_moving_;
 
+    // case 3: if moving for a long time, break 
     if (calibration_2_moving_history_.size() > CALI_2_MAX_FRAMES) {
         status_ = CALI_FAILED;
     }
@@ -111,15 +118,19 @@ void Denoiser::ProcessCalibrationSuccess() {
     CheckMoving();
 
     if (is_moving_) {
+        // mean vector of cir in moving periods
         updated_static_signal_ = (signal_ + moving_frames_ * updated_static_signal_) / (moving_frames_ + 1);
         moving_frames_++;
     }
 
+    // if need updating
     if (prev_is_moving_ && !is_moving_) {
         if (moving_frames_ >= MOVING_PERIOD_MIN_FRAMES) {
             OnlineUpdateStaticSignal();
         }
         OnlineRemoveStaticSignal();
+
+        // if update sucess, reset these two parameters
         updated_static_signal_ = MatrixX<complex<double>>::Constant(1, FRAME_SIZE, complex<double>(0, 0));
         moving_frames_ = 0;
     } else {
@@ -143,7 +154,7 @@ void Denoiser::OfflineCalcThreshold() {
     var_diff /= (calibration_1_frame_count_ - 1);
 
     // moving_threshold_ = mean_diff + 3 * sqrt(var_diff);
-    moving_threshold_ = 3 * mean_diff;
+    moving_threshold_ = thre_factor * mean_diff;
 }
 
 void Denoiser::OfflineCalcStaticSignal() {
@@ -197,6 +208,8 @@ void Denoiser::OnlineRemoveStaticSignal() {
 
 void Denoiser::CheckMoving() {
     double max_diff = MaxDiff(prev_signal_, signal_);
+
+    // todo: max_diff should be fed to a low pass filter before determine moving or static
     is_moving_ = max_diff > moving_threshold_;
 
     if (is_moving_) {

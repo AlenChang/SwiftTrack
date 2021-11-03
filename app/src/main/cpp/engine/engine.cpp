@@ -3,6 +3,7 @@
 Engine *Engine::instance1 = nullptr;
 Engine *Engine::instance2 = nullptr;
 
+using namespace std;
 
 Engine::Engine() {
 
@@ -22,7 +23,6 @@ Engine::Engine() {
     prev_status_ = Denoiser::CALI_1;
     cur_status_ = Denoiser::CALI_1;
 
-    LoggerUtil::Log("Engine::Engine()", "Initiate OK.");
 }
 
 Engine::~Engine() {
@@ -30,7 +30,7 @@ Engine::~Engine() {
     delete denoiser_;
     delete postprocessor_;
 
-    LoggerUtil::Log("Engine::~Engine()", "Destroyed OK.");
+    cout << "Engine::~Engine() Destroyed OK." << endl;
 }
 
 
@@ -49,7 +49,7 @@ Engine *Engine::GetInstance(int id) {
         return instance2;
     }
 
-    LoggerUtil::Log("Engine::GetInstance", "Invalid engine id.");
+    cout << "Engine::GetInstance Invalid engine id." << endl;
 
     return nullptr;
 }
@@ -81,18 +81,18 @@ void Engine::Reset(int id) {
     if (id == 1) {
         delete instance1;
         instance1 = new Engine();
-        LoggerUtil::Log("Engine::Reset", "Reset instance1 OK.");
+        // LoggerUtil::Log("Engine::Reset", "Reset instance1 OK.");
         return;
     }
 
     if (id == 2) {
         delete instance2;
         instance2 = new Engine();
-        LoggerUtil::Log("Engine::Reset", "Reset instance2 OK.");
+        // LoggerUtil::Log("Engine::Reset", "Reset instance2 OK.");
         return;
     }
 
-    LoggerUtil::Log("Engine::Reset", "Invalid engine id.");
+    // LoggerUtil::Log("Engine::Reset", "Invalid engine id.");
 }
 
 
@@ -102,16 +102,23 @@ double Engine::ProcessFrameCore(const MatrixX<double> &rx_signal) {
     // compute CIR
     MatrixX<complex<double>> cir_signal = preprocessor_->GenerateCIRSignal(rx_signal);
 
+    // simply feed signal to the denoiser
+    // the denoiser will determine the next step
     denoiser_->FeedSignal(cir_signal);
-
     cur_status_ = denoiser_->GetStatus();
+
+    // if calibration is not ready, the distance will always be 0
     if (cur_status_ == Denoiser::CALI_SUCCESS) {
         if (prev_status_ == Denoiser::CALI_2) {
             vector<MatrixX<complex<double>>> denoise_signals = denoiser_->GetOfflineDenoiseSignals();
             for (const MatrixX<complex<double>> &denoise_signal : denoise_signals) {
+                // update distance in calibration stage -> frame by frame
+                // different approaches should be applied here
                 dist = postprocessor_->ProcessCIRSignal(denoise_signal);
             }
         } else {
+            // compute online distance data
+            // different approaches should be applied here
             MatrixX<complex<double>> denoise_signal = denoiser_->GetOnlineDenoiseSignal();
             dist = postprocessor_->ProcessCIRSignal(denoise_signal);
         }

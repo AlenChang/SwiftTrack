@@ -19,12 +19,14 @@ Preprocessor::~Preprocessor() {
 }
 
 MatrixX<complex<double>> Preprocessor::GenerateCIRSignal(const MatrixX<double> &rx_signal) {
+    // perform down-conversion by cumulating phase
     DownConversion(rx_signal);
 
     LowPassFilter();
 
     CircularConvolution();
 
+    // shift the direct path to the first tap
     CenterShift();
 
     return cir_signal_;
@@ -42,10 +44,13 @@ void Preprocessor::GenerateRefSignal() {
     MatrixUtil::RowFFT(freq_zc, raw_zc);
 
     // Padding zeros in freq domain
+    // Perform conjugation when padding
     MatrixUtil::FreqPadding(freq_ref_signal_, freq_zc, N_ZC_UP - N_ZC);
 }
 
 void Preprocessor::DownConversion(const MatrixX<double> &rx_signal) {
+
+    // for channel 0
     for (int i = 0; i < N_ZC_UP; i++) {
         phase_ += DELTA_PHASE;
         rxbb_signal_(0, i) = rx_signal(0, i) * complex<double>(cos(phase_), sin(phase_));
