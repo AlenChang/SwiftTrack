@@ -3,6 +3,37 @@
 Engine *Engine::instance1 = nullptr;
 Engine *Engine::instance2 = nullptr;
 
+
+Engine::Engine() {
+
+    // from real-valued audio signal to complex-valued cir
+    // methods irrelevant
+    preprocessor_ = new Preprocessor();
+
+    // remove background noise
+    // two different approaches - DDBR or our method
+    denoiser_ = new Denoiser();
+
+    // deploy different methods
+    // Four different approaches - ToF, Strata, SwiftTrack w/o TOF, SwiftTrack
+    postprocessor_ = new Postprocessor();
+
+
+    prev_status_ = Denoiser::CALI_1;
+    cur_status_ = Denoiser::CALI_1;
+
+    LoggerUtil::Log("Engine::Engine()", "Initiate OK.");
+}
+
+Engine::~Engine() {
+    delete preprocessor_;
+    delete denoiser_;
+    delete postprocessor_;
+
+    LoggerUtil::Log("Engine::~Engine()", "Destroyed OK.");
+}
+
+
 Engine *Engine::GetInstance(int id) {
     if (id == 1) {
         if (instance1 == nullptr) {
@@ -64,28 +95,11 @@ void Engine::Reset(int id) {
     LoggerUtil::Log("Engine::Reset", "Invalid engine id.");
 }
 
-Engine::Engine() {
-    preprocessor_ = new Preprocessor();
-    denoiser_ = new Denoiser();
-    postprocessor_ = new Postprocessor();
-
-    prev_status_ = Denoiser::CALI_1;
-    cur_status_ = Denoiser::CALI_1;
-
-    LoggerUtil::Log("Engine::Engine()", "Initiate OK.");
-}
-
-Engine::~Engine() {
-    delete preprocessor_;
-    delete denoiser_;
-    delete postprocessor_;
-
-    LoggerUtil::Log("Engine::~Engine()", "Destroyed OK.");
-}
 
 double Engine::ProcessFrameCore(const MatrixX<double> &rx_signal) {
     double dist = 0.0;
 
+    // compute CIR
     MatrixX<complex<double>> cir_signal = preprocessor_->GenerateCIRSignal(rx_signal);
 
     denoiser_->FeedSignal(cir_signal);

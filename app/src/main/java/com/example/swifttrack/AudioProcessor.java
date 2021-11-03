@@ -63,7 +63,9 @@ public class AudioProcessor {
                 try {
                     if (lock.tryLock()) {
                         float[] data = MainActivity.rxQueue.poll(INTERVAL, TimeUnit.MILLISECONDS);
+
                         if (data != null) {
+                            Log.d("datasize", "data length " + data.length);
                             for (int i = 0; i < data.length / 2 / FRAME_SIZE; i++) {
                                 for (int j = 0; j < FRAME_SIZE; j++) {
                                     frame1[j] = data[2 * (i * FRAME_SIZE + j)];
