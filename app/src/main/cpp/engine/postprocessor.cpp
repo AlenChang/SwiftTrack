@@ -160,30 +160,23 @@ void Postprocessor::CutOffCIRSignal(const MatrixX<complex<double>> &cir_signal) 
     }
 }
 
-void Postprocessor::CalcPhase() {
-    // regression to phase
+complex<double> Postprocessor::LeastSquare(){
+    // regression to estimate first motion coefficients
     complex<double> beta = MatrixUtil::DotSum(prev_irs_signal_.conjugate(), irs_signal_);
     prev_irs_signal_ = irs_signal_;
-    // double phase_in_wrap = arg(beta);
+    return beta;
+}
 
-    // // phase unwrap
-    // double phase_diff = phase_in_wrap - prev_phase_in_wrap_;
-    // prev_phase_in_wrap_ = phase_in_wrap;
-
-    // // constraint phase diff by phase' threshold
-    // if (phase_diff > PHASE_DIFF_THRESHOLD) {
-    //     phase_diff -= 2 * M_PI;
-    // } else if (phase_diff < -PHASE_DIFF_THRESHOLD) {
-    //     phase_diff += 2 * M_PI;
-    // }
-
-    // double phase_unwrapped = phase_history_.back() + phase_diff;
+void Postprocessor::CalcPhase() {
+    
+    complex<double> beta = LeastSquare();
 
     double phase_diff = CalcPhase(beta, prev_phase_in_wrap_);
-
     double phase_unwrapped = phase_history_.back() + phase_diff;
-
     phase_history_.push_back(phase_unwrapped);
+
+    // todo: to implement with kalman filter
+    swifttrack_history_.phase_history_.push_back(phase_unwrapped);
 }
 
 
@@ -210,16 +203,12 @@ void Postprocessor::PhaseTransform() {
     double velocity = -phase_history_.back() * C / (4 * M_PI * FC * T);
     velocity_history_.push_back(velocity);
 
+    swifttrack_history_.velocity_history_.push_back(velocity);
+
     double dist = dist_history_.back() + velocity * T;
     dist_history_.push_back(dist);
-}
 
-void Postprocessor::PhaseTransform(Histories &history_type){
-    double velocity = -history_type.phase_history_.back() * C / (4 * M_PI * FC * T);
-    history_type.velocity_history_.push_back(velocity);
-
-    double dist = history_type.dist_history_.back() + velocity * T;
-    history_type.dist_history_.push_back(dist);
+    swifttrack_history_.dist_history_.push_back(dist);
 }
 
 
@@ -242,25 +231,19 @@ void Postprocessor::TapSelectionTOF(){
         TOF_history_.dist_history_.push_back(dist);
         TOF_history_.velocity_history_.push_back(0);
         TOF_history_.phase_history_.push_back(0);
-
         BasicChannelEstimation(i, tap);
 
         tap = 0;
-
-        
     }
-       
 }
 
 void Postprocessor::BasicChannelEstimation(int rows, int tap){
     complex<double> tapSel = irs_signal_(rows, tap);
     double phase_in_wrap = arg(tapSel);
-
     double phase_diff = CalcPhase(tapSel, Strata_pre_.pre_phase_in_wrap_);
-
     double phase_unwrapped = Strata_history_.phase_history_.back() + phase_diff;
-
     Strata_history_.phase_history_.push_back(phase_unwrapped);
     Strata_history_.dist_history_.push_back(phase_unwrapped * C / 2 / M_PI / FC / 2);
+    Strata_history_.velocity_history_.push_back(0);
 
 }

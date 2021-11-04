@@ -39,11 +39,12 @@ private:
     void CutOffCIRSignal(const MatrixX<complex<double>> &cir_signal);
 
     void CalcPhase();
+
     double CalcPhase(complex<double> tapSel, double & pre_phase);
 
-    void PhaseTransform();
+    complex<double> LeastSquare();
 
-    void PhaseTransform(Histories &history_type);
+    void PhaseTransform();
 
     void TapSelectionTOF();
 
