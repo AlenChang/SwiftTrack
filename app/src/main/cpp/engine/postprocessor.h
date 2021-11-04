@@ -14,13 +14,16 @@ public:
 
     ~Postprocessor();
 
+    double ProcessCIRSignal(const MatrixX<complex<double>> &cir_signal);
+
+    double ProcessCIRSignal2(const MatrixX<complex<double>> &cir_signal);
+
+    // operating histories
     Histories & GetHistories(string history_name);
 
     void PaddingZero();
 
     void PaddingZero(Histories &history_type);
-
-    double ProcessCIRSignal(const MatrixX<complex<double>> &cir_signal);
 
     void GetPhaseHistory(double *history, int n);
 
@@ -39,17 +42,20 @@ private:
 
     void CalcPhase();
 
-    void CalcPhase(Histories &history_type);
-
     void PhaseTransform();
 
     void PhaseTransform(Histories &history_type);
+
+    void TapSelectionTOF();
+
+    void CallPhaseStrata();
 
     bool USE_KALMAN = false;
 
     const int N_IRS = 150;
     const double C = 34300.0;
     const double FC = 20000.0;
+    const double FS = 48000.0;
     const double T = 0.01;
     const double PHASE_DIFF_THRESHOLD = 1.0 * M_PI;
     const double PHASE_DIFF_2_THRESHOLD = 1.0 * M_PI;
