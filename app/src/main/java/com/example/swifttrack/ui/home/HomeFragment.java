@@ -86,7 +86,7 @@ public class HomeFragment extends Fragment {
 
         //=====================
         // set button onclick listener
-        binding.startButton.setOnClickListener(new View.OnClickListener() {
+        binding.startHome.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
                 switchState(State.RUNNING);
@@ -103,7 +103,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        binding.stopButton.setOnClickListener(new View.OnClickListener() {
+        binding.stopHome.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 switchState(State.STOP);
                 audioPlayer.stop();
@@ -112,7 +112,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        binding.resetButton.setOnClickListener(new View.OnClickListener() {
+        binding.resetHome.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 switchState(State.INIT);
                 audioPlayer.reset();
@@ -121,7 +121,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        binding.saveButton.setOnClickListener(new View.OnClickListener() {
+        binding.saveHome.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 switchState(State.SAVED);
                 audioPlayer.save();
@@ -191,25 +191,25 @@ public class HomeFragment extends Fragment {
     // change state of buttons
     private void switchState(State state) {
         if (state == State.RUNNING) {
-            binding.startButton.setEnabled(false);
-            binding.stopButton.setEnabled(true);
-            binding.resetButton.setEnabled(false);
-            binding.saveButton.setEnabled(false);
+            binding.startHome.setEnabled(false);
+            binding.stopHome.setEnabled(true);
+            binding.resetHome.setEnabled(false);
+            binding.saveHome.setEnabled(false);
         } else if (state == State.STOP) {
-            binding.startButton.setEnabled(false);
-            binding.stopButton.setEnabled(false);
-            binding.resetButton.setEnabled(true);
-            binding.saveButton.setEnabled(true);
+            binding.startHome.setEnabled(false);
+            binding.stopHome.setEnabled(false);
+            binding.resetHome.setEnabled(true);
+            binding.saveHome.setEnabled(true);
         } else if (state == State.INIT) {
-            binding.startButton.setEnabled(true);
-            binding.stopButton.setEnabled(false);
-            binding.resetButton.setEnabled(false);
-            binding.saveButton.setEnabled(false);
+            binding.startHome.setEnabled(true);
+            binding.stopHome.setEnabled(false);
+            binding.resetHome.setEnabled(false);
+            binding.saveHome.setEnabled(false);
         } else {
-            binding.startButton.setEnabled(false);
-            binding.stopButton.setEnabled(false);
-            binding.resetButton.setEnabled(true);
-            binding.saveButton.setEnabled(false);
+            binding.startHome.setEnabled(false);
+            binding.stopHome.setEnabled(false);
+            binding.resetHome.setEnabled(true);
+            binding.saveHome.setEnabled(false);
         }
     }
 

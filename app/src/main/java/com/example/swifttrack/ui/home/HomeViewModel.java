@@ -23,7 +23,6 @@ public class HomeViewModel extends ViewModel {
             LEFT_DIST, RIGHT_DIST, LEFT_V, RIGHT_V
     }
 
-    private MutableLiveData<String> mText;
 
     private static MutableLiveData<LineDataSet> xChart1; // channel 1 distance
     private static MutableLiveData<LineDataSet> xChart2; // channel 2 distance
@@ -32,8 +31,6 @@ public class HomeViewModel extends ViewModel {
 
 
     public HomeViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is home fragment");
 
         xChart1 = new MutableLiveData<>();
         xChart2 = new MutableLiveData<>();
@@ -41,9 +38,6 @@ public class HomeViewModel extends ViewModel {
         vChart2 = new MutableLiveData<>();
     }
 
-    public LiveData<String> getText() {
-        return mText;
-    }
     public LiveData<LineDataSet> getLiveLineData(OutTypes type) {
         switch (type){
             case LEFT_DIST:

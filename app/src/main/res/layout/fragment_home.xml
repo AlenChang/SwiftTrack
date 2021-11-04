@@ -7,7 +7,7 @@
     tools:context=".ui.home.HomeFragment">
 
     <Button
-        android:id="@+id/start_button"
+        android:id="@+id/start_home"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/start"
@@ -19,7 +19,7 @@
         app:layout_constraintTop_toBottomOf="@+id/v_chart_2" />
 
     <Button
-        android:id="@+id/stop_button"
+        android:id="@+id/stop_home"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/stop"
@@ -31,7 +31,7 @@
         app:layout_constraintTop_toBottomOf="@+id/v_chart_2" />
 
     <Button
-        android:id="@+id/reset_button"
+        android:id="@+id/reset_home"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/reset"
@@ -43,7 +43,7 @@
         app:layout_constraintTop_toBottomOf="@+id/v_chart_2" />
 
     <Button
-        android:id="@+id/save_button"
+        android:id="@+id/save_home"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/save"
