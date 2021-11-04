@@ -10,8 +10,6 @@ class Postprocessor {
 public:
     Postprocessor();
 
-    Postprocessor(bool useKalman);
-
     ~Postprocessor();
 
     double ProcessCIRSignal(const MatrixX<complex<double>> &cir_signal);
@@ -41,6 +39,7 @@ private:
     void CutOffCIRSignal(const MatrixX<complex<double>> &cir_signal);
 
     void CalcPhase();
+    double CalcPhase(complex<double> tapSel, double & pre_phase);
 
     void PhaseTransform();
 
@@ -48,9 +47,11 @@ private:
 
     void TapSelectionTOF();
 
+    void BasicChannelEstimation(int rows, int tap);
+
     void CallPhaseStrata();
 
-    bool USE_KALMAN = false;
+    // bool USE_KALMAN = false;
 
     const int N_IRS = 150;
     const double C = 34300.0;
@@ -61,9 +62,8 @@ private:
     const double PHASE_DIFF_2_THRESHOLD = 1.0 * M_PI;
 
     double prev_phase_in_wrap_;
+    Pre_Data_Store Strata_pre_;
 
-    
-    void init_history(Histories &history_type);
 
     Histories swifttrack_history_;
     Histories TOF_history_;
