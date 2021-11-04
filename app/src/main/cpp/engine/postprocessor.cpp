@@ -9,6 +9,7 @@ Postprocessor::Postprocessor() {
 
     prev_irs_signal_ = MatrixX<complex<double>>::Constant(1, N_IRS, complex<double>(0, 0));
     irs_signal_ = MatrixX<complex<double>>::Constant(1, N_IRS, complex<double>(0, 0));
+    irs_signal_diff = MatrixX<complex<double>>::Constant(1, N_IRS, complex<double>(0, 0));
 
     cout << "Postprocessor was initiated." << endl;
 }
@@ -50,9 +51,9 @@ void Postprocessor::PaddingZero(Histories &history_type){
 double Postprocessor::ProcessCIRSignal(const MatrixX<complex<double>> &cir_signal) {
     CutOffCIRSignal(cir_signal);
 
-    TapSelectionTOF();
-
     CalcPhase();
+
+    TapSelectionTOF();
 
     PhaseTransform();
 
@@ -148,7 +149,7 @@ void Postprocessor::GetDistHistory(double *history, int n, Histories &history_ty
 void Postprocessor::GetCIR(double *cir_abs, int n){
 
     for (int i = 0; i < N_IRS; i++) {
-        *(cir_abs + i) = abs(irs_signal_(0, i));
+        *(cir_abs + i) = abs(irs_signal_diff(0, i));
     }
 }
 
@@ -162,6 +163,10 @@ void Postprocessor::CutOffCIRSignal(const MatrixX<complex<double>> &cir_signal) 
 complex<double> Postprocessor::LeastSquare(){
     // regression to estimate first motion coefficients
     complex<double> beta = MatrixUtil::DotSum(prev_irs_signal_.conjugate(), irs_signal_);
+    for (int i = 0; i < N_IRS; i++) {
+        irs_signal_diff(0, i) = irs_signal_(0, i) - prev_irs_signal_(0, i);
+    }
+    
     prev_irs_signal_ = irs_signal_;
     return beta;
 }
@@ -212,14 +217,20 @@ void Postprocessor::PhaseTransform() {
 
 
 void Postprocessor::TapSelectionTOF(){
-    int rows = (int) irs_signal_.rows(), cols = (int) irs_signal_.cols();
+    MatrixX<complex<double>> signal;
+    if(use_diff_flag){
+        signal = irs_signal_diff;
+    } else {
+        signal = irs_signal_;
+    }
+    int rows = (int) signal.rows(), cols = (int) signal.cols();
 
     double res = 0.0;
     int tap = 0;
 
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
-            double amp = abs(irs_signal_(i, j));
+            double amp = abs(signal(i, j));
             if (amp > res) {
                 res = amp;
                 tap = j;

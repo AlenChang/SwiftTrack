@@ -62,6 +62,7 @@ private:
     const double T = 0.01;
     const double PHASE_DIFF_THRESHOLD = 1.0 * M_PI;
     const double PHASE_DIFF_2_THRESHOLD = 1.0 * M_PI;
+    const double use_diff_flag = true;
 
     double prev_phase_in_wrap_;
     Pre_Data_Store Strata_pre_;
@@ -78,6 +79,7 @@ private:
 
     MatrixX<complex<double>> prev_irs_signal_;
     MatrixX<complex<double>> irs_signal_;
+    MatrixX<complex<double>> irs_signal_diff;
 };
 
 #endif
