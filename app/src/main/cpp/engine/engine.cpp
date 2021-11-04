@@ -54,7 +54,7 @@ Engine *Engine::GetInstance(int id) {
     return nullptr;
 }
 
-double Engine::ProcessFrame(int id, const double *data, int n) {
+void Engine::ProcessFrame(int id, const double *data, int n) {
     Engine *engine = Engine::GetInstance(id);
     // 把数据从double array转成eigen能处理的格式
     MatrixX<double> rx_signal(1, n);
@@ -62,7 +62,7 @@ double Engine::ProcessFrame(int id, const double *data, int n) {
         rx_signal(0, i) = *(data + i);
     }
 
-    return engine->ProcessFrameCore(rx_signal);
+    engine->ProcessFrameCore(rx_signal);
 }
 
 void Engine::GetVelocityHistory(int id, double *history, int n) {
@@ -96,8 +96,7 @@ void Engine::Reset(int id) {
 }
 
 
-double Engine::ProcessFrameCore(const MatrixX<double> &rx_signal) {
-    double dist = 0.0;
+void Engine::ProcessFrameCore(const MatrixX<double> &rx_signal) {
 
     // compute CIR
     MatrixX<complex<double>> cir_signal = preprocessor_->GenerateCIRSignal(rx_signal);
@@ -114,13 +113,13 @@ double Engine::ProcessFrameCore(const MatrixX<double> &rx_signal) {
             for (const MatrixX<complex<double>> &denoise_signal : denoise_signals) {
                 // update distance in calibration stage -> frame by frame
                 // different approaches should be applied here
-                dist = postprocessor_->ProcessCIRSignal(denoise_signal);
+                postprocessor_->ProcessCIRSignal(denoise_signal);
             }
         } else {
             // compute online distance data
             // different approaches should be applied here
             MatrixX<complex<double>> denoise_signal = denoiser_->GetOnlineDenoiseSignal();
-            dist = postprocessor_->ProcessCIRSignal(denoise_signal);
+            postprocessor_->ProcessCIRSignal(denoise_signal);
         }
     } else if (cur_status_ == Denoiser::CALI_1) {
         postprocessor_->PaddingZero();
@@ -128,5 +127,4 @@ double Engine::ProcessFrameCore(const MatrixX<double> &rx_signal) {
 
     prev_status_ = cur_status_;
 
-    return dist;
 }

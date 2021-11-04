@@ -11,7 +11,7 @@ class Engine {
 public:
     static Engine* GetInstance(int id);
 
-    static double ProcessFrame(int id, const double *data, int n);
+    static void ProcessFrame(int id, const double *data, int n);
 
     static void GetVelocityHistory(int id, double *history, int n);
 
@@ -24,7 +24,7 @@ private:
 
     ~Engine();
 
-    double ProcessFrameCore(const MatrixX<double> &rx_signal);
+    void ProcessFrameCore(const MatrixX<double> &rx_signal);
 
     static Engine *instance1, *instance2;
 
