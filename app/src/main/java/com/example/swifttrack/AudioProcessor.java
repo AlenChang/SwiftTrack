@@ -120,6 +120,9 @@ public class AudioProcessor {
                                         GalleryViewModel.setLineData(xWindow2, GalleryViewModel.OutTypes.TOF);
                                         getDistHistory2(2, xWindow2, WINDOW_SIZE, 1);
                                         GalleryViewModel.setLineData(xWindow2, GalleryViewModel.OutTypes.STRATA);
+                                        double[] cir_abs = new double[FRAME_SIZE];
+                                        getCIR(2, cir_abs, FRAME_SIZE);
+                                        GalleryViewModel.setLineData(cir_abs, GalleryViewModel.OutTypes.CIR);
                                     }
                                     break;
                                 default:
@@ -307,6 +310,8 @@ public class AudioProcessor {
     private static native void getDistHistory(int id, double[] history, int n);
 
     private static native void getDistHistory2(int id, double[] history, int n, int history_id);
+
+    private static native void getCIR(int id, double[] cir_abs, int n);
 
     private static native void reset(int id);
 }

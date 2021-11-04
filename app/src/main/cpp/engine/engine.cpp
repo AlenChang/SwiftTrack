@@ -84,6 +84,11 @@ void Engine::GetDistHistory(int id, double *history, int n, int history_id) {
     engine->postprocessor_->GetDistHistory(history, n, history_profile);
 }
 
+void Engine::GetCIR(int id, double *cir_abs, int n){
+    Engine *engine = Engine::GetInstance(id);
+    engine->postprocessor_->GetCIR(cir_abs, n);
+}
+
 void Engine::Reset(int id) {
     if (id == 1) {
         delete instance1;

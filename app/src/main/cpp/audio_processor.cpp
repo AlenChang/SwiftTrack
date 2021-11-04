@@ -61,6 +61,20 @@ Java_com_example_swifttrack_AudioProcessor_getDistHistory2(
 
 extern "C"
 JNIEXPORT void JNICALL
+Java_com_example_swifttrack_AudioProcessor_getCIR(
+        JNIEnv *env, jobject thiz, jint id, jdoubleArray cir_abs, jint n
+) {
+    jdouble *history_ = (env)->GetDoubleArrayElements(cir_abs, nullptr);
+
+    if (Engine::GetInstance(id) != nullptr) {
+        Engine::GetCIR(id, history_, n);
+    }
+
+    env->ReleaseDoubleArrayElements(cir_abs, history_, 0);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
 Java_com_example_swifttrack_AudioProcessor_reset(
         JNIEnv *env, jobject thiz, jint id
 ) {

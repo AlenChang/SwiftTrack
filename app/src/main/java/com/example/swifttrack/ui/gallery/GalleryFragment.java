@@ -68,6 +68,9 @@ public class GalleryFragment extends Fragment {
         binding.xSwifttrack.setData(new LineData());
         binding.xSwifttrack.setBorderWidth(20.0f);
 
+        binding.xCir.setData(new LineData());
+        binding.xCir.setBorderWidth(20.0f);
+
         //=====================
         // set button onclick listener
         binding.startGallery.setOnClickListener(new View.OnClickListener() {
@@ -132,6 +135,19 @@ public class GalleryFragment extends Fragment {
             @Override
             public void onChanged(LineDataSet lineDataSet) {
                 setChart(binding.xSwifttrack, lineDataSet);
+            }
+        });
+
+        galleryViewModel.getLiveLineData(GalleryViewModel.OutTypes.CIR).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
+            @Override
+            public void onChanged(LineDataSet lineDataSet) {
+//                setChart(binding.xCir, lineDataSet);
+                LineData newData = new LineData();
+                newData.addDataSet(lineDataSet);
+                binding.xCir.setData(newData);
+                binding.xCir.notifyDataSetChanged();
+                binding.xCir.invalidate();
+
             }
         });
 

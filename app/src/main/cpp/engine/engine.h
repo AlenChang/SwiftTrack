@@ -19,6 +19,8 @@ public:
 
     static void GetDistHistory(int id, double *history, int n, int history_id);
 
+    static void GetCIR(int id, double *cir_abs, int n);
+
     static void Reset(int id);
 
 private:

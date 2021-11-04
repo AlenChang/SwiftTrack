@@ -34,6 +34,8 @@ public:
 
     void GetDistHistory(double *history, int n, Histories &history_type);
 
+    void GetCIR(double *cir_abs, int n);
+
 private:
     void CutOffCIRSignal(const MatrixX<complex<double>> &cir_signal);
 
@@ -53,7 +55,7 @@ private:
 
     // bool USE_KALMAN = false;
 
-    const int N_IRS = 150;
+    const int N_IRS = 480;
     const double C = 34300.0;
     const double FC = 20000.0;
     const double FS = 48000.0;

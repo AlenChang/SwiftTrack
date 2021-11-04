@@ -145,6 +145,13 @@ void Postprocessor::GetDistHistory(double *history, int n, Histories &history_ty
     }
 }
 
+void Postprocessor::GetCIR(double *cir_abs, int n){
+
+    for (int i = 0; i < N_IRS; i++) {
+        *(cir_abs + i) = abs(irs_signal_(0, i));
+    }
+}
+
 // do not need a special version
 void Postprocessor::CutOffCIRSignal(const MatrixX<complex<double>> &cir_signal) {
     for (int i = 0; i < N_IRS; i++) {
@@ -220,7 +227,7 @@ void Postprocessor::TapSelectionTOF(){
         }
         // we only care about distance history for TOF method
         double dist = (double) tap / FC * C / 2;
-        TOF_history_.dist_history_.push_back(dist);
+        TOF_history_.dist_history_.push_back(1.0 * tap);
         TOF_history_.velocity_history_.push_back(0);
         TOF_history_.phase_history_.push_back(0);
         BasicChannelEstimation(i, tap);
