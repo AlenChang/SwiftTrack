@@ -307,9 +307,9 @@ public:
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (j < (cols + 1) / 2) {
-                    dst(i, j) = conj(src(i, j));
+                    dst(i, j) = src(i, j);
                 } else {
-                    dst(i, len + j) = conj(src(i, j));
+                    dst(i, len + j) = src(i, j);
                 }
             }
         }
