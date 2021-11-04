@@ -17,13 +17,16 @@ Postprocessor::~Postprocessor() {
     cout << "Postprocessor was recycled." << endl;
 }
 
-Histories & Postprocessor::GetHistories(string history_name){
-    if (history_name == "TOF"){
-        return TOF_history_;
-    }else if(history_name == "STRATA"){
-        return Strata_history_;
-    } else {
-        return swifttrack_history_;
+Histories & Postprocessor::GetHistories(int history_type){
+    switch(history_type){
+        case 0:
+            return TOF_history_;
+        case 1:
+            return Strata_history_;
+        case 2:
+            return swifttrack_history_;
+        default:
+            return swifttrack_history_;
     }
 }
 
@@ -56,17 +59,6 @@ double Postprocessor::ProcessCIRSignal(const MatrixX<complex<double>> &cir_signa
     return dist_history_.back();
 }
 
-double Postprocessor::ProcessCIRSignal2(const MatrixX<complex<double>> &cir_signal) {
-    CutOffCIRSignal(cir_signal);
-
-    // select channel taps with maximum amplitude
-
-    CalcPhase();
-
-    PhaseTransform();
-
-    return dist_history_.back();
-}
 
 
 void Postprocessor::GetPhaseHistory(double *history, int n) {

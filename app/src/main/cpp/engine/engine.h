@@ -17,6 +17,8 @@ public:
 
     static void GetDistHistory(int id, double *history, int n);
 
+    static void GetDistHistory(int id, double *history, int n, int history_id);
+
     static void Reset(int id);
 
 private:

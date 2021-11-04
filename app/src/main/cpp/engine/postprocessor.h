@@ -5,6 +5,7 @@
 #include "matrix_util.hpp"
 #include "histories.h"
 
+
 class Postprocessor {
   
 public:
@@ -14,10 +15,8 @@ public:
 
     double ProcessCIRSignal(const MatrixX<complex<double>> &cir_signal);
 
-    double ProcessCIRSignal2(const MatrixX<complex<double>> &cir_signal);
-
     // operating histories
-    Histories & GetHistories(string history_name);
+    Histories & GetHistories(int history_type);
 
     void PaddingZero();
 

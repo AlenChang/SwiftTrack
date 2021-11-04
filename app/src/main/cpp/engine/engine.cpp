@@ -77,6 +77,13 @@ void Engine::GetDistHistory(int id, double *history, int n) {
     engine->postprocessor_->GetDistHistory(history, n);
 }
 
+void Engine::GetDistHistory(int id, double *history, int n, int history_id) {
+    Engine *engine = Engine::GetInstance(id);
+    Histories history_profile = engine->postprocessor_->GetHistories(history_id);
+
+    engine->postprocessor_->GetDistHistory(history, n, history_profile);
+}
+
 void Engine::Reset(int id) {
     if (id == 1) {
         delete instance1;
