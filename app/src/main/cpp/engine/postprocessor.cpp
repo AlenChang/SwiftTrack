@@ -1,4 +1,5 @@
 #include "postprocessor.h"
+#include "my_movmedian.h"
 
 Postprocessor::Postprocessor() {
     prev_phase_in_wrap_ = 0.0;
@@ -238,6 +239,7 @@ void Postprocessor::TapSelectionTOF(){
         }
         // we only care about distance history for TOF method
         double dist = (double) tap / FC * C / 2;
+        dist = my_movmedian(dist, 5);
         TOF_history_.dist_history_.push_back(dist);
         TOF_history_.velocity_history_.push_back(0);
         TOF_history_.phase_history_.push_back(0);
