@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.10.2)
 
 project(acoustic)
 
-add_subdirectory(lib)
-add_subdirectory(util)
+#add_subdirectory(lib)
+#add_subdirectory(util)
 
 set(CMAKE_CXX_STANDARD 14)
 set(TARGET engine)
