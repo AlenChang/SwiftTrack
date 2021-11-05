@@ -65,8 +65,8 @@ void Preprocessor::LowPassFilter() {
 void Preprocessor::CircularConvolution() {
     MatrixX<complex<double>> freq_filtered_signal(1, N_ZC_UP);
     MatrixUtil::RowFFT(freq_filtered_signal, filtered_signal_);
-    MatrixX<complex<double>> conj_data = freq_filtered_signal.conjugate();
-    MatrixUtil::RowIFFT(cir_signal_, MatrixUtil::Dot(conj_data, freq_ref_signal_));
+    MatrixX<complex<double>> conj_data = freq_ref_signal_.conjugate();
+    MatrixUtil::RowIFFT(cir_signal_, MatrixUtil::Dot(freq_filtered_signal, conj_data));
 }
 
 void Preprocessor::CenterShift() {
