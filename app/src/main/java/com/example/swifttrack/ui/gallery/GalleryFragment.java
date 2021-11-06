@@ -1,10 +1,13 @@
 package com.example.swifttrack.ui.gallery;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.swifttrack.AudioPlayer;
 import com.example.swifttrack.AudioProcessor;
 import com.example.swifttrack.AudioRecorder;
+import com.example.swifttrack.MainActivity;
 import com.example.swifttrack.R;
 import com.example.swifttrack.databinding.FragmentGalleryBinding;
 import com.example.swifttrack.ui.home.HomeFragment;
@@ -22,6 +26,9 @@ import com.example.swifttrack.ui.home.HomeViewModel;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class GalleryFragment extends Fragment {
 
@@ -35,6 +42,7 @@ public class GalleryFragment extends Fragment {
     private AudioPlayer audioPlayer;
     public AudioRecorder audioRecorder;
     public AudioProcessor audioProcessor;
+    private Timer timer;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -53,6 +61,9 @@ public class GalleryFragment extends Fragment {
 
         audioProcessor = new AudioProcessor();
         audioProcessor.init(1);
+
+        // set a timer
+        timer = new Timer();
 
         // init button state
         switchState(HomeFragment.State.INIT);
@@ -87,6 +98,21 @@ public class GalleryFragment extends Fragment {
 
                 audioProcessor.setTimestamp(timestamp);
                 audioProcessor.start();
+
+                Toast.makeText(getActivity(),"Waiting for speaker warm up!",Toast.LENGTH_SHORT).show();
+
+//                timer.schedule(new TimerTask() {
+//                    @Override
+//                    public void run() {
+//                        getActivity().runOnUiThread(new Runnable() {
+//                            public void run() {
+//                                Toast.makeText(getActivity(),"Calibration!",Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+//                    }
+//                }, 2*1000);
+
+
             }
         });
 
@@ -167,6 +193,10 @@ public class GalleryFragment extends Fragment {
         LineData lineData = chart.getLineData();
         lineData.removeDataSet(lineData.getDataSetCount() - 1);
         lineData.addDataSet(lineDataSet);
+//        LineData lineData = new LineData();
+//        lineData.addDataSet(lineDataSet);
+//        chart.setData(lineData);
+
         chart.notifyDataSetChanged();
         chart.invalidate();
     }

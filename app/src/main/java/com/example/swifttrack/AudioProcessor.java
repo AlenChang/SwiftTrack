@@ -3,6 +3,7 @@ package com.example.swifttrack;
 
 import android.graphics.Color;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.swifttrack.ui.gallery.GalleryViewModel;
 import com.example.swifttrack.ui.home.HomeFragment;
@@ -14,11 +15,14 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.example.swifttrack.ui.home.HomeViewModel;
+
+import java.util.Timer;
 
 public class AudioProcessor {
 
@@ -27,7 +31,7 @@ public class AudioProcessor {
     }
 
     private static final int FRAME_SIZE = AudioPlayer.N_ZC_UP;
-    private static final boolean[] CHANNEL_MASK = { false, true };
+    private static final boolean[] CHANNEL_MASK = { true, true };
 
     private static FileOutputStream fileOutputStream;
     private static OutputStreamWriter outputStreamWriter;
@@ -53,6 +57,10 @@ public class AudioProcessor {
 
         private final int fragID;
 
+        private boolean warmUpFlag = false;
+
+        Timer timer = new Timer();
+
         public Engine() { fragID = 0;}
         public Engine(int inFragID) {fragID = inFragID;}
 
@@ -62,12 +70,26 @@ public class AudioProcessor {
 
             running = true;
 
+            Log.d("Timer", "Waiting for speaker warm up.");
+
+
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    warmUpFlag = true;
+
+                    Log.d("Timer", "Warm up finished.");
+                }
+            }, 2*1000);
+
+
             while (running) {
                 try {
                     if (lock.tryLock()) {
                         float[] data = MainActivity.rxQueue.poll(INTERVAL, TimeUnit.MILLISECONDS);
 
-                        if (data != null) {
+                        if (data != null & warmUpFlag) {
+//                            Log.d("Timer", "Start processing audios.");
 //                            Log.d("datasize", "data length " + data.length);
                             for (int i = 0; i < data.length / 2 / FRAME_SIZE; i++) {
                                 for (int j = 0; j < FRAME_SIZE; j++) {
@@ -106,7 +128,7 @@ public class AudioProcessor {
                                     break;
                                 case 1:
                                     if (CHANNEL_MASK[0]) {
-                                        getVelocityHistory2(1, xWindow1, WINDOW_SIZE, 2);
+                                        getDistHistory2(1, xWindow1, WINDOW_SIZE, 2);
                                         GalleryViewModel.setLineData(xWindow1, GalleryViewModel.OutTypes.SWIFT_TRACK);
                                         getDistHistory2(1, xWindow1, WINDOW_SIZE, 0);
                                         GalleryViewModel.setLineData(xWindow1, GalleryViewModel.OutTypes.TOF);
@@ -114,7 +136,7 @@ public class AudioProcessor {
                                         GalleryViewModel.setLineData(xWindow1, GalleryViewModel.OutTypes.STRATA);
                                     }
                                     if (CHANNEL_MASK[1]) {
-                                        getVelocityHistory2(2, xWindow2, WINDOW_SIZE, 2);
+                                        getDistHistory2(2, xWindow2, WINDOW_SIZE, 2);
                                         GalleryViewModel.setLineData(xWindow2, GalleryViewModel.OutTypes.SWIFT_TRACK);
                                         getDistHistory2(2, xWindow2, WINDOW_SIZE, 0);
                                         GalleryViewModel.setLineData(xWindow2, GalleryViewModel.OutTypes.TOF);
@@ -182,7 +204,7 @@ public class AudioProcessor {
                 case 1:
 
                     if (CHANNEL_MASK[0]) {
-                        getVelocityHistory2(1, xHistory1, frameCount, 2);
+                        getDistHistory2(1, xHistory1, frameCount, 2);
                         GalleryViewModel.setLineData(xHistory1, GalleryViewModel.OutTypes.SWIFT_TRACK);
                         getDistHistory2(1, xHistory1, frameCount, 0);
                         GalleryViewModel.setLineData(xHistory1, GalleryViewModel.OutTypes.TOF);
@@ -191,7 +213,7 @@ public class AudioProcessor {
                     }
 
                     if (CHANNEL_MASK[1]) {
-                        getVelocityHistory2(2, xHistory2, frameCount, 2);
+                        getDistHistory2(2, xHistory2, frameCount, 2);
                         GalleryViewModel.setLineData(xHistory2, GalleryViewModel.OutTypes.SWIFT_TRACK);
                         getDistHistory2(2, xHistory2, frameCount, 0);
                         GalleryViewModel.setLineData(xHistory2, GalleryViewModel.OutTypes.TOF);

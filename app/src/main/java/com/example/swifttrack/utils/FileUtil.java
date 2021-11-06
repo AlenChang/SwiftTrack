@@ -100,6 +100,18 @@ public class FileUtil {
 
         File file = new File(mainActivity.getExternalFilesDir(null), filePath);
 
+        File dirs1 = new File(mainActivity.getExternalFilesDir(null), "player");
+        File dirs2 = new File(mainActivity.getExternalFilesDir(null), "recorder");
+        File dirs3 = new File(mainActivity.getExternalFilesDir(null), "processor");
+        if(!dirs1.exists()){
+            dirs1.mkdir();
+        }
+        if(!dirs2.exists()){
+            dirs2.mkdir();
+        }
+        if(!dirs3.exists()){
+            dirs3.mkdir();
+        }
         try {
             return new FileOutputStream(file);
         } catch (IOException e) {
