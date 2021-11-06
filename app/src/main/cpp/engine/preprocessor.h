@@ -3,6 +3,7 @@
 
 #include "filter_util.hpp"
 #include "matrix_util.hpp"
+#include "codeGen.h"
 
 class Preprocessor {
 public:
@@ -31,8 +32,16 @@ private:
     const double FS = 48000.0;
     const double DELTA_PHASE = -2 * M_PI * FC / FS;
 
+
     double phase_;
     int center_tap_;
+
+    codeGen *classInstance = new codeGen;
+
+    void addWindow();
+    void genWindow(double win[480]);
+
+  
 
     MatrixX<complex<double>> freq_ref_signal_;
     MatrixX<complex<double>> rxbb_signal_;

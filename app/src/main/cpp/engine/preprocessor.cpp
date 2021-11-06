@@ -1,8 +1,11 @@
 #include "preprocessor.h"
 
+
 Preprocessor::Preprocessor() {
     phase_ = 0.0;
     center_tap_ = -1;
+
+    
 
     freq_ref_signal_ = MatrixX<complex<double>>::Constant(1, N_ZC_UP, complex<double>(0, 0));
     rxbb_signal_ = MatrixX<complex<double>>::Constant(1, N_ZC_UP, complex<double>(0, 0));
@@ -46,6 +49,8 @@ void Preprocessor::GenerateRefSignal() {
     // Padding zeros in freq domain
     // Perform conjugation when padding
     MatrixUtil::FreqPadding(freq_ref_signal_, freq_zc, N_ZC_UP - N_ZC);
+    addWindow();
+    
 }
 
 void Preprocessor::DownConversion(const MatrixX<double> &rx_signal) {
@@ -77,4 +82,18 @@ void Preprocessor::CenterShift() {
     }
 
     MatrixUtil::CyclicShift(cir_signal_, 0, center_tap_);
+}
+
+void Preprocessor::addWindow(){
+    double win[480];
+    genWindow(win);
+    for (int i = 0; i < N_ZC_UP; i++) {
+        freq_ref_signal_(0, i) = freq_ref_signal_(0, i) * win[i];
+    }
+}
+
+void Preprocessor::genWindow(double win[480])
+{
+  // Call the entry-point 'genWindow'.
+  classInstance->genWindow(win);
 }

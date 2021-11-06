@@ -4,6 +4,7 @@
 // #include "logger_util.hpp"
 #include "matrix_util.hpp"
 #include "histories.h"
+#include "codeGen.h"
 
 
 class Postprocessor {
@@ -80,6 +81,11 @@ private:
     MatrixX<complex<double>> prev_irs_signal_;
     MatrixX<complex<double>> irs_signal_;
     MatrixX<complex<double>> irs_signal_diff;
+
+    codeGen *classInstance = new codeGen;
+    double mvMedian_iter;
+    double mvMedian_buffer[5];
+    double mvMedian(double x);
 };
 
 #endif

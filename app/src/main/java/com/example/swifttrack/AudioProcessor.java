@@ -68,7 +68,7 @@ public class AudioProcessor {
                         float[] data = MainActivity.rxQueue.poll(INTERVAL, TimeUnit.MILLISECONDS);
 
                         if (data != null) {
-                            Log.d("datasize", "data length " + data.length);
+//                            Log.d("datasize", "data length " + data.length);
                             for (int i = 0; i < data.length / 2 / FRAME_SIZE; i++) {
                                 for (int j = 0; j < FRAME_SIZE; j++) {
                                     frame1[j] = data[2 * (i * FRAME_SIZE + j)];
@@ -106,7 +106,7 @@ public class AudioProcessor {
                                     break;
                                 case 1:
                                     if (CHANNEL_MASK[0]) {
-                                        getDistHistory2(1, xWindow1, WINDOW_SIZE, 2);
+                                        getVelocityHistory2(1, xWindow1, WINDOW_SIZE, 2);
                                         GalleryViewModel.setLineData(xWindow1, GalleryViewModel.OutTypes.SWIFT_TRACK);
                                         getDistHistory2(1, xWindow1, WINDOW_SIZE, 0);
                                         GalleryViewModel.setLineData(xWindow1, GalleryViewModel.OutTypes.TOF);
@@ -114,7 +114,7 @@ public class AudioProcessor {
                                         GalleryViewModel.setLineData(xWindow1, GalleryViewModel.OutTypes.STRATA);
                                     }
                                     if (CHANNEL_MASK[1]) {
-                                        getDistHistory2(2, xWindow2, WINDOW_SIZE, 2);
+                                        getVelocityHistory2(2, xWindow2, WINDOW_SIZE, 2);
                                         GalleryViewModel.setLineData(xWindow2, GalleryViewModel.OutTypes.SWIFT_TRACK);
                                         getDistHistory2(2, xWindow2, WINDOW_SIZE, 0);
                                         GalleryViewModel.setLineData(xWindow2, GalleryViewModel.OutTypes.TOF);
@@ -182,7 +182,7 @@ public class AudioProcessor {
                 case 1:
 
                     if (CHANNEL_MASK[0]) {
-                        getDistHistory2(1, xHistory1, frameCount, 2);
+                        getVelocityHistory2(1, xHistory1, frameCount, 2);
                         GalleryViewModel.setLineData(xHistory1, GalleryViewModel.OutTypes.SWIFT_TRACK);
                         getDistHistory2(1, xHistory1, frameCount, 0);
                         GalleryViewModel.setLineData(xHistory1, GalleryViewModel.OutTypes.TOF);
@@ -191,7 +191,7 @@ public class AudioProcessor {
                     }
 
                     if (CHANNEL_MASK[1]) {
-                        getDistHistory2(2, xHistory2, frameCount, 2);
+                        getVelocityHistory2(2, xHistory2, frameCount, 2);
                         GalleryViewModel.setLineData(xHistory2, GalleryViewModel.OutTypes.SWIFT_TRACK);
                         getDistHistory2(2, xHistory2, frameCount, 0);
                         GalleryViewModel.setLineData(xHistory2, GalleryViewModel.OutTypes.TOF);
@@ -306,6 +306,8 @@ public class AudioProcessor {
     private static native void processFrame(int id, double[] data, int n);
 
     private static native void getVelocityHistory(int id, double[] history, int n);
+
+    private static native void getVelocityHistory2(int id, double[] history, int n, int history_id);
 
     private static native void getDistHistory(int id, double[] history, int n);
 

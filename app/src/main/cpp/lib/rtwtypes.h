@@ -1,12 +1,12 @@
-/*
- * Academic License - for use in teaching, academic research, and meeting
- * course requirements at degree granting institutions only.  Not for
- * government, commercial, or other organizational use.
- * File: rtwtypes.h
- *
- * MATLAB Coder version            : 5.2
- * C/C++ source code generated on  : 05-Nov-2021 16:55:26
- */
+//
+// Academic License - for use in teaching, academic research, and meeting
+// course requirements at degree granting institutions only.  Not for
+// government, commercial, or other organizational use.
+// File: rtwtypes.h
+//
+// MATLAB Coder version            : 5.2
+// C/C++ source code generated on  : 06-Nov-2021 14:27:28
+//
 
 #ifndef RTWTYPES_H
 #define RTWTYPES_H
@@ -37,12 +37,12 @@
 #endif
 #endif
 
-/* Include Files */
+// Include Files
 #include "tmwtypes.h"
 
 #endif
-/*
- * File trailer for rtwtypes.h
- *
- * [EOF]
- */
+//
+// File trailer for rtwtypes.h
+//
+// [EOF]
+//

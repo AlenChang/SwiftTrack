@@ -33,6 +33,20 @@ Java_com_example_swifttrack_AudioProcessor_getVelocityHistory(
 
 extern "C"
 JNIEXPORT void JNICALL
+Java_com_example_swifttrack_AudioProcessor_getVelocityHistory2(
+        JNIEnv *env, jobject thiz, jint id, jdoubleArray history, jint n, jint history_id
+) {
+    jdouble *history_ = (env)->GetDoubleArrayElements(history, nullptr);
+
+    if (Engine::GetInstance(id) != nullptr) {
+        Engine::GetVelocityHistory(id, history_, n, history_id);
+    }
+
+    env->ReleaseDoubleArrayElements(history, history_, 0);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
 Java_com_example_swifttrack_AudioProcessor_getDistHistory(
         JNIEnv *env, jobject thiz, jint id, jdoubleArray history, jint n
 ) {

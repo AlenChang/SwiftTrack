@@ -1,8 +1,13 @@
 #include "postprocessor.h"
-#include "my_movmedian.h"
 
 Postprocessor::Postprocessor() {
     prev_phase_in_wrap_ = 0.0;
+    mvMedian_iter = 0;
+
+    for (int i = 0; i < 5; i++) {
+        mvMedian_buffer[i] = 0.0;
+    }
+    
 
     phase_history_.push_back(0.0);
     velocity_history_.push_back(0.0);
@@ -148,10 +153,16 @@ void Postprocessor::GetDistHistory(double *history, int n, Histories &history_ty
 }
 
 void Postprocessor::GetCIR(double *cir_abs, int n){
-
-    for (int i = 0; i < N_IRS; i++) {
-        *(cir_abs + i) = abs(irs_signal_diff(0, i));
+    if (use_diff_flag){
+        for (int i = 0; i < N_IRS; i++) {
+            *(cir_abs + i) = abs(irs_signal_diff(0, i));
+        }
+    } else{
+        for (int i = 0; i < N_IRS; i++) {
+            *(cir_abs + i) = abs(irs_signal_(0, i));
+        }
     }
+
 }
 
 // do not need a special version
@@ -239,7 +250,7 @@ void Postprocessor::TapSelectionTOF(){
         }
         // we only care about distance history for TOF method
         double dist = (double) tap / FC * C / 2;
-        dist = my_movmedian(dist, 5);
+        dist = mvMedian(dist);
         TOF_history_.dist_history_.push_back(dist);
         TOF_history_.velocity_history_.push_back(0);
         TOF_history_.phase_history_.push_back(0);
@@ -251,11 +262,14 @@ void Postprocessor::TapSelectionTOF(){
 
 void Postprocessor::BasicChannelEstimation(int rows, int tap){
     complex<double> tapSel = irs_signal_(rows, tap);
-    double phase_in_wrap = arg(tapSel);
     double phase_diff = CalcPhase(tapSel, Strata_pre_.pre_phase_in_wrap_);
     double phase_unwrapped = Strata_history_.phase_history_.back() + phase_diff;
     Strata_history_.phase_history_.push_back(phase_unwrapped);
     Strata_history_.dist_history_.push_back(- phase_unwrapped * C / 2 / M_PI / FC / 2);
     Strata_history_.velocity_history_.push_back(0);
 
+}
+
+double Postprocessor::mvMedian(double x){
+    return classInstance->mvMedian(x, mvMedian_buffer, &mvMedian_iter);
 }
