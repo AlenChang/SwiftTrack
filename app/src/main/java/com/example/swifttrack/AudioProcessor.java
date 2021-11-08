@@ -31,7 +31,7 @@ public class AudioProcessor {
     }
 
     private static final int FRAME_SIZE = AudioPlayer.N_ZC_UP;
-    private static final boolean[] CHANNEL_MASK = { true, true };
+    private static final boolean[] CHANNEL_MASK = { false, true };
 
     private static FileOutputStream fileOutputStream;
     private static OutputStreamWriter outputStreamWriter;

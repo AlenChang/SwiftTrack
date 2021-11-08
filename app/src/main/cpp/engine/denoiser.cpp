@@ -14,6 +14,12 @@ Denoiser::Denoiser() {
     calibration_1_frame_count_ = 0;
     moving_threshold_ = 0.0;
 
+    // median filter initialization
+    mvMedian_iter = 0;
+    for (int i = 0; i < 5; i++) {
+        mvMedian_buffer[i] = 0.0;
+    }
+
     calibration_2_moving_periods_ = 0;
 
     moving_frames_ = 0;
@@ -153,8 +159,8 @@ void Denoiser::OfflineCalcThreshold() {
     }
     var_diff /= (calibration_1_frame_count_ - 1);
 
-    // moving_threshold_ = mean_diff + 3 * sqrt(var_diff);
-    moving_threshold_ = thre_factor * mean_diff;
+//    moving_threshold_ = mean_diff + 4 * sqrt(var_diff);
+     moving_threshold_ = thre_factor * mean_diff;
 }
 
 void Denoiser::OfflineCalcStaticSignal() {
@@ -209,7 +215,6 @@ void Denoiser::OnlineRemoveStaticSignal() {
 void Denoiser::CheckMoving() {
     double max_diff = MaxDiff(prev_signal_, signal_);
 
-    // todo: max_diff should be fed to a low pass filter before determine moving or static
     is_moving_ = max_diff > moving_threshold_;
 
     if (is_moving_) {
@@ -231,7 +236,16 @@ double Denoiser::MaxDiff(const MatrixX<complex<double>> &m1, const MatrixX<compl
             }
         }
     }
-    diff_history_.push_back(res);
+
+    diff_history_.push_back(mvMedian(res));
 
     return res;
+}
+
+double Denoiser::mvMedian(double x){
+    return classInstance->mvMedian(x, mvMedian_buffer, &mvMedian_iter);
+}
+
+bool Denoiser::getMovingStatus(){
+    return is_moving_;
 }

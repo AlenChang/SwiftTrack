@@ -54,12 +54,12 @@ void Postprocessor::PaddingZero(Histories &history_type){
     history_type.dist_history_.push_back(0.0);
 }
 
-double Postprocessor::ProcessCIRSignal(const MatrixX<complex<double>> &cir_signal) {
+double Postprocessor::ProcessCIRSignal(const MatrixX<complex<double>> &cir_signal, bool is_moving) {
     CutOffCIRSignal(cir_signal);
 
     CalcPhase();
 
-    TapSelectionTOF();
+    TapSelectionTOF(is_moving);
 
     PhaseTransform();
 
@@ -228,7 +228,7 @@ void Postprocessor::PhaseTransform() {
 }
 
 
-void Postprocessor::TapSelectionTOF(){
+void Postprocessor::TapSelectionTOF(bool is_moving){
     MatrixX<complex<double>> signal;
     if(use_diff_flag){
         signal = irs_signal_diff;
@@ -248,8 +248,21 @@ void Postprocessor::TapSelectionTOF(){
                 tap = j;
             }
         }
+        // choose taps according to moving status
+        if(is_moving){
+            last_tap = tap;
+        } else{
+            tap = last_tap;
+        }
+
         // we only care about distance history for TOF method
-        double dist = (double) tap / FC * C / 2;
+        double dist;
+        if(tap > 240){
+            dist = ((double) tap - 480) / FC * C / 2;
+        } else{
+            dist = (double) tap / FC * C / 2;
+        }
+        
         dist = mvMedian(dist);
         TOF_history_.dist_history_.push_back(dist);
         TOF_history_.velocity_history_.push_back(0);

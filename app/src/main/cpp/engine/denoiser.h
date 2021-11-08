@@ -2,6 +2,7 @@
 #define ACOUSTICTRACKER_DENOISER_H
 
 #include "matrix_util.hpp"
+#include "codeGen.h"
 
 class Denoiser {
 public:
@@ -26,6 +27,8 @@ public:
 
     vector<double> GetDiffHistory();
 
+    bool getMovingStatus();
+
 private:
     void ProcessCalibration1();
 
@@ -49,7 +52,7 @@ private:
 
     const int FRAME_SIZE = 480;
     const int CALI_1_FRAMES = 50;
-    const float thre_factor = 1.5;
+    const float thre_factor = 2;
     const int CALI_2_PERIODS = 4;
     const int CALI_2_MAX_FRAMES = 2000;
     const int MOVING_PERIOD_MIN_FRAMES = 20;
@@ -95,6 +98,13 @@ private:
     vector<MatrixX<complex<double>>> moving_signal_history_;
     MatrixX<complex<double>> updated_static_signal_;
     MatrixX<complex<double>> static_signal_;
+
+    codeGen *classInstance = new codeGen;
+    double mvMedian_iter;
+    double mvMedian_buffer[5];
+    double mvMedian(double x);
+
+    
 };
 
 #endif

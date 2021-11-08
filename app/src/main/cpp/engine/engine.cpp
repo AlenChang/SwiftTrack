@@ -34,7 +34,7 @@ Engine::~Engine() {
 }
 
 
-Engine *Engine::GetInstance(int id) {
+Engine* Engine::GetInstance(int id) {
     if (id == 1) {
         if (instance1 == nullptr) {
             instance1 = new Engine();
@@ -125,6 +125,7 @@ void Engine::ProcessFrameCore(const MatrixX<double> &rx_signal) {
     // the denoiser will determine the next step
     denoiser_->FeedSignal(cir_signal);
     cur_status_ = denoiser_->GetStatus();
+    bool is_moving = denoiser_->getMovingStatus();
 
     // if calibration is not ready, the distance will always be 0
     if (cur_status_ == Denoiser::CALI_SUCCESS) {
@@ -133,13 +134,13 @@ void Engine::ProcessFrameCore(const MatrixX<double> &rx_signal) {
             for (const MatrixX<complex<double>> &denoise_signal : denoise_signals) {
                 // update distance in calibration stage -> frame by frame
                 // different approaches should be applied here
-                postprocessor_->ProcessCIRSignal(denoise_signal);
+                postprocessor_->ProcessCIRSignal(denoise_signal, is_moving);
             }
         } else {
             // compute online distance data
             // different approaches should be applied here
             MatrixX<complex<double>> denoise_signal = denoiser_->GetOnlineDenoiseSignal();
-            postprocessor_->ProcessCIRSignal(denoise_signal);
+            postprocessor_->ProcessCIRSignal(denoise_signal, is_moving);
         }
     } else if (cur_status_ == Denoiser::CALI_1) {
         postprocessor_->PaddingZero();

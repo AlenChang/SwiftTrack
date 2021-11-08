@@ -5,6 +5,7 @@
 #include "matrix_util.hpp"
 #include "histories.h"
 #include "codeGen.h"
+#include "denoiser.h"
 
 
 class Postprocessor {
@@ -14,7 +15,7 @@ public:
 
     ~Postprocessor();
 
-    double ProcessCIRSignal(const MatrixX<complex<double>> &cir_signal);
+    double ProcessCIRSignal(const MatrixX<complex<double>> &cir_signal, bool is_moving);
 
     // operating histories
     Histories & GetHistories(int history_type);
@@ -48,7 +49,7 @@ private:
 
     void PhaseTransform();
 
-    void TapSelectionTOF();
+    void TapSelectionTOF(bool is_moving);
 
     void BasicChannelEstimation(int rows, int tap);
 
@@ -64,6 +65,8 @@ private:
     const double PHASE_DIFF_THRESHOLD = 1.0 * M_PI;
     const double PHASE_DIFF_2_THRESHOLD = 1.0 * M_PI;
     const double use_diff_flag = true;
+
+    int last_tap = 0;
 
     double prev_phase_in_wrap_;
     Pre_Data_Store Strata_pre_;

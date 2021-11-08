@@ -37,7 +37,7 @@ public class AudioPlayer {
     private static final boolean USE_WINDOW = false;
     private static final int U = 1;
     private static final double SCALE = 0.9;
-    private static final byte CHANNEL_MASK = 0x03;
+    private static final byte CHANNEL_MASK = 0x02;
     private static final double[][] TX_SEQ = new double[N_ZC_UP][2];
 
     private static FileInputStream fileInputStream;
