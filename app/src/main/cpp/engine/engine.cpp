@@ -71,25 +71,10 @@ void Engine::GetVelocityHistory(int id, double *history, int n) {
     engine->postprocessor_->GetVelocityHistory(history, n);
 }
 
-void Engine::GetVelocityHistory(int id, double *history, int n, int history_id) {
-    Engine *engine = Engine::GetInstance(id);
-    Histories history_profile = engine->postprocessor_->GetHistories(history_id);
-
-    engine->postprocessor_->GetVelocityHistory(history, n, history_profile);
-}
-
-
 void Engine::GetDistHistory(int id, double *history, int n) {
     Engine *engine = Engine::GetInstance(id);
 
     engine->postprocessor_->GetDistHistory(history, n);
-}
-
-void Engine::GetDistHistory(int id, double *history, int n, int history_id) {
-    Engine *engine = Engine::GetInstance(id);
-    Histories history_profile = engine->postprocessor_->GetHistories(history_id);
-
-    engine->postprocessor_->GetDistHistory(history, n, history_profile);
 }
 
 void Engine::GetHistoryData(int id, double *history, int n, int history_id, int history_type){

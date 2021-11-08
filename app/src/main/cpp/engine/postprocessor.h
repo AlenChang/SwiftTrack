@@ -26,15 +26,9 @@ public:
 
     void GetPhaseHistory(double *history, int n);
 
-    void GetPhaseHistory(double *history, int n, Histories &history_type);
-
     void GetVelocityHistory(double *history, int n);
 
-    void GetVelocityHistory(double *history, int n, Histories &history_type);
-
     void GetDistHistory(double *history, int n);
-
-    void GetDistHistory(double *history, int n, Histories &history_type);
 
     void GetCIR(double *cir_abs, int n);
 

@@ -15,11 +15,7 @@ public:
 
     static void GetVelocityHistory(int id, double *history, int n);
 
-    static void GetVelocityHistory(int id, double *history, int n, int history_id);
-
     static void GetDistHistory(int id, double *history, int n);
-
-    static void GetDistHistory(int id, double *history, int n, int history_id);
 
     static void GetCIR(int id, double *cir_abs, int n);
 

@@ -77,27 +77,17 @@ void Postprocessor::GetPhaseHistory(double *history, int n) {
     get_history(history, n, phase_history_);
 }
 
-void Postprocessor::GetPhaseHistory(double *history, int n, Histories &history_type) {
-    get_history(history, n, history_type.phase_history_);
-}
 
 void Postprocessor::GetVelocityHistory(double *history, int n) {
     get_history(history, n, velocity_history_);
 }
 
-void Postprocessor::GetVelocityHistory(double *history, int n, Histories &history_type) {
-    get_history(history, n, history_type.velocity_history_);
-}
 
 void Postprocessor::GetDistHistory(double *history, int n) {
     get_history(history, n, dist_history_);
     
 }
 
-void Postprocessor::GetDistHistory(double *history, int n, Histories &history_type) {
-    get_history(history, n, history_type.dist_history_);
-    
-}
 
 void Postprocessor::GetHistoryData(double *history, int n, Histories &history_type, HistoryType h_type){
     switch (h_type) {
