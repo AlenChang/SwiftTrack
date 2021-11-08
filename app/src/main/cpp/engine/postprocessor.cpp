@@ -196,7 +196,7 @@ void Postprocessor::MotionCoeff2(complex<double> beta){
 
     double phase_diff = CalcPhase(motion2, phase_prev_motion2);
     double phase_unwrapped = swifttrack_history_.acc_phase_history_.back() + phase_diff;
-    double acc = phase_unwrapped * C / (4 * M_PI * FC * T);
+    double acc = - phase_unwrapped * C / (4 * M_PI * FC * T);
     double velocity = swifttrack_history_.acc2velocity_history_.back() + acc * T;
     double dist = swifttrack_history_.acc2dist_history_.back() + velocity * T;
 
