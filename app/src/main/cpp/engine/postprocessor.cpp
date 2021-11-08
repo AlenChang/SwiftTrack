@@ -2,6 +2,7 @@
 
 Postprocessor::Postprocessor() {
     prev_phase_in_wrap_ = 0.0;
+    prev_motion2 = complex<double>(0, 0);
     mvMedian_iter = 0;
 
     for (int i = 0; i < 5; i++) {
@@ -52,6 +53,10 @@ void Postprocessor::PaddingZero(Histories &history_type){
     history_type.phase_history_.push_back(0.0);
     history_type.velocity_history_.push_back(0.0);
     history_type.dist_history_.push_back(0.0);
+    history_type.acc_history_.push_back(0.0);
+    history_type.acc2velocity_history_.push_back(0.0);
+    history_type.acc2dist_history_.push_back(0.0);
+    history_type.acc_phase_history_.push_back(0.0);
 }
 
 double Postprocessor::ProcessCIRSignal(const MatrixX<complex<double>> &cir_signal, bool is_moving) {
@@ -69,85 +74,69 @@ double Postprocessor::ProcessCIRSignal(const MatrixX<complex<double>> &cir_signa
 
 
 void Postprocessor::GetPhaseHistory(double *history, int n) {
-    int l = (int) phase_history_.size();
-
-    if (n >= l) {
-        for (int i = 0; i < l; i++) {
-            *(history + i) = phase_history_[i];
-        }
-    } else {
-        for (int i = 0; i < n; i++) {
-            *(history + n - 1 - i) = phase_history_[l - 1 - i];
-        }
-    }
+    get_history(history, n, phase_history_);
 }
 
 void Postprocessor::GetPhaseHistory(double *history, int n, Histories &history_type) {
-    int l = (int) history_type.phase_history_.size();
-
-    if (n >= l) {
-        for (int i = 0; i < l; i++) {
-            *(history + i) = history_type.phase_history_[i];
-        }
-    } else {
-        for (int i = 0; i < n; i++) {
-            *(history + n - 1 - i) = history_type.phase_history_[l - 1 - i];
-        }
-    }
+    get_history(history, n, history_type.phase_history_);
 }
 
 void Postprocessor::GetVelocityHistory(double *history, int n) {
-    int l = (int) velocity_history_.size();
-
-    if (n >= l) {
-        for (int i = 0; i < l; i++) {
-            *(history + i) = velocity_history_[i];
-        }
-    } else {
-        for (int i = 0; i < n; i++) {
-            *(history + n - 1 - i) = velocity_history_[l - 1 - i];
-        }
-    }
+    get_history(history, n, velocity_history_);
 }
 
 void Postprocessor::GetVelocityHistory(double *history, int n, Histories &history_type) {
-    int l = (int) history_type.velocity_history_.size();
-
-    if (n >= l) {
-        for (int i = 0; i < l; i++) {
-            *(history + i) = history_type.velocity_history_[i];
-        }
-    } else {
-        for (int i = 0; i < n; i++) {
-            *(history + n - 1 - i) = history_type.velocity_history_[l - 1 - i];
-        }
-    }
+    get_history(history, n, history_type.velocity_history_);
 }
 
 void Postprocessor::GetDistHistory(double *history, int n) {
-    int l = (int) dist_history_.size();
-
-    if (n >= l) {
-        for (int i = 0; i < l; i++) {
-            *(history + i) = dist_history_[i];
-        }
-    } else {
-        for (int i = 0; i < n; i++) {
-            *(history + n - 1 - i) = dist_history_[l - 1 - i];
-        }
-    }
+    get_history(history, n, dist_history_);
+    
 }
 
 void Postprocessor::GetDistHistory(double *history, int n, Histories &history_type) {
-    int l = (int) history_type.dist_history_.size();
+    get_history(history, n, history_type.dist_history_);
+    
+}
+
+void Postprocessor::GetHistoryData(double *history, int n, Histories &history_type, HistoryType h_type){
+    switch (h_type) {
+        case phase_v:
+            get_history(history, n, history_type.phase_history_);
+            break;
+        case velocity_:
+            get_history(history, n, history_type.velocity_history_);
+            break;
+        case dist_v:
+            get_history(history, n, history_type.dist_history_);
+            break;
+        case acceleration_:
+            get_history(history, n, history_type.acc_history_);
+            break;
+        case velocity_a:
+            get_history(history, n, history_type.acc2velocity_history_);
+            break;
+        case dist_a:
+            get_history(history, n, history_type.acc2dist_history_);
+            break;
+        case phase_acc:
+            get_history(history, n, history_type.acc_phase_history_);
+            break;
+        default:
+            break;
+    }
+}
+
+void Postprocessor::get_history(double *history, int n, vector<double> & profiles){
+    int l = (int) profiles.size();
 
     if (n >= l) {
         for (int i = 0; i < l; i++) {
-            *(history + i) = history_type.dist_history_[i];
+            *(history + i) = profiles[i];
         }
     } else {
         for (int i = 0; i < n; i++) {
-            *(history + n - 1 - i) = history_type.dist_history_[l - 1 - i];
+            *(history + n - 1 - i) = profiles[l - 1 - i];
         }
     }
 }
@@ -186,6 +175,7 @@ complex<double> Postprocessor::LeastSquare(){
 void Postprocessor::CalcPhase() {
     
     complex<double> beta = LeastSquare();
+    MotionCoeff2(beta);
 
     double phase_diff = CalcPhase(beta, prev_phase_in_wrap_);
     double phase_unwrapped = phase_history_.back() + phase_diff;
@@ -193,6 +183,24 @@ void Postprocessor::CalcPhase() {
 
     // todo: to implement with kalman filter
     swifttrack_history_.phase_history_.push_back(phase_unwrapped);
+}
+
+void Postprocessor::MotionCoeff2(complex<double> beta){
+    double phase_prev_motion2 = arg(prev_motion2);
+    complex<double> motion2 = beta / prev_motion2;
+    prev_motion2 = beta;
+
+    double phase_diff = CalcPhase(motion2, phase_prev_motion2);
+    double phase_unwrapped = swifttrack_history_.acc_phase_history_.back() + phase_diff;
+    double acc = phase_unwrapped * C / (4 * M_PI * FC * T);
+    double velocity = swifttrack_history_.acc2velocity_history_.back() + acc * T;
+    double dist = swifttrack_history_.acc2dist_history_.back() + velocity * T;
+
+    swifttrack_history_.acc_phase_history_.push_back(phase_unwrapped);
+    swifttrack_history_.acc_history_.push_back(acc);
+    swifttrack_history_.acc2velocity_history_.push_back(velocity);
+    swifttrack_history_.acc2dist_history_.push_back(dist);
+    
 }
 
 
@@ -221,7 +229,7 @@ void Postprocessor::PhaseTransform() {
 
     swifttrack_history_.velocity_history_.push_back(velocity);
 
-    double dist = dist_history_.back() + velocity * T;
+    double dist = swifttrack_history_.dist_history_.back() + velocity * T;
     dist_history_.push_back(dist);
 
     swifttrack_history_.dist_history_.push_back(dist);

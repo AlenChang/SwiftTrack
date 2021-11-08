@@ -35,14 +35,14 @@ Engine::~Engine() {
 
 
 Engine* Engine::GetInstance(int id) {
-    if (id == 1) {
+    if (id == 0) {
         if (instance1 == nullptr) {
             instance1 = new Engine();
         }
         return instance1;
     }
 
-    if (id == 2) {
+    if (id == 1) {
         if (instance2 == nullptr) {
             instance2 = new Engine();
         }
@@ -92,20 +92,51 @@ void Engine::GetDistHistory(int id, double *history, int n, int history_id) {
     engine->postprocessor_->GetDistHistory(history, n, history_profile);
 }
 
+void Engine::GetHistoryData(int id, double *history, int n, int history_id, int history_type){
+    Engine *engine = Engine::GetInstance(id);
+    Histories history_profile = engine->postprocessor_->GetHistories(history_id);
+
+    switch(history_type){
+        case 0:
+            engine->postprocessor_->GetHistoryData(history, n, history_profile, phase_v);
+            break;
+        case 1:
+            engine->postprocessor_->GetHistoryData(history, n, history_profile, velocity_);
+            break;
+        case 2:
+            engine->postprocessor_->GetHistoryData(history, n, history_profile, dist_v);
+            break;
+        case 3:
+            engine->postprocessor_->GetHistoryData(history, n, history_profile, acceleration_);
+            break;
+        case 4:
+            engine->postprocessor_->GetHistoryData(history, n, history_profile, velocity_a);
+            break;
+        case 5:
+            engine->postprocessor_->GetHistoryData(history, n, history_profile, dist_a);
+            break;
+        case 6:
+            engine->postprocessor_->GetHistoryData(history, n, history_profile, phase_acc);
+            break;
+        default:
+            break;
+    }
+}
+
 void Engine::GetCIR(int id, double *cir_abs, int n){
     Engine *engine = Engine::GetInstance(id);
     engine->postprocessor_->GetCIR(cir_abs, n);
 }
 
 void Engine::Reset(int id) {
-    if (id == 1) {
+    if (id == 0) {
         delete instance1;
         instance1 = new Engine();
         // LoggerUtil::Log("Engine::Reset", "Reset instance1 OK.");
         return;
     }
 
-    if (id == 2) {
+    if (id == 1) {
         delete instance2;
         instance2 = new Engine();
         // LoggerUtil::Log("Engine::Reset", "Reset instance2 OK.");

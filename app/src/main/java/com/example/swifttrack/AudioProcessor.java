@@ -41,6 +41,26 @@ public class AudioProcessor {
     private int fragID;
 
 
+    public static class deployMethods{
+        public static final int tof = 0;
+        public static final int strata = 1;
+        public static final int swifttrack = 2;
+    }
+
+    public static class HistoryType{
+        public static final int phase_v = 0;
+        public static final int velocity_ = 1;
+        public static final int dist_v = 2;
+        public static final int acceleration_ = 3;
+        public static final int velocity_a = 4;
+        public static final int dist_a = 5;
+        public static final int phase_acc = 6;
+    };
+
+    public static class inputChannel{
+        public static final int LEFT = 0;
+        public static final int RIGHT = 1;
+    }
 
 
 
@@ -96,11 +116,11 @@ public class AudioProcessor {
                                     frame1[j] = data[2 * (i * FRAME_SIZE + j)];
                                     frame2[j] = data[2 * (i * FRAME_SIZE + j) + 1];
                                 }
-                                if (CHANNEL_MASK[0]) {
-                                    processFrame(1, frame1, FRAME_SIZE);
+                                if (CHANNEL_MASK[inputChannel.LEFT]) {
+                                    processFrame(inputChannel.LEFT, frame1, FRAME_SIZE);
                                 }
-                                if (CHANNEL_MASK[1]) {
-                                    processFrame(2, frame2, FRAME_SIZE);
+                                if (CHANNEL_MASK[inputChannel.RIGHT]) {
+                                    processFrame(inputChannel.RIGHT, frame2, FRAME_SIZE);
                                 }
                             }
 
@@ -113,37 +133,42 @@ public class AudioProcessor {
 
                             switch (fragID){
                                 case 0:
-                                    if (CHANNEL_MASK[0]) {
-                                        getDistHistory(1, xWindow1, WINDOW_SIZE);
-                                        getVelocityHistory(1, vWindow1, WINDOW_SIZE);
+                                    if (CHANNEL_MASK[inputChannel.LEFT]) {
+                                        getDistHistory(inputChannel.LEFT, xWindow1, WINDOW_SIZE);
+                                        getVelocityHistory(inputChannel.LEFT, vWindow1, WINDOW_SIZE);
                                         HomeViewModel.setLineData(xWindow1, HomeViewModel.OutTypes.LEFT_DIST);
                                         HomeViewModel.setLineData(vWindow1, HomeViewModel.OutTypes.LEFT_V);
                                     }
-                                    if (CHANNEL_MASK[1]) {
-                                        getDistHistory(2, xWindow2, WINDOW_SIZE);
-                                        getVelocityHistory(2, vWindow2, WINDOW_SIZE);
+                                    if (CHANNEL_MASK[inputChannel.RIGHT]) {
+                                        getDistHistory(inputChannel.RIGHT, xWindow2, WINDOW_SIZE);
+                                        getVelocityHistory(inputChannel.RIGHT, vWindow2, WINDOW_SIZE);
                                         HomeViewModel.setLineData(xWindow2, HomeViewModel.OutTypes.RIGHT_DIST);
                                         HomeViewModel.setLineData(vWindow2, HomeViewModel.OutTypes.RIGHT_V);
                                     }
                                     break;
                                 case 1:
-                                    if (CHANNEL_MASK[0]) {
-                                        getDistHistory2(1, xWindow1, WINDOW_SIZE, 2);
+                                    if (CHANNEL_MASK[inputChannel.LEFT]) {
+                                        getHistoryData(inputChannel.LEFT, xWindow1, WINDOW_SIZE, deployMethods.swifttrack, HistoryType.dist_v);
                                         GalleryViewModel.setLineData(xWindow1, GalleryViewModel.OutTypes.SWIFT_TRACK);
-                                        getDistHistory2(1, xWindow1, WINDOW_SIZE, 0);
+
+                                        getHistoryData(inputChannel.LEFT, xWindow1, WINDOW_SIZE, deployMethods.tof, HistoryType.dist_v);
                                         GalleryViewModel.setLineData(xWindow1, GalleryViewModel.OutTypes.TOF);
-                                        getDistHistory2(1, xWindow1, WINDOW_SIZE, 1);
+
+                                        getHistoryData(inputChannel.LEFT, xWindow1, WINDOW_SIZE, deployMethods.strata, HistoryType.dist_v);
                                         GalleryViewModel.setLineData(xWindow1, GalleryViewModel.OutTypes.STRATA);
                                     }
-                                    if (CHANNEL_MASK[1]) {
-                                        getDistHistory2(2, xWindow2, WINDOW_SIZE, 2);
+                                    if (CHANNEL_MASK[inputChannel.RIGHT]) {
+                                        getHistoryData(inputChannel.RIGHT, xWindow2, WINDOW_SIZE, deployMethods.swifttrack, HistoryType.dist_v);
                                         GalleryViewModel.setLineData(xWindow2, GalleryViewModel.OutTypes.SWIFT_TRACK);
-                                        getDistHistory2(2, xWindow2, WINDOW_SIZE, 0);
+
+                                        getHistoryData(inputChannel.RIGHT, xWindow2, WINDOW_SIZE, deployMethods.tof, HistoryType.dist_v);
                                         GalleryViewModel.setLineData(xWindow2, GalleryViewModel.OutTypes.TOF);
-                                        getDistHistory2(2, xWindow2, WINDOW_SIZE, 1);
+
+                                        getHistoryData(inputChannel.RIGHT, xWindow2, WINDOW_SIZE, deployMethods.strata, HistoryType.dist_v);
                                         GalleryViewModel.setLineData(xWindow2, GalleryViewModel.OutTypes.STRATA);
+
                                         double[] cir_abs = new double[FRAME_SIZE];
-                                        getCIR(2, cir_abs, FRAME_SIZE);
+                                        getCIR(inputChannel.RIGHT, cir_abs, FRAME_SIZE);
                                         GalleryViewModel.setLineData(cir_abs, GalleryViewModel.OutTypes.CIR);
                                     }
                                     break;
@@ -178,16 +203,16 @@ public class AudioProcessor {
 
             switch (fragID){
                 case 0:
-                    if (CHANNEL_MASK[0]) {
-                        getDistHistory(1, xHistory1, frameCount);
-                        getVelocityHistory(1, vHistory1, frameCount);
+                    if (CHANNEL_MASK[inputChannel.LEFT]) {
+                        getDistHistory(inputChannel.LEFT, xHistory1, frameCount);
+                        getVelocityHistory(inputChannel.LEFT, vHistory1, frameCount);
                         HomeViewModel.setLineData(xHistory1, HomeViewModel.OutTypes.LEFT_DIST);
                         HomeViewModel.setLineData(vHistory1, HomeViewModel.OutTypes.LEFT_V);
                     }
 
-                    if (CHANNEL_MASK[1]) {
-                        getDistHistory(2, xHistory2, frameCount);
-                        getVelocityHistory(2, vHistory2, frameCount);
+                    if (CHANNEL_MASK[inputChannel.RIGHT]) {
+                        getDistHistory(inputChannel.RIGHT, xHistory2, frameCount);
+                        getVelocityHistory(inputChannel.RIGHT, vHistory2, frameCount);
                         HomeViewModel.setLineData(xHistory2, HomeViewModel.OutTypes.RIGHT_DIST);
                         HomeViewModel.setLineData(vHistory2, HomeViewModel.OutTypes.RIGHT_V);
                     }
@@ -203,21 +228,25 @@ public class AudioProcessor {
                     break;
                 case 1:
 
-                    if (CHANNEL_MASK[0]) {
-                        getDistHistory2(1, xHistory1, frameCount, 2);
+                    if (CHANNEL_MASK[inputChannel.LEFT]) {
+                        getHistoryData(inputChannel.LEFT, xHistory1, frameCount, deployMethods.swifttrack, HistoryType.dist_v);
                         GalleryViewModel.setLineData(xHistory1, GalleryViewModel.OutTypes.SWIFT_TRACK);
-                        getDistHistory2(1, xHistory1, frameCount, 0);
+
+                        getHistoryData(inputChannel.LEFT, xHistory1, frameCount, deployMethods.tof, HistoryType.dist_v);
                         GalleryViewModel.setLineData(xHistory1, GalleryViewModel.OutTypes.TOF);
-                        getDistHistory2(1, xHistory1, frameCount, 1);
+
+                        getHistoryData(inputChannel.LEFT, xHistory1, frameCount, deployMethods.strata, HistoryType.dist_v);
                         GalleryViewModel.setLineData(xHistory1, GalleryViewModel.OutTypes.STRATA);
                     }
 
-                    if (CHANNEL_MASK[1]) {
-                        getDistHistory2(2, xHistory2, frameCount, 2);
+                    if (CHANNEL_MASK[inputChannel.RIGHT]) {
+                        getHistoryData(inputChannel.RIGHT, xHistory2, frameCount, deployMethods.swifttrack, HistoryType.dist_v);
                         GalleryViewModel.setLineData(xHistory2, GalleryViewModel.OutTypes.SWIFT_TRACK);
-                        getDistHistory2(2, xHistory2, frameCount, 0);
+
+                        getHistoryData(inputChannel.RIGHT, xHistory2, frameCount, deployMethods.tof, HistoryType.dist_v);
                         GalleryViewModel.setLineData(xHistory2, GalleryViewModel.OutTypes.TOF);
-                        getDistHistory2(2, xHistory2, frameCount, 1);
+
+                        getHistoryData(inputChannel.RIGHT, xHistory2, frameCount, deployMethods.strata, HistoryType.dist_v);
                         GalleryViewModel.setLineData(xHistory2, GalleryViewModel.OutTypes.STRATA);
 
                     }
@@ -256,11 +285,11 @@ public class AudioProcessor {
         needSave = false;
         fragID = 0;
 
-        if (CHANNEL_MASK[0]) {
-            reset(1);
+        if (CHANNEL_MASK[inputChannel.LEFT]) {
+            reset(inputChannel.LEFT);
         }
-        if (CHANNEL_MASK[1]) {
-            reset(2);
+        if (CHANNEL_MASK[inputChannel.RIGHT]) {
+            reset(inputChannel.RIGHT);
         }
 
         engine = new Engine();
@@ -273,11 +302,11 @@ public class AudioProcessor {
     public void init(int inFragID) {
         needSave = false;
 
-        if (CHANNEL_MASK[0]) {
-            reset(1);
+        if (CHANNEL_MASK[inputChannel.LEFT]) {
+            reset(inputChannel.LEFT);
         }
-        if (CHANNEL_MASK[1]) {
-            reset(2);
+        if (CHANNEL_MASK[inputChannel.RIGHT]) {
+            reset(inputChannel.RIGHT);
         }
         fragID = inFragID;
         engine = new Engine(fragID);
@@ -314,11 +343,11 @@ public class AudioProcessor {
             needSave = false;
         }
 
-        if (CHANNEL_MASK[0]) {
-            reset(1);
+        if (CHANNEL_MASK[inputChannel.LEFT]) {
+            reset(inputChannel.LEFT);
         }
-        if (CHANNEL_MASK[1]) {
-            reset(2);
+        if (CHANNEL_MASK[inputChannel.RIGHT]) {
+            reset(inputChannel.RIGHT);
         }
         MainActivity.rxQueue.clear();
         engine = new Engine(fragID);
@@ -338,4 +367,6 @@ public class AudioProcessor {
     private static native void getCIR(int id, double[] cir_abs, int n);
 
     private static native void reset(int id);
+
+    private static native void getHistoryData(int id, double[] history, int n, int history_id, int history_type);
 }

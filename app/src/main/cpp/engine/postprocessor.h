@@ -38,6 +38,8 @@ public:
 
     void GetCIR(double *cir_abs, int n);
 
+    void GetHistoryData(double *history, int n, Histories &history_type, HistoryType h_type);
+
 private:
     void CutOffCIRSignal(const MatrixX<complex<double>> &cir_signal);
 
@@ -55,6 +57,10 @@ private:
 
     void CallPhaseStrata();
 
+    void MotionCoeff2(complex<double> beta);
+
+    void get_history(double *history, int n, vector<double> & profiles);
+
     // bool USE_KALMAN = false;
 
     const int N_IRS = 480;
@@ -69,6 +75,7 @@ private:
     int last_tap = 0;
 
     double prev_phase_in_wrap_;
+    
     Pre_Data_Store Strata_pre_;
 
 
@@ -81,14 +88,18 @@ private:
     vector<double> velocity_history_;
     vector<double> dist_history_;
 
+
     MatrixX<complex<double>> prev_irs_signal_;
     MatrixX<complex<double>> irs_signal_;
     MatrixX<complex<double>> irs_signal_diff;
+
+    complex<double> prev_motion2;
 
     codeGen *classInstance = new codeGen;
     double mvMedian_iter;
     double mvMedian_buffer[5];
     double mvMedian(double x);
+
 };
 
 #endif

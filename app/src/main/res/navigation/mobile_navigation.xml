@@ -22,4 +22,10 @@
         android:name="com.example.swifttrack.ui.slideshow.SlideshowFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_slideshow" />
+
+    <fragment
+        android:id="@+id/nav_acc"
+        android:name="com.example.swifttrack.ui.acc.AccFragment"
+        android:label="@string/menu_acc"
+        tools:layout="@layout/fragment_acc" />
 </navigation>

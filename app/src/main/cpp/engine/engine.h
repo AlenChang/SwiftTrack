@@ -25,6 +25,8 @@ public:
 
     static void Reset(int id);
 
+    static void GetHistoryData(int id, double *history, int n, int history_id, int history_type);
+
 private:
     Engine();
 
