@@ -1,4 +1,6 @@
 #include "postprocessor.h"
+#include "logger_util.hpp"
+#include <stdio.h>
 
 Postprocessor::Postprocessor() {
     prev_phase_in_wrap_ = 0.0;
@@ -26,15 +28,24 @@ Postprocessor::~Postprocessor() {
 }
 
 Histories & Postprocessor::GetHistories(int history_type){
+//    LoggerUtil::Log("CLog", "Test ");
     switch(history_type){
         case 0:
+            LoggerUtil::Log("CLog", "TOF_history_");
             return TOF_history_;
+
         case 1:
+            LoggerUtil::Log("CLog", "Strata_history_");
             return Strata_history_;
+
         case 2:
+            LoggerUtil::Log("CLog", "swift track");
             return swifttrack_history_;
+
         default:
+            LoggerUtil::Log("CLog", "Default");
             return swifttrack_history_;
+
     }
 }
 
@@ -165,7 +176,10 @@ complex<double> Postprocessor::LeastSquare(){
 void Postprocessor::CalcPhase() {
     
     complex<double> beta = LeastSquare();
-    MotionCoeff2(beta);
+    if(abs(beta) != 0){
+        MotionCoeff2(beta);
+    }
+
 
     double phase_diff = CalcPhase(beta, prev_phase_in_wrap_);
     double phase_unwrapped = phase_history_.back() + phase_diff;

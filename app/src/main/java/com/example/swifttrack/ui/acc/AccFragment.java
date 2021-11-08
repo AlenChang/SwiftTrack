@@ -16,7 +16,9 @@ import com.example.swifttrack.AudioProcessor;
 import com.example.swifttrack.AudioRecorder;
 
 import com.example.swifttrack.databinding.FragmentAccBinding;
+import com.example.swifttrack.ui.gallery.GalleryViewModel;
 import com.example.swifttrack.ui.home.HomeFragment;
+import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
@@ -48,7 +50,7 @@ public class AccFragment extends Fragment {
         audioRecorder.init();
 
         audioProcessor = new AudioProcessor();
-        audioProcessor.init(1);
+        audioProcessor.init(AudioProcessor.ActivityID.accFragment);
 
         // init button state
         switchState(HomeFragment.State.INIT);
@@ -69,6 +71,92 @@ public class AccFragment extends Fragment {
 
         binding.acc2d.setData(new LineData());
         binding.acc2d.setBorderWidth(20.0f);
+
+        //=====================
+        // set button onclick listener
+        binding.startButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                switchState(HomeFragment.State.RUNNING);
+
+                long timestamp = System.currentTimeMillis();
+                audioPlayer.setTimestamp(timestamp);
+                audioPlayer.start();
+
+                audioRecorder.setTimestamp(timestamp);
+                audioRecorder.start();
+
+                audioProcessor.setTimestamp(timestamp);
+                audioProcessor.start();
+
+                Toast.makeText(getActivity(),"Waiting for speaker warm up!",Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
+
+        binding.stopButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                switchState(HomeFragment.State.STOP);
+                audioPlayer.stop();
+                audioRecorder.stop();
+                audioProcessor.stop();
+            }
+        });
+
+        binding.resetButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                switchState(HomeFragment.State.INIT);
+                audioPlayer.reset();
+                audioRecorder.reset();
+                audioProcessor.reset();
+            }
+        });
+
+        binding.saveButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                switchState(HomeFragment.State.SAVED);
+                audioPlayer.save();
+                audioRecorder.save();
+                audioProcessor.save();
+            }
+        });
+
+        accViewModel.getLiveLineData(AccViewModel.OutTypes.velocity).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
+            @Override
+            public void onChanged(LineDataSet lineDataSet) {
+                setChart(binding.v, lineDataSet);
+            }
+        });
+
+        accViewModel.getLiveLineData(AccViewModel.OutTypes.acceleration).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
+            @Override
+            public void onChanged(LineDataSet lineDataSet) {
+                setChart(binding.acc, lineDataSet);
+            }
+        });
+
+        accViewModel.getLiveLineData(AccViewModel.OutTypes.velocity2dist).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
+            @Override
+            public void onChanged(LineDataSet lineDataSet) {
+                setChart(binding.v2d, lineDataSet);
+            }
+        });
+
+        accViewModel.getLiveLineData(AccViewModel.OutTypes.acceleration2velocity).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
+            @Override
+            public void onChanged(LineDataSet lineDataSet) {
+                setChart(binding.acc2v, lineDataSet);
+            }
+        });
+
+        accViewModel.getLiveLineData(AccViewModel.OutTypes.acceleration2dist).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
+            @Override
+            public void onChanged(LineDataSet lineDataSet) {
+                setChart(binding.acc2d, lineDataSet);
+            }
+        });
+
 
 
 
@@ -99,5 +187,15 @@ public class AccFragment extends Fragment {
             binding.resetButton.setEnabled(true);
             binding.saveButton.setEnabled(false);
         }
+    }
+
+    // update chart
+    private void setChart(LineChart chart, LineDataSet lineDataSet){
+        LineData lineData = chart.getLineData();
+        lineData.removeDataSet(lineData.getDataSetCount() - 1);
+        lineData.addDataSet(lineDataSet);
+
+        chart.notifyDataSetChanged();
+        chart.invalidate();
     }
 }

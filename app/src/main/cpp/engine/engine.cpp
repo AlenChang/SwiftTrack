@@ -1,4 +1,6 @@
 #include "engine.h"
+#include "logger_util.hpp"
+#include <string>
 
 Engine *Engine::instance1 = nullptr;
 Engine *Engine::instance2 = nullptr;
@@ -80,6 +82,7 @@ void Engine::GetDistHistory(int id, double *history, int n) {
 void Engine::GetHistoryData(int id, double *history, int n, int history_id, int history_type){
     Engine *engine = Engine::GetInstance(id);
     Histories history_profile = engine->postprocessor_->GetHistories(history_id);
+
 
     switch(history_type){
         case 0:

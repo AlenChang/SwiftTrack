@@ -27,7 +27,7 @@ public class GalleryViewModel extends ViewModel {
         xCIR = new MutableLiveData<>();
     }
 
-    public LiveData<LineDataSet> getLiveLineData(GalleryViewModel.OutTypes type) {
+    public LiveData<LineDataSet> getLiveLineData(OutTypes type) {
         switch (type){
             case TOF:
                 return xTOF;

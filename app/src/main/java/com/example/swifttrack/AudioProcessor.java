@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.swifttrack.ui.acc.AccViewModel;
 import com.example.swifttrack.ui.gallery.GalleryViewModel;
 import com.example.swifttrack.ui.home.HomeFragment;
 import com.example.swifttrack.utils.FileUtil;
@@ -62,6 +63,12 @@ public class AudioProcessor {
         public static final int RIGHT = 1;
     }
 
+    public static class ActivityID{
+        public static final int homeFragment = 0;
+        public static final int galleryFragment = 1;
+        public static final int accFragment = 2;
+    }
+
 
 
     private static class Engine extends Thread {
@@ -81,7 +88,7 @@ public class AudioProcessor {
 
         Timer timer = new Timer();
 
-        public Engine() { fragID = 0;}
+        public Engine() { fragID = ActivityID.homeFragment;}
         public Engine(int inFragID) {fragID = inFragID;}
 
         private void prepareDataForHomeFragment(double[] xLeft, double[] vLeft, double[] xRight, double[] vRight, int winLen){
@@ -134,6 +141,45 @@ public class AudioProcessor {
             }
         }
 
+        private void prepareDataForAccFragment(int winLen){
+            double[] xWindow1 = new double[winLen];
+            double[] xWindow2 = new double[winLen];
+            if (CHANNEL_MASK[inputChannel.RIGHT]) {
+
+                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.velocity_);
+                AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.velocity);
+
+                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.acceleration_);
+                AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.acceleration);
+
+                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+                AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.velocity2dist);
+
+                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.velocity_a);
+                AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.acceleration2velocity);
+
+                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_a);
+                AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.acceleration2dist);
+
+            } else {
+                getHistoryData(inputChannel.LEFT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.velocity_);
+                AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.velocity);
+
+                getHistoryData(inputChannel.LEFT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.acceleration_);
+                AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.acceleration);
+
+                getHistoryData(inputChannel.LEFT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+                AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.velocity2dist);
+
+                getHistoryData(inputChannel.LEFT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.velocity_a);
+                AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.acceleration2velocity);
+
+                getHistoryData(inputChannel.LEFT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_a);
+                AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.acceleration2dist);
+
+            }
+        }
+
         @Override
         public void run() {
             frameCount = 0;
@@ -177,16 +223,19 @@ public class AudioProcessor {
                             frameCount += data.length / 2 / FRAME_SIZE;
 
                             switch (fragID){
-                                case 0:
+                                case ActivityID.homeFragment:
                                     double[] xWindow1 = new double[WINDOW_SIZE];
                                     double[] xWindow2 = new double[WINDOW_SIZE];
                                     double[] vWindow1 = new double[WINDOW_SIZE];
                                     double[] vWindow2 = new double[WINDOW_SIZE];
                                     prepareDataForHomeFragment(xWindow1, vWindow1, xWindow2, vWindow2, WINDOW_SIZE);
                                     break;
-                                case 1:
+                                case ActivityID.galleryFragment:
                                     prepareDataForGalleryFragment(WINDOW_SIZE);
 
+                                    break;
+                                case ActivityID.accFragment:
+                                    prepareDataForAccFragment(WINDOW_SIZE);
                                     break;
                                 default:
                                     break;
@@ -218,7 +267,7 @@ public class AudioProcessor {
             double[][] result = new double[frameCount][4];
 
             switch (fragID){
-                case 0:
+                case ActivityID.homeFragment:
                     prepareDataForHomeFragment(xHistory1, vHistory1, xHistory2, vHistory2, frameCount);
                     for (int i = 0; i < frameCount; i++) {
                         result[i][0] = xHistory1[i];
@@ -228,9 +277,12 @@ public class AudioProcessor {
                     }
                     FileUtil.streamWriteResult(bufferedWriter, result);
                     break;
-                case 1:
+                case ActivityID.galleryFragment:
                     prepareDataForGalleryFragment(frameCount);
 
+                    break;
+                case ActivityID.accFragment:
+                    prepareDataForAccFragment(frameCount);
                     break;
                 default:
                     break;

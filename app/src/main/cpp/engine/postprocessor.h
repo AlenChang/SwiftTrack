@@ -6,6 +6,7 @@
 #include "histories.h"
 #include "codeGen.h"
 #include "denoiser.h"
+#include <stdio.h>
 
 
 class Postprocessor {

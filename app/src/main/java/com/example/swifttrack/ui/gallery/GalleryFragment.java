@@ -60,7 +60,7 @@ public class GalleryFragment extends Fragment {
         audioRecorder.init();
 
         audioProcessor = new AudioProcessor();
-        audioProcessor.init(1);
+        audioProcessor.init(AudioProcessor.ActivityID.galleryFragment);
 
         // set a timer
         timer = new Timer();
