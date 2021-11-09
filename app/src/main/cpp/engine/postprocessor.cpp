@@ -1,5 +1,5 @@
 #include "postprocessor.h"
-#include "logger_util.hpp"
+// #include "logger_util.hpp"
 #include <stdio.h>
 
 Postprocessor::Postprocessor() {
@@ -36,19 +36,19 @@ Histories & Postprocessor::GetHistories(int history_type){
 //    LoggerUtil::Log("CLog", "Test ");
     switch(history_type){
         case 0:
-            LoggerUtil::Log("CLog", "TOF_history_");
+            // LoggerUtil::Log("CLog", "TOF_history_");
             return TOF_history_;
 
         case 1:
-            LoggerUtil::Log("CLog", "Strata_history_");
+            // LoggerUtil::Log("CLog", "Strata_history_");
             return Strata_history_;
 
         case 2:
-            LoggerUtil::Log("CLog", "swift track");
+            // LoggerUtil::Log("CLog", "swift track");
             return swifttrack_history_;
 
         default:
-            LoggerUtil::Log("CLog", "Default");
+            // LoggerUtil::Log("CLog", "Default");
             return swifttrack_history_;
 
     }

@@ -1,5 +1,5 @@
 #include "engine.h"
-#include "logger_util.hpp"
+// #include "logger_util.hpp"
 #include <string>
 
 Engine *Engine::instance1 = nullptr;
@@ -142,6 +142,7 @@ void Engine::ProcessFrameCore(const MatrixX<double> &rx_signal) {
 
     // simply feed signal to the denoiser
     // the denoiser will determine the next step
+    // three-step computation
     denoiser_->FeedSignal(cir_signal);
     cur_status_ = denoiser_->GetStatus();
     bool is_moving = denoiser_->getMovingStatus();

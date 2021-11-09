@@ -1,24 +1,1 @@
-cmake_minimum_required(VERSION 3.10.2)
-
-project(acoustic)
-
-set(CMAKE_CXX_STANDARD 14)
-
-set(TARGET lib)
-
-add_library(
-       ${TARGET}
-       codeGen.cpp
-       codeGen.h
-       codeGen_data.cpp
-       codeGen_data.h
-       codeGen_types.h
-       quickselect.cpp
-       quickselect.h
-       rtwtypes.h
-       tmwtypes.h
-
-)
-set_target_properties(${TARGET} PROPERTIES LINKER_LANGUAGE CXX)
-
-target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+cmake_minimum_required(VERSION 3.10.2)project(acoustic)set(CMAKE_CXX_STANDARD 14)set(TARGET lib)add_library(       ${TARGET}       BackgroundRemoval.cpp       BackgroundRemoval.h       codeGen.cpp       codeGen.h       codeGen_data.cpp       codeGen_data.h       codeGen_types.h       compute_thre_data.cpp       compute_thre_data.h       compute_thre_types.h       quickselect.cpp       quickselect.h       rtwtypes.h       tmwtypes.h)set_target_properties(${TARGET} PROPERTIES LINKER_LANGUAGE CXX)target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

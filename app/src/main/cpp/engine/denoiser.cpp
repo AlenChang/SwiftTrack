@@ -40,8 +40,10 @@ void Denoiser::FeedSignal(const MatrixX<complex<double>> &signal) {
     signal_ = signal;
 
     if (status_ == CALI_1) {
+        // compute threshold from previous 50 frames
         ProcessCalibration1();
     } else if (status_ == CALI_2) {
+        // compute static vectors from the first moving period
         ProcessCalibration2();
     } else if (status_ == CALI_SUCCESS) {
         ProcessCalibrationSuccess();
@@ -67,12 +69,14 @@ vector<double> Denoiser::GetDiffHistory() {
 }
 
 void Denoiser::ProcessCalibration1() {
+    // frame counter
     calibration_1_frame_count_++;
     if (calibration_1_frame_count_ == 1) {
         return;
     }
 
-    calibration_1_diff_history_.push_back(MaxDiff(prev_signal_, signal_));
+    // profile of tapsel
+    tapsel.push_back(MaxDiff(prev_signal_, signal_));
 
     if (calibration_1_frame_count_ == CALI_1_FRAMES) {
         OfflineCalcThreshold();
@@ -108,6 +112,7 @@ void Denoiser::ProcessCalibration2() {
         OfflineCalcStaticSignal();
         OfflineRemoveStaticSignal();
         status_ = CALI_SUCCESS;
+        calibration_2_moving_periods_ = 0;
     }
 
     prev_is_moving_ = is_moving_;
@@ -124,15 +129,16 @@ void Denoiser::ProcessCalibrationSuccess() {
     CheckMoving();
 
     if (is_moving_) {
-        // mean vector of cir in moving periods
+        // compute mean vector of cir in moving periods
         updated_static_signal_ = (signal_ + moving_frames_ * updated_static_signal_) / (moving_frames_ + 1);
-        moving_frames_++;
+        // moving_frames_++;
     }
 
     // if need updating
     if (prev_is_moving_ && !is_moving_) {
         if (moving_frames_ >= MOVING_PERIOD_MIN_FRAMES) {
-            OnlineUpdateStaticSignal();
+            // OnlineUpdateStaticSignal();
+            static_signal_ = updated_static_signal_;
         }
         OnlineRemoveStaticSignal();
 
@@ -148,13 +154,13 @@ void Denoiser::ProcessCalibrationSuccess() {
 
 void Denoiser::OfflineCalcThreshold() {
     double mean_diff = 0.0;
-    for (double diff : calibration_1_diff_history_) {
+    for (double diff : tapsel) {
         mean_diff += diff;
     }
     mean_diff /= (calibration_1_frame_count_ - 1);
 
     double var_diff = 0.0;
-    for (double diff : calibration_1_diff_history_) {
+    for (double diff : tapsel) {
         var_diff += pow(diff - mean_diff, 2);
     }
     var_diff /= (calibration_1_frame_count_ - 1);
@@ -181,30 +187,35 @@ void Denoiser::OfflineRemoveStaticSignal() {
 }
 
 void Denoiser::OnlineUpdateStaticSignal() {
-    moving_frame_history_.push_back(moving_frames_);
-    moving_signal_history_.push_back(updated_static_signal_);
+    // moving_frame_history_.push_back(moving_frames_);
+    // moving_signal_history_.push_back(updated_static_signal_);
 
     // Online update static signal every UPDATED_MOVING_PERIODS periods
     if (moving_frame_history_.size() == UPDATED_MOVING_PERIODS) {
         // Calculate update static signal on the weighted average of moving signal history
-        updated_static_signal_.setConstant(complex<double>(0, 0));
-        int stage_moving_frames = 0;
-        for (int i = 0; i < UPDATED_MOVING_PERIODS; i++) {
-            stage_moving_frames += moving_frame_history_[i];
-            updated_static_signal_ += moving_frame_history_[i] * moving_signal_history_[i];
-        }
-        updated_static_signal_ /= stage_moving_frames;
+        // updated_static_signal_.setConstant(complex<double>(0, 0));
+        // int stage_moving_frames = 0;
+        // for (int i = 0; i < UPDATED_MOVING_PERIODS; i++) {
+        //     stage_moving_frames += moving_frame_history_[i];
+        //     updated_static_signal_ += moving_frame_history_[i] * moving_signal_history_[i];
+        // }
+        // updated_static_signal_ /= stage_moving_frames;
 
         // Apply balance filter method
-        static_signal_ = static_signal_ * (1 - UPDATE_FACTOR) + updated_static_signal_ * UPDATE_FACTOR;
-
+        if(use_init_static_vector){
+            static_signal_ = static_signal_ * (1 - UPDATE_FACTOR) + updated_static_signal_ * UPDATE_FACTOR;
+        }else{
+            static_signal_ = updated_static_signal_;
+        }
+        
+        
         // Apply stream mean update method
         // static_signal_ = static_signal_ * total_moving_frames_ + updated_static_signal_ * stage_moving_frames;
         // total_moving_frames_ += stage_moving_frames;
         // static_signal_ /= total_moving_frames_;
 
-        moving_frame_history_.clear();
-        moving_signal_history_.clear();
+        // moving_frame_history_.clear();
+        // moving_signal_history_.clear();
     }
 }
 
@@ -236,8 +247,7 @@ double Denoiser::MaxDiff(const MatrixX<complex<double>> &m1, const MatrixX<compl
             }
         }
     }
-
-    diff_history_.push_back(mvMedian(res));
+    // res = mvMedian(res);
 
     return res;
 }
