@@ -5,12 +5,15 @@
 Postprocessor::Postprocessor() {
     prev_phase_in_wrap_ = 0.0;
     prev_motion2 = complex<double>(0, 0);
+    prev_beta = complex<double>(0, 0);
     mvMedian_iter = 0;
     mvMedian_iter_v_ = 0;
+    mvMedian_iter_a_ = 0;
 
     for (int i = 0; i < 5; i++) {
         mvMedian_buffer[i] = 0.0;
         mvMedian_buffer_v_[i] = 0.0;
+        mvMedian_buffer_a_[i] = 0.0;
     }
     
 
@@ -193,12 +196,15 @@ void Postprocessor::CalcPhase() {
 
 void Postprocessor::MotionCoeff2(complex<double> beta){
     double phase_prev_motion2 = arg(prev_motion2);
-    complex<double> motion2 = beta / prev_motion2;
-    prev_motion2 = beta;
+    complex<double> motion2 = beta / prev_beta;
+    prev_beta = beta;
+    prev_motion2 = motion2;
 
     double phase_diff = CalcPhase(motion2, phase_prev_motion2);
     double phase_unwrapped = swifttrack_history_.acc_phase_history_.back() + phase_diff;
     double acc = - phase_unwrapped * C / (4 * M_PI * FC * T);
+    acc = mvMedian(acc, mvMedian_buffer_a_, &mvMedian_iter_a_);
+
     double velocity = swifttrack_history_.acc2velocity_history_.back() + acc * T;
     double dist = swifttrack_history_.acc2dist_history_.back() + velocity * T;
 
@@ -231,11 +237,10 @@ double Postprocessor::CalcPhase(complex<double> tapSel, double & pre_phase) {
 
 void Postprocessor::PhaseTransform() {
     double velocity = -phase_history_.back() * C / (4 * M_PI * FC * T);
-    double v_diff_ = velocity - last_v_;
-    velocity_history_.push_back(last_v_ + mvMedian(v_diff_, mvMedian_buffer_v_, &mvMedian_iter_v_));
-    last_v_ = velocity;
-
-
+//    double v_diff_ = velocity - last_v_;
+    velocity_history_.push_back(velocity);
+    velocity = mvMedian(velocity, mvMedian_buffer_v_, &mvMedian_iter_v_);
+//    last_v_ = velocity;
     swifttrack_history_.velocity_history_.push_back(velocity);
 
     double dist = swifttrack_history_.dist_history_.back() + velocity * T;

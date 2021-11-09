@@ -89,6 +89,7 @@ private:
     MatrixX<complex<double>> irs_signal_diff;
 
     complex<double> prev_motion2;
+    complex<double> prev_beta;
 
     codeGen *classInstance = new codeGen;
     double mvMedian_iter;
@@ -98,6 +99,9 @@ private:
     double mvMedian_iter_v_;
     double mvMedian_buffer_v_[5];
     double last_v_ = 0;
+
+    double mvMedian_iter_a_;
+    double mvMedian_buffer_a_[5];
 
 };
 
