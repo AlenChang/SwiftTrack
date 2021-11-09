@@ -6,9 +6,11 @@ Postprocessor::Postprocessor() {
     prev_phase_in_wrap_ = 0.0;
     prev_motion2 = complex<double>(0, 0);
     mvMedian_iter = 0;
+    mvMedian_iter_v_ = 0;
 
     for (int i = 0; i < 5; i++) {
         mvMedian_buffer[i] = 0.0;
+        mvMedian_buffer_v_[i] = 0.0;
     }
     
 
@@ -229,7 +231,10 @@ double Postprocessor::CalcPhase(complex<double> tapSel, double & pre_phase) {
 
 void Postprocessor::PhaseTransform() {
     double velocity = -phase_history_.back() * C / (4 * M_PI * FC * T);
-    velocity_history_.push_back(velocity);
+    double v_diff_ = velocity - last_v_;
+    velocity_history_.push_back(last_v_ + mvMedian(v_diff_, mvMedian_buffer_v_, &mvMedian_iter_v_));
+    last_v_ = velocity;
+
 
     swifttrack_history_.velocity_history_.push_back(velocity);
 
@@ -275,7 +280,7 @@ void Postprocessor::TapSelectionTOF(bool is_moving){
             dist = (double) tap / FC * C / 2;
         }
         
-        dist = mvMedian(dist);
+        dist = mvMedian(dist, mvMedian_buffer, &mvMedian_iter);
         TOF_history_.dist_history_.push_back(dist);
         TOF_history_.velocity_history_.push_back(0);
         TOF_history_.phase_history_.push_back(0);
@@ -295,6 +300,6 @@ void Postprocessor::BasicChannelEstimation(int rows, int tap){
 
 }
 
-double Postprocessor::mvMedian(double x){
-    return classInstance->mvMedian(x, mvMedian_buffer, &mvMedian_iter);
+double Postprocessor::mvMedian(double x, double buffer[5], double* iter){
+    return classInstance->mvMedian(x, buffer, iter);
 }

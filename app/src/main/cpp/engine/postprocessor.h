@@ -93,7 +93,11 @@ private:
     codeGen *classInstance = new codeGen;
     double mvMedian_iter;
     double mvMedian_buffer[5];
-    double mvMedian(double x);
+    double mvMedian(double x, double buffer[5], double* iter);
+
+    double mvMedian_iter_v_;
+    double mvMedian_buffer_v_[5];
+    double last_v_ = 0;
 
 };
 
