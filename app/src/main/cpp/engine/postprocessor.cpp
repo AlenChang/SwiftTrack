@@ -148,7 +148,7 @@ void Postprocessor::get_history(double *history, int n, vector<double> & profile
 }
 
 void Postprocessor::GetCIR(double *cir_abs, int n){
-    if (use_diff_flag){
+    if (false){
         for (int i = 0; i < N_IRS; i++) {
             *(cir_abs + i) = abs(irs_signal_diff(0, i));
         }

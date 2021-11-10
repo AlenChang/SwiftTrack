@@ -9,7 +9,7 @@
 
     <string name="menu_home">Real-Time Test</string>
     <string name="menu_gallery">Different Approaches</string>
-    <string name="menu_slideshow">2D Tracking</string>
+    <string name="menu_slideshow">CIR Visulization</string>
     <string name="reset">Reset</string>
     <string name="stop">Stop</string>
     <string name="save">Save</string>

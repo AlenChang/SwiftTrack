@@ -8,6 +8,8 @@ import android.widget.Toast;
 import com.example.swifttrack.ui.acc.AccViewModel;
 import com.example.swifttrack.ui.gallery.GalleryViewModel;
 import com.example.swifttrack.ui.home.HomeFragment;
+import com.example.swifttrack.ui.slideshow.SlideshowFragment;
+import com.example.swifttrack.ui.slideshow.SlideshowViewModel;
 import com.example.swifttrack.utils.FileUtil;
 
 import java.io.BufferedWriter;
@@ -67,6 +69,7 @@ public class AudioProcessor {
         public static final int homeFragment = 0;
         public static final int galleryFragment = 1;
         public static final int accFragment = 2;
+        public static final int slideFragment = 3;
     }
 
 
@@ -180,6 +183,17 @@ public class AudioProcessor {
             }
         }
 
+        private void prepareDataForSlideFragment(int winLen){
+            double[] cir_abs = new double[FRAME_SIZE];
+            getCIR(inputChannel.RIGHT, cir_abs, FRAME_SIZE);
+            SlideshowViewModel.draw(cir_abs);
+
+            double[] xWindow1 = new double[winLen];
+            getHistoryData(inputChannel.RIGHT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+            SlideshowViewModel.setLineData(xWindow1);
+
+        }
+
         @Override
         public void run() {
             frameCount = 0;
@@ -237,6 +251,9 @@ public class AudioProcessor {
                                 case ActivityID.accFragment:
                                     prepareDataForAccFragment(WINDOW_SIZE);
                                     break;
+                                case ActivityID.slideFragment:
+                                    prepareDataForSlideFragment(WINDOW_SIZE);
+                                    break;
                                 default:
                                     break;
                             }
@@ -283,6 +300,9 @@ public class AudioProcessor {
                     break;
                 case ActivityID.accFragment:
                     prepareDataForAccFragment(frameCount);
+                    break;
+                case ActivityID.slideFragment:
+                    prepareDataForSlideFragment(frameCount);
                     break;
                 default:
                     break;
