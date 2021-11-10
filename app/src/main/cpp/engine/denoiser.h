@@ -52,14 +52,12 @@ private:
 
     const int FRAME_SIZE = 480;
     const int CALI_1_FRAMES = 50;
-    const float thre_factor = 3;
-    const int CALI_2_PERIODS = 1;
+    const float thre_factor = 2;
+    const int CALI_2_PERIODS = 4;
     const int CALI_2_MAX_FRAMES = 2000;
-    const int MOVING_PERIOD_MIN_FRAMES = 30;
-    const int UPDATED_MOVING_PERIODS = 1;
+    const int MOVING_PERIOD_MIN_FRAMES = 20;
+    const int UPDATED_MOVING_PERIODS = 10;
     const double UPDATE_FACTOR = 0.0;
-
-    const bool use_init_static_vector = false;
 
     // Remark the denoiser working stage
     status_type status_;
@@ -84,7 +82,7 @@ private:
 
     // Variables for offline calculate moving threshold
     int calibration_1_frame_count_;
-    vector<double> tapsel;
+    vector<double> calibration_1_diff_history_;
     double moving_threshold_;
 
     // Variables for offline calculate static signal
