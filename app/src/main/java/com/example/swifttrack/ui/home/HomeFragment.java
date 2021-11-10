@@ -44,6 +44,8 @@ public class HomeFragment extends Fragment {
     public AudioRecorder audioRecorder;
     public AudioProcessor audioProcessor;
 
+    private static final boolean[] CHANNEL_MASK = {true, true};
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -61,7 +63,7 @@ public class HomeFragment extends Fragment {
         audioRecorder = new AudioRecorder();
         audioRecorder.init();
 
-        audioProcessor = new AudioProcessor();
+        audioProcessor = new AudioProcessor(CHANNEL_MASK);
         audioProcessor.init();
 
         // init button state

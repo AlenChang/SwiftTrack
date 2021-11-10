@@ -34,7 +34,7 @@ public class AudioProcessor {
     }
 
     private static final int FRAME_SIZE = AudioPlayer.N_ZC_UP;
-    private static final boolean[] CHANNEL_MASK = { false, true };
+    private static boolean[] CHANNEL_MASK = { false, true };
 
     private static FileOutputStream fileOutputStream;
     private static OutputStreamWriter outputStreamWriter;
@@ -184,13 +184,24 @@ public class AudioProcessor {
         }
 
         private void prepareDataForSlideFragment(int winLen){
-            double[] cir_abs = new double[FRAME_SIZE];
-            getCIR(inputChannel.RIGHT, cir_abs, FRAME_SIZE);
-            SlideshowViewModel.draw(cir_abs);
+            if(CHANNEL_MASK[inputChannel.RIGHT]){
+                double[] cir_abs = new double[FRAME_SIZE];
+                getCIR(inputChannel.RIGHT, cir_abs, FRAME_SIZE);
+                SlideshowViewModel.draw(cir_abs);
 
-            double[] xWindow1 = new double[winLen];
-            getHistoryData(inputChannel.RIGHT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-            SlideshowViewModel.setLineData(xWindow1);
+                double[] xWindow1 = new double[winLen];
+                getHistoryData(inputChannel.RIGHT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+                SlideshowViewModel.setLineData(xWindow1);
+            }else{
+                double[] cir_abs = new double[FRAME_SIZE];
+                getCIR(inputChannel.LEFT, cir_abs, FRAME_SIZE);
+                SlideshowViewModel.draw(cir_abs);
+
+                double[] xWindow1 = new double[winLen];
+                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+                SlideshowViewModel.setLineData(xWindow1);
+            }
+
 
         }
 
@@ -210,7 +221,7 @@ public class AudioProcessor {
 
                     Log.d("Timer", "Warm up finished.");
                 }
-            }, 2*1000);
+            }, 4*1000);
 
 
             while (running) {
@@ -321,6 +332,7 @@ public class AudioProcessor {
 
 
     public AudioProcessor() {}
+    public AudioProcessor(boolean[] mask) {CHANNEL_MASK = mask;}
 
     public void setTimestamp(long timestamp) {
         AudioProcessor.timestamp = timestamp;

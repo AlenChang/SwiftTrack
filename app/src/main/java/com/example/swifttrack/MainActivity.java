@@ -3,6 +3,7 @@ package com.example.swifttrack;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -32,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
 
+    public static boolean[] CHANNEL_MASK = {true, false};
+
     // ******************************
     // required permissions
     // ******************************
@@ -54,6 +57,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setupPermission();
+
+        showSystemParameter();
+
+        if(Build.MODEL.equals("GM1910")){
+            CHANNEL_MASK = new boolean[]{false, true};
+        }
+        if(Build.MODEL.equals("Redmi K30 5G")){
+            CHANNEL_MASK = new boolean[]{true, false};
+        }
 
         FileUtil.init(this);
 
@@ -140,6 +152,11 @@ public class MainActivity extends AppCompatActivity {
         int duration = Toast.LENGTH_SHORT;
 
         Toast.makeText(context, text, duration).show();
+    }
+
+    public void showSystemParameter(){
+        String TAG = "系统参数： ";
+        Log.e(TAG, "手机型号： " + Build.MODEL);
     }
 
 }

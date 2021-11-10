@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.swifttrack.AudioPlayer;
 import com.example.swifttrack.AudioProcessor;
 import com.example.swifttrack.AudioRecorder;
+import com.example.swifttrack.MainActivity;
 import com.example.swifttrack.R;
 import com.example.swifttrack.databinding.FragmentSlideshowBinding;
 import com.example.swifttrack.ui.acc.AccViewModel;
@@ -50,7 +51,7 @@ public class SlideshowFragment extends Fragment {
         audioRecorder = new AudioRecorder();
         audioRecorder.init();
 
-        audioProcessor = new AudioProcessor();
+        audioProcessor = new AudioProcessor(MainActivity.CHANNEL_MASK);
         audioProcessor.init(AudioProcessor.ActivityID.slideFragment);
 
         // init button state

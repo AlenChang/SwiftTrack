@@ -1,6 +1,7 @@
 package com.example.swifttrack.ui.gallery;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,6 +45,8 @@ public class GalleryFragment extends Fragment {
     public AudioProcessor audioProcessor;
     private Timer timer;
 
+
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         galleryViewModel =
@@ -59,7 +62,7 @@ public class GalleryFragment extends Fragment {
         audioRecorder = new AudioRecorder();
         audioRecorder.init();
 
-        audioProcessor = new AudioProcessor();
+        audioProcessor = new AudioProcessor(MainActivity.CHANNEL_MASK);
         audioProcessor.init(AudioProcessor.ActivityID.galleryFragment);
 
         // set a timer

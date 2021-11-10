@@ -15,6 +15,7 @@ import com.example.swifttrack.AudioPlayer;
 import com.example.swifttrack.AudioProcessor;
 import com.example.swifttrack.AudioRecorder;
 
+import com.example.swifttrack.MainActivity;
 import com.example.swifttrack.databinding.FragmentAccBinding;
 import com.example.swifttrack.ui.gallery.GalleryViewModel;
 import com.example.swifttrack.ui.home.HomeFragment;
@@ -49,7 +50,7 @@ public class AccFragment extends Fragment {
         audioRecorder = new AudioRecorder();
         audioRecorder.init();
 
-        audioProcessor = new AudioProcessor();
+        audioProcessor = new AudioProcessor(MainActivity.CHANNEL_MASK);
         audioProcessor.init(AudioProcessor.ActivityID.accFragment);
 
         // init button state
