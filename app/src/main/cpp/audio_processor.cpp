@@ -17,33 +17,7 @@ Java_com_example_swifttrack_AudioProcessor_processFrame(
     env->ReleaseDoubleArrayElements(data, data_, JNI_ABORT);
 }
 
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_example_swifttrack_AudioProcessor_getVelocityHistory(
-        JNIEnv *env, jobject thiz, jint id, jdoubleArray history, jint n
-) {
-    jdouble *history_ = (env)->GetDoubleArrayElements(history, nullptr);
 
-    if (Engine::GetInstance(id) != nullptr) {
-        Engine::GetVelocityHistory(id, history_, n);
-    }
-
-    env->ReleaseDoubleArrayElements(history, history_, 0);
-}
-
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_example_swifttrack_AudioProcessor_getDistHistory(
-        JNIEnv *env, jobject thiz, jint id, jdoubleArray history, jint n
-) {
-    jdouble *history_ = (env)->GetDoubleArrayElements(history, nullptr);
-
-    if (Engine::GetInstance(id) != nullptr) {
-        Engine::GetDistHistory(id, history_, n);
-    }
-
-    env->ReleaseDoubleArrayElements(history, history_, 0);
-}
 
 extern "C"
 JNIEXPORT void JNICALL

@@ -3,7 +3,7 @@
 
 #include "filter_util.hpp"
 #include "matrix_util.hpp"
-#include "codeGen.h"
+#include "NoiseSupression.h"
 
 class Preprocessor {
 public:
@@ -35,8 +35,6 @@ private:
 
     double phase_;
     int center_tap_;
-
-    codeGen *classInstance = new codeGen;
 
     void addWindow();
     void genWindow(double win[480]);

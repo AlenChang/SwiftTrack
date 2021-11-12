@@ -2,14 +2,14 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: codeGen.cpp
+// File: NoiseSupression.cpp
 //
 // MATLAB Coder version            : 5.2
-// C/C++ source code generated on  : 06-Nov-2021 14:27:28
+// C/C++ source code generated on  : 12-Nov-2021 14:22:45
 //
 
 // Include Files
-#include "codeGen.h"
+#include "NoiseSupression.h"
 #include "quickselect.h"
 #include <algorithm>
 #include <cmath>
@@ -19,7 +19,7 @@
 // Arguments    : void
 // Return Type  : void
 //
-codeGen::codeGen()
+NoiseSupression::NoiseSupression()
 {
 }
 
@@ -27,7 +27,7 @@ codeGen::codeGen()
 // Arguments    : void
 // Return Type  : void
 //
-codeGen::~codeGen()
+NoiseSupression::~NoiseSupression()
 {
   // (no terminate code required)
 }
@@ -36,7 +36,7 @@ codeGen::~codeGen()
 // Arguments    : double win[480]
 // Return Type  : void
 //
-void codeGen::genWindow(double win[480])
+void NoiseSupression::genWindow(double win[480])
 {
   static const double b_win[480]{0.0,
                                  0.0029310214228202014,
@@ -529,11 +529,40 @@ void codeGen::genWindow(double win[480])
 
 //
 // Arguments    : double x
+//                double taps[22]
+// Return Type  : double
+//
+double NoiseSupression::lowPass6_15_60_100(double x, double taps[22])
+{
+  static const double b[22]{
+      -0.0035, -0.0079, -0.0129, -0.0149, -0.0092, 0.0083, 0.0391, 0.0804,
+      0.125,   0.163,   0.1849,  0.1849,  0.163,   0.125,  0.0804, 0.0391,
+      0.0083,  -0.0092, -0.0149, -0.0129, -0.0079, -0.0035};
+  double y;
+  int k;
+  //  cutoff freq: 6Hz
+  //  stop freq: 15Hz
+  //  attenuation: 60dB
+  //  sampling frequency: 100Hz
+  //  time delay: 10ms
+  for (k = 20; k >= 0; k--) {
+    taps[k + 1] = taps[k];
+  }
+  taps[0] = x;
+  y = 0.0;
+  for (k = 0; k < 22; k++) {
+    y += taps[k] * b[k];
+  }
+  return y;
+}
+
+//
+// Arguments    : double x
 //                double buffer[5]
 //                double *id
 // Return Type  : double
 //
-double codeGen::mvMedian(double x, double buffer[5], double *id)
+double NoiseSupression::mvMedian(double x, double buffer[5], double *id)
 {
   double a__4[5];
   double vref;
@@ -668,7 +697,7 @@ double codeGen::mvMedian(double x, double buffer[5], double *id)
 }
 
 //
-// File trailer for codeGen.cpp
+// File trailer for NoiseSupression.cpp
 //
 // [EOF]
 //

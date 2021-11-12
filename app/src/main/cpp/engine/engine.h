@@ -13,11 +13,9 @@ public:
 
     static void ProcessFrame(int id, const double *data, int n);
 
-    static void GetVelocityHistory(int id, double *history, int n);
-
-    static void GetDistHistory(int id, double *history, int n);
-
     static void GetCIR(int id, double *cir_abs, int n);
+
+    static void GetBeta(int id, double* beta_real, double* beta_imag);
 
     static void Reset(int id);
 

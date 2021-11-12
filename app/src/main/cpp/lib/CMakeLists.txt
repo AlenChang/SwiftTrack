@@ -8,11 +8,11 @@ set(TARGET lib)
 
 add_library(
        ${TARGET}
-       codeGen.cpp
-       codeGen.h
-       codeGen_data.cpp
-       codeGen_data.h
-       codeGen_types.h
+       NoiseSupression.cpp
+       NoiseSupression.h
+       NoiseSupression_data.cpp
+       NoiseSupression_data.h
+       NoiseSupression_types.h
        quickselect.cpp
        quickselect.h
        rtwtypes.h

@@ -115,6 +115,8 @@ void Denoiser::ProcessCalibration2() {
     // case 3: if moving for a long time, break 
     if (calibration_2_moving_history_.size() > CALI_2_MAX_FRAMES) {
         status_ = CALI_FAILED;
+        cout << "Motion is not detected for " << CALI_2_MAX_FRAMES * 0.01 << " seconds!" << endl;
+        cout << "Program terminated!" << endl;
     }
 }
 
@@ -159,8 +161,8 @@ void Denoiser::OfflineCalcThreshold() {
     }
     var_diff /= (calibration_1_frame_count_ - 1);
 
-//    moving_threshold_ = mean_diff + 4 * sqrt(var_diff);
-     moving_threshold_ = thre_factor * mean_diff;
+   moving_threshold_ = mean_diff + 3 * sqrt(var_diff);
+    //  moving_threshold_ = thre_factor * mean_diff;
 }
 
 void Denoiser::OfflineCalcStaticSignal() {
@@ -243,7 +245,7 @@ double Denoiser::MaxDiff(const MatrixX<complex<double>> &m1, const MatrixX<compl
 }
 
 double Denoiser::mvMedian(double x){
-    return classInstance->mvMedian(x, mvMedian_buffer, &mvMedian_iter);
+    return NoiseSupression::mvMedian(x, mvMedian_buffer, &mvMedian_iter);
 }
 
 bool Denoiser::getMovingStatus(){

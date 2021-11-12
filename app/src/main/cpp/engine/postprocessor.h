@@ -3,11 +3,12 @@
 
 // #include "logger_util.hpp"
 #include "matrix_util.hpp"
-#include "histories.h"
-#include "codeGen.h"
+#include "histories.hpp"
+#include "NoiseSupression.h"
 #include "denoiser.h"
 #include <stdio.h>
 
+#define M_PI		3.14159265358979323846
 
 class Postprocessor {
   
@@ -23,15 +24,9 @@ public:
 
     void PaddingZero();
 
-    void PaddingZero(Histories &history_type);
-
-    void GetPhaseHistory(double *history, int n);
-
-    void GetVelocityHistory(double *history, int n);
-
-    void GetDistHistory(double *history, int n);
-
     void GetCIR(double *cir_abs, int n);
+
+    void GetBeta(double* beta_real, double* beta_imag);
 
     void GetHistoryData(double *history, int n, Histories &history_type, HistoryType h_type);
 
@@ -50,11 +45,11 @@ private:
 
     void BasicChannelEstimation(int rows, int tap);
 
-    void CallPhaseStrata();
-
     void MotionCoeff2(complex<double> beta);
 
     void get_history(double *history, int n, vector<double> & profiles);
+
+    void PaddingZero(Histories &history_type);
 
     // bool USE_KALMAN = false;
 
@@ -78,12 +73,6 @@ private:
     Histories TOF_history_;
     Histories Strata_history_;
 
-
-    vector<double> phase_history_;
-    vector<double> velocity_history_;
-    vector<double> dist_history_;
-
-
     MatrixX<complex<double>> prev_irs_signal_;
     MatrixX<complex<double>> irs_signal_;
     MatrixX<complex<double>> irs_signal_diff;
@@ -91,18 +80,20 @@ private:
     complex<double> prev_motion2;
     complex<double> prev_beta;
 
-    codeGen *classInstance = new codeGen;
-    double mvMedian_iter;
-    double mvMedian_buffer[5];
+
+    // For move median filter
+    mvMedian_data mvTOF;
+    mvMedian_data mvVelocity;
+    mvMedian_data mvAcc;
     double mvMedian(double x, double buffer[5], double* iter);
 
-    double mvMedian_iter_v_;
-    double mvMedian_buffer_v_[5];
-    double last_v_ = 0;
+    double lowpass_taps_v[22];
+    double lowpass_taps_a[22];
+    double lowpass(double x, double taps[22]);
 
-    double mvMedian_iter_a_;
-    double mvMedian_buffer_a_[5];
 
 };
+
+
 
 #endif

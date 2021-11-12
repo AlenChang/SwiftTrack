@@ -1,5 +1,5 @@
 #include "engine.h"
-#include "logger_util.hpp"
+//#include "logger_util.hpp"
 #include <string>
 
 Engine *Engine::instance1 = nullptr;
@@ -67,18 +67,6 @@ void Engine::ProcessFrame(int id, const double *data, int n) {
     engine->ProcessFrameCore(rx_signal);
 }
 
-void Engine::GetVelocityHistory(int id, double *history, int n) {
-    Engine *engine = Engine::GetInstance(id);
-
-    engine->postprocessor_->GetVelocityHistory(history, n);
-}
-
-void Engine::GetDistHistory(int id, double *history, int n) {
-    Engine *engine = Engine::GetInstance(id);
-
-    engine->postprocessor_->GetDistHistory(history, n);
-}
-
 void Engine::GetHistoryData(int id, double *history, int n, int history_id, int history_type){
     Engine *engine = Engine::GetInstance(id);
     Histories history_profile = engine->postprocessor_->GetHistories(history_id);
@@ -116,6 +104,11 @@ void Engine::GetCIR(int id, double *cir_abs, int n){
     engine->postprocessor_->GetCIR(cir_abs, n);
 }
 
+void Engine::GetBeta(int id, double* beta_real, double* beta_imag){
+    Engine *engine = Engine::GetInstance(id);
+    engine->postprocessor_->GetBeta(beta_real, beta_imag);
+}
+
 void Engine::Reset(int id) {
     if (id == 0) {
         delete instance1;
@@ -142,6 +135,7 @@ void Engine::ProcessFrameCore(const MatrixX<double> &rx_signal) {
 
     // simply feed signal to the denoiser
     // the denoiser will determine the next step
+    // todo: rewrite denoiser to make it compatible with matlab results.
     denoiser_->FeedSignal(cir_signal);
     cur_status_ = denoiser_->GetStatus();
     bool is_moving = denoiser_->getMovingStatus();

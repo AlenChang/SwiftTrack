@@ -2,7 +2,7 @@
 #define ACOUSTICTRACKER_DENOISER_H
 
 #include "matrix_util.hpp"
-#include "codeGen.h"
+#include "NoiseSupression.h"
 
 class Denoiser {
 public:
@@ -99,7 +99,6 @@ private:
     MatrixX<complex<double>> updated_static_signal_;
     MatrixX<complex<double>> static_signal_;
 
-    codeGen *classInstance = new codeGen;
     double mvMedian_iter;
     double mvMedian_buffer[5];
     double mvMedian(double x);

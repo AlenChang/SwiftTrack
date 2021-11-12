@@ -11,6 +11,21 @@ enum HistoryType{
         phase_acc
     };
 
+class mvMedian_data{
+public:
+    mvMedian_data(){
+        iter = 0;
+        for (int i = 0; i < 5; i++) {
+            buffer[i] = 0.0;
+        }
+    };
+    ~mvMedian_data(){};
+
+    // 不能直接读指针成员？
+    double iter;
+    double buffer[5];
+};
+
 class Histories {
 
 public:
