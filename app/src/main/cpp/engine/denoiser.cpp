@@ -40,10 +40,13 @@ void Denoiser::FeedSignal(const MatrixX<complex<double>> &signal) {
     signal_ = signal;
 
     if (status_ == CALI_1) {
+        // compute moving threshold
         ProcessCalibration1();
     } else if (status_ == CALI_2) {
+        // compute background noise
         ProcessCalibration2();
     } else if (status_ == CALI_SUCCESS) {
+        // remove background noise and update background noise
         ProcessCalibrationSuccess();
     }
 
@@ -74,6 +77,7 @@ void Denoiser::ProcessCalibration1() {
 
     calibration_1_diff_history_.push_back(MaxDiff(prev_signal_, signal_));
 
+    // minimum frames used to compute threshold
     if (calibration_1_frame_count_ == CALI_1_FRAMES) {
         OfflineCalcThreshold();
         status_ = CALI_2;
@@ -92,6 +96,7 @@ void Denoiser::ProcessCalibration2() {
     if (prev_is_moving_ && !is_moving_) {
         // if the minimum moving period is satisfied
         if (moving_frames_ >= MOVING_PERIOD_MIN_FRAMES) {
+            // a flag represent the valid movign periods
             calibration_2_moving_periods_++;
         } else { // if not satisfied, remove the last fake period
             int k = (int) calibration_2_moving_history_.size() - 1;
@@ -161,7 +166,7 @@ void Denoiser::OfflineCalcThreshold() {
     }
     var_diff /= (calibration_1_frame_count_ - 1);
 
-   moving_threshold_ = mean_diff + 3 * sqrt(var_diff);
+   moving_threshold_ = mean_diff + 4 * sqrt(var_diff);
     //  moving_threshold_ = thre_factor * mean_diff;
 }
 
@@ -198,12 +203,10 @@ void Denoiser::OnlineUpdateStaticSignal() {
         updated_static_signal_ /= stage_moving_frames;
 
         // Apply balance filter method
-        static_signal_ = static_signal_ * (1 - UPDATE_FACTOR) + updated_static_signal_ * UPDATE_FACTOR;
+        // static_signal_ = static_signal_ * (1 - UPDATE_FACTOR) + updated_static_signal_ * UPDATE_FACTOR;
 
-        // Apply stream mean update method
-        // static_signal_ = static_signal_ * total_moving_frames_ + updated_static_signal_ * stage_moving_frames;
-        // total_moving_frames_ += stage_moving_frames;
-        // static_signal_ /= total_moving_frames_;
+        // update static vector with the last estimation
+        static_signal_ = updated_static_signal_;
 
         moving_frame_history_.clear();
         moving_signal_history_.clear();

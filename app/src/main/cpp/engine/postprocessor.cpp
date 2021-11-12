@@ -1,5 +1,4 @@
 #include "postprocessor.h"
-//#include "logger_util.hpp"
 #include <stdio.h>
 
 Postprocessor::Postprocessor() {

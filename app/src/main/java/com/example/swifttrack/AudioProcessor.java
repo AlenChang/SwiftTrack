@@ -96,14 +96,18 @@ public class AudioProcessor {
 
         private void prepareDataForHomeFragment(double[] xLeft, double[] vLeft, double[] xRight, double[] vRight, int winLen){
             if (CHANNEL_MASK[inputChannel.LEFT]) {
-                getDistHistory(inputChannel.LEFT, xLeft, winLen);
-                getVelocityHistory(inputChannel.LEFT, vLeft, winLen);
+                getHistoryData(inputChannel.LEFT, xLeft, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+//                getDistHistory(inputChannel.LEFT, xLeft, winLen);
+                getHistoryData(inputChannel.LEFT, vLeft, winLen, deployMethods.swifttrack, HistoryType.velocity_);
+//                getVelocityHistory(inputChannel.LEFT, vLeft, winLen);
                 HomeViewModel.setLineData(xLeft, HomeViewModel.OutTypes.LEFT_DIST);
                 HomeViewModel.setLineData(vLeft, HomeViewModel.OutTypes.LEFT_V);
             }
             if (CHANNEL_MASK[inputChannel.RIGHT]) {
-                getDistHistory(inputChannel.RIGHT, xRight, winLen);
-                getVelocityHistory(inputChannel.RIGHT, vRight, winLen);
+                getHistoryData(inputChannel.RIGHT, xRight, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+//                getDistHistory(inputChannel.RIGHT, xRight, winLen);
+                getHistoryData(inputChannel.RIGHT, vRight, winLen, deployMethods.swifttrack, HistoryType.velocity_);
+//                getVelocityHistory(inputChannel.RIGHT, vRight, winLen);
                 HomeViewModel.setLineData(xRight, HomeViewModel.OutTypes.RIGHT_DIST);
                 HomeViewModel.setLineData(vRight, HomeViewModel.OutTypes.RIGHT_V);
             }
@@ -412,10 +416,6 @@ public class AudioProcessor {
 
 
     private static native void processFrame(int id, double[] data, int n);
-
-    private static native void getVelocityHistory(int id, double[] history, int n);
-
-    private static native void getDistHistory(int id, double[] history, int n);
 
     private static native void getCIR(int id, double[] cir_abs, int n);
 

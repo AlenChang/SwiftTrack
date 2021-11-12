@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         if(Build.MODEL.equals("GM1910")){
             CHANNEL_MASK = new boolean[]{false, true};
         }
-        if(Build.MODEL.equals("Redmi K30 5G")){
+        if(Build.MODEL.equals("Redmi K20 Pro Premium Edition")){
             CHANNEL_MASK = new boolean[]{true, false};
         }
 

@@ -77,7 +77,7 @@ public class SlideshowViewModel extends ViewModel {
     }
 
     public static void setLineData(double[] values) {
-        xChart.postValue(PlotUtil.getLineDataSet(values, "Velocity", Color.RED));
+        xChart.postValue(PlotUtil.getLineDataSet(values, "Distance", Color.RED));
     }
 
     private static int[] getCmap(int c){
