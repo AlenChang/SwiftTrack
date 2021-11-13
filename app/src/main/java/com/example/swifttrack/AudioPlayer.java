@@ -29,7 +29,7 @@ public class AudioPlayer {
     public static final int N_ZC_UP = 480;
     public static final int FC = 20000;
 
-    public static boolean USE_FILE = false;
+    public static boolean USE_FILE = true;
     public static int SAMPLE_RATE = 48000;
     public static int BUFFER_SIZE = 4800;
 
@@ -159,40 +159,32 @@ public class AudioPlayer {
     public void init() {
         needSave = false;
 
-        if (USE_FILE) {
-            speaker = new FileSpeaker();
-        } else {
+        if (!USE_FILE) {
             genZCSeq();
             speaker = new SeqSpeaker();
         }
     }
 
     public void start() {
-        if (USE_FILE) {
-            fileInputStream = FileUtil.getFileInputStream("player/tx_default.txt");
-            inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
-            bufferedReader = new BufferedReader(inputStreamReader);
-        } else {
+        if (!USE_FILE) {
             fileOutputStream = FileUtil.getFileOutputStream("player/tx_" + timestamp + ".txt");
             outputStreamWriter = new OutputStreamWriter(fileOutputStream, StandardCharsets.UTF_8);
             bufferedWriter = new BufferedWriter(outputStreamWriter);
+            speaker.start();
         }
 
-        speaker.start();
+
     }
 
     public void stop() {
-        speaker.terminate();
+
 
         try {
-            if (USE_FILE) {
-                bufferedReader.close();
-                inputStreamReader.close();
-                fileInputStream.close();
-            } else {
+            if (!USE_FILE) {
                 bufferedWriter.close();
                 outputStreamWriter.close();
                 fileOutputStream.close();
+                speaker.terminate();
             }
         } catch (IOException e) {
             Log.e("AudioPlayer", e.getMessage());
@@ -210,9 +202,7 @@ public class AudioPlayer {
             needSave = false;
         }
 
-        if (USE_FILE) {
-            speaker = new FileSpeaker();
-        } else {
+        if (!USE_FILE) {
             speaker = new SeqSpeaker();
         }
     }
