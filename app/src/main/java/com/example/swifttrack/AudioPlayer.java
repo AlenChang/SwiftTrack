@@ -40,11 +40,8 @@ public class AudioPlayer {
     private static final byte CHANNEL_MASK = 0x02;
     private static final double[][] TX_SEQ = new double[N_ZC_UP][2];
 
-    private static FileInputStream fileInputStream;
     private static FileOutputStream fileOutputStream;
-    private static InputStreamReader inputStreamReader;
     private static OutputStreamWriter outputStreamWriter;
-    private static BufferedReader bufferedReader;
     private static BufferedWriter bufferedWriter;
     private static long timestamp;
     private static boolean needSave;
@@ -66,43 +63,6 @@ public class AudioPlayer {
         public abstract void terminate();
     }
 
-    private static class FileSpeaker extends Speaker {
-        public FileSpeaker() { }
-
-        @Override
-        public void run() {
-            audioTrack.play();
-
-            running = true;
-
-            while (running) {
-                if (lock.tryLock()) {
-                    int lineCount = FileUtil.streamReadMusic(bufferedReader, buffer);
-                    if (lineCount * 2 < AudioPlayer.BUFFER_SIZE) {
-                        Arrays.fill(buffer, lineCount * 2, AudioPlayer.BUFFER_SIZE, 0.0f);
-                        running = false;
-                    }
-
-                    audioTrack.write(buffer, 0, AudioPlayer.BUFFER_SIZE, AudioTrack.WRITE_BLOCKING);
-
-                    lock.unlock();
-                } else {
-                    break;
-                }
-            }
-        }
-
-        public void terminate() {
-            running = false;
-
-            lock.lock();
-
-            audioTrack.stop();
-            audioTrack.release();
-
-            lock.unlock();
-        }
-    }
 
     private static class SeqSpeaker extends Speaker {
         public SeqSpeaker() { }
