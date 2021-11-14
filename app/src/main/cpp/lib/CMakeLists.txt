@@ -17,6 +17,8 @@ add_library(
        quickselect.h
        rtwtypes.h
        tmwtypes.h
+        BackgroundRemoval.cpp
+        BackgroundRemoval.h
 
 )
 set_target_properties(${TARGET} PROPERTIES LINKER_LANGUAGE CXX)
