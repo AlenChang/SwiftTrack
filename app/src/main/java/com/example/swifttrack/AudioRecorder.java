@@ -180,6 +180,10 @@ public class AudioRecorder {
         phone.start();
     }
 
+    public static void setFileName(String fileName) {
+        playFile = fileName;
+    };
+
     public void stop() {
         phone.terminate();
 
