@@ -33,7 +33,7 @@ public:
 private:
     void CutOffCIRSignal(const MatrixX<complex<double>> &cir_signal);
 
-    void CalcPhase();
+    void CalcPhase(bool is_moving);
 
     double CalcPhase(complex<double> tapSel, double & pre_phase);
 
@@ -89,6 +89,7 @@ private:
 
     double lowpass_taps_v[22];
     double lowpass_taps_a[22];
+    double lowpass_taps_fingerIO[22];
     double lowpass(double x, double taps[22]);
 
 

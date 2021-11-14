@@ -1,4 +1,5 @@
 #include "denoiser.h"
+#include "BackgroundRemoval.h"
 
 Denoiser::Denoiser() {
     // first stage calibration -> estimate threshold to determine moving period.
@@ -41,7 +42,10 @@ void Denoiser::FeedSignal(const MatrixX<complex<double>> &signal) {
 
     if (status_ == CALI_1) {
         // compute moving threshold
-        ProcessCalibration1();
+        // ProcessCalibration1();
+        compute_thre();
+
+
     } else if (status_ == CALI_2) {
         // compute background noise
         ProcessCalibration2();
@@ -69,56 +73,74 @@ vector<double> Denoiser::GetDiffHistory() {
     return diff_history_;
 }
 
-void Denoiser::ProcessCalibration1() {
+// void Denoiser::ProcessCalibration1() {
+//     calibration_1_frame_count_++;
+//     if (calibration_1_frame_count_ == 1) {
+//         return;
+//     }
+
+//     calibration_1_diff_history_.push_back(MaxDiff(prev_signal_, signal_));
+
+//     // minimum frames used to compute threshold
+//     if (calibration_1_frame_count_ == CALI_1_FRAMES) {
+//         OfflineCalcThreshold();
+//         status_ = CALI_2;
+//     }
+// }
+
+void Denoiser::compute_thre(){
     calibration_1_frame_count_++;
     if (calibration_1_frame_count_ == 1) {
         return;
     }
 
-    calibration_1_diff_history_.push_back(MaxDiff(prev_signal_, signal_));
+    double signa_diff[960];
+    complex2double(signal_ - prev_signal_, signa_diff);
+    BackgroundRemoval::compute_thre(signa_diff, compute_thre_taps, compute_thre_iter, 4, &init1_flag ,&moving_threshold_);
+    compute_thre_iter++;
 
-    // minimum frames used to compute threshold
-    if (calibration_1_frame_count_ == CALI_1_FRAMES) {
-        OfflineCalcThreshold();
+    if(init1_flag){
         status_ = CALI_2;
+        cout << "Threshold is " << moving_threshold_ << endl;
     }
 }
 
+void Denoiser::complex2double(const MatrixX<complex<double>> &x, double out[960]){
+    int rows = (int) x.rows(), cols = (int) x.cols();
+    assert(rows == 1 && cols * 2 == 960);
+
+    for (int j = 0; j < cols; j++) {
+        out[2*j] = x(j).real();
+        out[2*j+1] = x(j).imag();
+    }
+    
+}
+
+// * pass
 void Denoiser::ProcessCalibration2() {
     CheckMoving();
 
     // store moving flags
-    calibration_2_moving_history_.push_back(is_moving_);
     // store cir from moving periods
     calibration_2_signal_history_.push_back(signal_);
 
     // case 1: last frame is moving and this frame is not moving
-    if (prev_is_moving_ && !is_moving_) {
-        // if the minimum moving period is satisfied
-        if (moving_frames_ >= MOVING_PERIOD_MIN_FRAMES) {
-            // a flag represent the valid movign periods
-            calibration_2_moving_periods_++;
-        } else { // if not satisfied, remove the last fake period
-            int k = (int) calibration_2_moving_history_.size() - 1;
-            while (k >= 0 && calibration_2_moving_history_[k]) {
-                calibration_2_moving_history_[k] = !calibration_2_moving_history_[k];
-                k--;
-            }
-        }
+    if(!is_moving_ && prev_is_moving_){
         moving_frames_ = 0;
     }
 
     // case 2: compute static vector if we have enough moving data
-    if (calibration_2_moving_periods_ == CALI_2_PERIODS) {
+    if (moving_frames_ > MOVING_PERIOD_MIN_FRAMES) {
         OfflineCalcStaticSignal();
         OfflineRemoveStaticSignal();
         status_ = CALI_SUCCESS;
+        moving_frames_ = 0;
     }
 
     prev_is_moving_ = is_moving_;
 
     // case 3: if moving for a long time, break 
-    if (calibration_2_moving_history_.size() > CALI_2_MAX_FRAMES) {
+    if (calibration_2_signal_history_.size() > CALI_2_MAX_FRAMES) {
         status_ = CALI_FAILED;
         cout << "Motion is not detected for " << CALI_2_MAX_FRAMES * 0.01 << " seconds!" << endl;
         cout << "Program terminated!" << endl;
@@ -132,91 +154,69 @@ void Denoiser::ProcessCalibrationSuccess() {
 
     if (is_moving_) {
         // mean vector of cir in moving periods
-        updated_static_signal_ = (signal_ + moving_frames_ * updated_static_signal_) / (moving_frames_ + 1);
-        moving_frames_++;
+        updated_static_signal_ = (signal_ + (moving_frames_ - 1) * updated_static_signal_) / (moving_frames_);
     }
 
     // if need updating
-    if (prev_is_moving_ && !is_moving_) {
-        if (moving_frames_ >= MOVING_PERIOD_MIN_FRAMES) {
-            OnlineUpdateStaticSignal();
-        }
-        OnlineRemoveStaticSignal();
-
+    if (moving_frames_ >= MOVING_PERIOD_MIN_FRAMES) {
+        OnlineUpdateStaticSignal();
         // if update sucess, reset these two parameters
         updated_static_signal_ = MatrixX<complex<double>>::Constant(1, FRAME_SIZE, complex<double>(0, 0));
         moving_frames_ = 0;
-    } else {
-        OnlineRemoveStaticSignal();
     }
+
+    // non-sufficient moving frames
+    if (prev_is_moving_ && !is_moving_) {
+        updated_static_signal_ = MatrixX<complex<double>>::Constant(1, FRAME_SIZE, complex<double>(0, 0));
+        moving_frames_ = 0;
+    }
+
+    OnlineRemoveStaticSignal();
 
     prev_is_moving_ = is_moving_;
 }
 
-void Denoiser::OfflineCalcThreshold() {
-    double mean_diff = 0.0;
-    for (double diff : calibration_1_diff_history_) {
-        mean_diff += diff;
-    }
-    mean_diff /= (calibration_1_frame_count_ - 1);
-
-    double var_diff = 0.0;
-    for (double diff : calibration_1_diff_history_) {
-        var_diff += pow(diff - mean_diff, 2);
-    }
-    var_diff /= (calibration_1_frame_count_ - 1);
-
-   moving_threshold_ = mean_diff + 4 * sqrt(var_diff);
-    //  moving_threshold_ = thre_factor * mean_diff;
-}
-
+// * pass
 void Denoiser::OfflineCalcStaticSignal() {
-    for (int i = 0; i < calibration_2_moving_history_.size(); i++) {
-        if (calibration_2_moving_history_[i]) {
-            static_signal_ += calibration_2_signal_history_[i];
-            total_moving_frames_++;
-        }
+    int len = calibration_2_signal_history_.size() - 1;
+    for (int i = 0; i <= MOVING_PERIOD_MIN_FRAMES; i++) {
+        static_signal_ += calibration_2_signal_history_[len - i];
+        total_moving_frames_++;
     }
+
+    cout << "Cali2 frame size: " << total_moving_frames_ << endl;
 
     static_signal_ /=  total_moving_frames_;
+    fout.open("static.txt");
+    for(int i = 0; i < 480; i++){
+        fout << real(static_signal_(i)) << " " << imag(static_signal_(i)) << " ";
+    }
+    fout.close();
 }
 
+// donot imapct on the calculation of static signal
+// * pass
 void Denoiser::OfflineRemoveStaticSignal() {
     for (const MatrixX<complex<double>>& calibration_2_signal : calibration_2_signal_history_) {
         offline_denoise_signals_.emplace_back(calibration_2_signal - static_signal_);
     }
 }
 
+// offline first - we will have a static signal before online algorithm
+// * pass
 void Denoiser::OnlineUpdateStaticSignal() {
-    moving_frame_history_.push_back(moving_frames_);
-    moving_signal_history_.push_back(updated_static_signal_);
 
-    // Online update static signal every UPDATED_MOVING_PERIODS periods
-    if (moving_frame_history_.size() == UPDATED_MOVING_PERIODS) {
-        // Calculate update static signal on the weighted average of moving signal history
-        updated_static_signal_.setConstant(complex<double>(0, 0));
-        int stage_moving_frames = 0;
-        for (int i = 0; i < UPDATED_MOVING_PERIODS; i++) {
-            stage_moving_frames += moving_frame_history_[i];
-            updated_static_signal_ += moving_frame_history_[i] * moving_signal_history_[i];
-        }
-        updated_static_signal_ /= stage_moving_frames;
+    moving_frames_counter ++;
+    static_signal_ = (moving_frames_counter * static_signal_ +  updated_static_signal_) / (moving_frames_counter + 1);
 
-        // Apply balance filter method
-        // static_signal_ = static_signal_ * (1 - UPDATE_FACTOR) + updated_static_signal_ * UPDATE_FACTOR;
-
-        // update static vector with the last estimation
-        static_signal_ = updated_static_signal_;
-
-        moving_frame_history_.clear();
-        moving_signal_history_.clear();
-    }
 }
 
+// * pass
 void Denoiser::OnlineRemoveStaticSignal() {
     online_denoise_signal_ = signal_ - static_signal_;
 }
 
+// * pass
 void Denoiser::CheckMoving() {
     double max_diff = MaxDiff(prev_signal_, signal_);
 
@@ -227,6 +227,7 @@ void Denoiser::CheckMoving() {
     }
 }
 
+// * pass
 double Denoiser::MaxDiff(const MatrixX<complex<double>> &m1, const MatrixX<complex<double>> &m2) {
     int rows = (int) m1.rows(), cols = (int) m1.cols();
     assert(m2.rows() == rows && m2.cols() == cols);
@@ -242,7 +243,7 @@ double Denoiser::MaxDiff(const MatrixX<complex<double>> &m1, const MatrixX<compl
         }
     }
 
-    diff_history_.push_back(mvMedian(res));
+    diff_history_.push_back(res);
 
     return res;
 }

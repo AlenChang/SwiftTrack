@@ -225,7 +225,7 @@ public class AudioProcessor {
 
                     Log.d("Timer", "Warm up finished.");
                 }
-            }, 4*1000);
+            }, 5*1000);
 
 
             while (running) {

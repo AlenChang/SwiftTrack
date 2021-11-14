@@ -5,6 +5,9 @@
 #include "matrix_util.hpp"
 #include "NoiseSupression.h"
 
+
+#define M_PI		3.14159265358979323846
+
 class Preprocessor {
 public:
     Preprocessor();
@@ -38,8 +41,6 @@ private:
 
     void addWindow();
     void genWindow(double win[480]);
-
-  
 
     MatrixX<complex<double>> freq_ref_signal_;
     MatrixX<complex<double>> rxbb_signal_;

@@ -54,7 +54,7 @@ double Postprocessor::ProcessCIRSignal(const MatrixX<complex<double>> &cir_signa
     CutOffCIRSignal(cir_signal);
     
     // calculate motion coefficients
-    CalcPhase();
+    CalcPhase(is_moving);
 
     TapSelectionTOF(is_moving);
 
@@ -107,7 +107,7 @@ void Postprocessor::get_history(double *history, int n, vector<double> & profile
 }
 
 void Postprocessor::GetCIR(double *cir_abs, int n){
-    if (false){
+    if (use_diff_flag){
         for (int i = 0; i < N_IRS; i++) {
             *(cir_abs + i) = abs(irs_signal_diff(0, i));
         }
@@ -145,10 +145,9 @@ complex<double> Postprocessor::LeastSquare(){
     return beta;
 }
 
-void Postprocessor::CalcPhase() {
-    
-    // first order motion coefficients
-    complex<double> beta = LeastSquare();
+void Postprocessor::CalcPhase(bool is_moving) {
+    complex<double> beta;
+    beta = LeastSquare();
     
     for (int i = 0; i < N_IRS; i++) {
         irs_signal_diff(0, i) = irs_signal_(0, i) - prev_irs_signal_(0, i);
@@ -281,6 +280,7 @@ void Postprocessor::TapSelectionTOF(bool is_moving){
         }
         
         dist = mvMedian(dist, mvTOF.buffer, &mvTOF.iter);
+        dist = lowpass(dist, lowpass_taps_fingerIO);
         TOF_history_.dist_history_.push_back(dist);
         TOF_history_.velocity_history_.push_back(0);
         TOF_history_.phase_history_.push_back(0);

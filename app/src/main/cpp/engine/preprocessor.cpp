@@ -13,11 +13,13 @@ Preprocessor::Preprocessor() {
     cir_signal_ = MatrixX<complex<double>>::Constant(1, N_ZC_UP, complex<double>(0, 0));
 
     GenerateRefSignal();
+    
 
     cout << "Preprocessor was initiated." << endl;
 }
 
 Preprocessor::~Preprocessor() {
+    
     cout << "Preprocessor was recycled." << endl;
 }
 
@@ -31,6 +33,7 @@ MatrixX<complex<double>> Preprocessor::GenerateCIRSignal(const MatrixX<double> &
 
     // shift the direct path to the first tap
     CenterShift();
+    
 
     return cir_signal_;
 }
@@ -49,8 +52,7 @@ void Preprocessor::GenerateRefSignal() {
     // Padding zeros in freq domain
     // Perform conjugation when padding
     MatrixUtil::FreqPadding(freq_ref_signal_, freq_zc, N_ZC_UP - N_ZC);
-    addWindow();
-    
+    addWindow();  
 }
 
 void Preprocessor::DownConversion(const MatrixX<double> &rx_signal) {
@@ -60,6 +62,7 @@ void Preprocessor::DownConversion(const MatrixX<double> &rx_signal) {
         phase_ += DELTA_PHASE;
         rxbb_signal_(0, i) = rx_signal(0, i) * complex<double>(cos(phase_), sin(phase_));
     }
+    phase_ = fmod(phase_, 2.0 * M_PI);
 }
 
 void Preprocessor::LowPassFilter() {
@@ -70,8 +73,8 @@ void Preprocessor::LowPassFilter() {
 void Preprocessor::CircularConvolution() {
     MatrixX<complex<double>> freq_filtered_signal(1, N_ZC_UP);
     MatrixUtil::RowFFT(freq_filtered_signal, filtered_signal_);
-    MatrixX<complex<double>> conj_data = freq_ref_signal_.conjugate();
-    MatrixUtil::RowIFFT(cir_signal_, MatrixUtil::Dot(freq_filtered_signal, conj_data));
+    // MatrixX<complex<double>> conj_data = freq_ref_signal_;
+    MatrixUtil::RowIFFT(cir_signal_, MatrixUtil::Dot(freq_filtered_signal, freq_ref_signal_));
 }
 
 void Preprocessor::CenterShift() {
