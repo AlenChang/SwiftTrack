@@ -107,7 +107,7 @@ private:
     void compute_thre();
     void complex2double(const MatrixX<complex<double>> &x, double out[960]);
 
-    ofstream fout;
+//    ofstream fout;
     
 };
 

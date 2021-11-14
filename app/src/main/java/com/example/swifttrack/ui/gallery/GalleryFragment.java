@@ -41,8 +41,8 @@ public class GalleryFragment extends Fragment {
     }
 
     private AudioPlayer audioPlayer;
-    public AudioRecorder audioRecorder;
-    public AudioProcessor audioProcessor;
+    private AudioRecorder audioRecorder;
+    private AudioProcessor audioProcessor;
     private Timer timer;
 
 

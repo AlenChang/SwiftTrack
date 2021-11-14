@@ -30,8 +30,8 @@ public class AccFragment extends Fragment {
     private FragmentAccBinding binding;
 
     private AudioPlayer audioPlayer;
-    public AudioRecorder audioRecorder;
-    public AudioProcessor audioProcessor;
+    private AudioRecorder audioRecorder;
+    private AudioProcessor audioProcessor;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,

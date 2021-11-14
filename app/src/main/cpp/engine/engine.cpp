@@ -142,19 +142,19 @@ void Engine::ProcessFrameCore(const MatrixX<double> &rx_signal) {
 
     // if calibration is not ready, the distance will always be 0
     if (cur_status_ == Denoiser::CALI_SUCCESS) {
-        if (prev_status_ == Denoiser::CALI_2) {
-            vector<MatrixX<complex<double>>> denoise_signals = denoiser_->GetOfflineDenoiseSignals();
-            for (const MatrixX<complex<double>> &denoise_signal : denoise_signals) {
-                // update distance in calibration stage -> frame by frame
-                // different approaches should be applied here
-                postprocessor_->ProcessCIRSignal(denoise_signal, is_moving);
-            }
-        } else {
+        // if (prev_status_ == Denoiser::CALI_2) {
+            // vector<MatrixX<complex<double>>> denoise_signals = denoiser_->GetOfflineDenoiseSignals();
+            // for (const MatrixX<complex<double>> &denoise_signal : denoise_signals) {
+            //     // update distance in calibration stage -> frame by frame
+            //     // different approaches should be applied here
+            //     postprocessor_->ProcessCIRSignal(denoise_signal, is_moving);
+            // }
+        // } else {
             // compute online distance data
             // different approaches should be applied here
-            MatrixX<complex<double>> denoise_signal = denoiser_->GetOnlineDenoiseSignal();
-            postprocessor_->ProcessCIRSignal(denoise_signal, is_moving);
-        }
+        MatrixX<complex<double>> denoise_signal = denoiser_->GetOnlineDenoiseSignal();
+        postprocessor_->ProcessCIRSignal(denoise_signal, is_moving);
+        // }
     } else if (cur_status_ == Denoiser::CALI_1) {
         postprocessor_->PaddingZero();
     }

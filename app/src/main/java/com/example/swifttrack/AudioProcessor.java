@@ -89,6 +89,8 @@ public class AudioProcessor {
 
         private boolean warmUpFlag = false;
 
+        private int counter = 0;
+
         Timer timer = new Timer();
 
         public Engine() { fragID = ActivityID.homeFragment;}
@@ -215,6 +217,8 @@ public class AudioProcessor {
 
             running = true;
 
+
+
             Log.d("Timer", "Waiting for speaker warm up.");
 
 
@@ -241,12 +245,18 @@ public class AudioProcessor {
                                     frame1[j] = data[2 * (i * FRAME_SIZE + j)];
                                     frame2[j] = data[2 * (i * FRAME_SIZE + j) + 1];
                                 }
+                                long startTime = System.currentTimeMillis();
                                 if (CHANNEL_MASK[inputChannel.LEFT]) {
                                     processFrame(inputChannel.LEFT, frame1, FRAME_SIZE);
                                 }
                                 if (CHANNEL_MASK[inputChannel.RIGHT]) {
                                     processFrame(inputChannel.RIGHT, frame2, FRAME_SIZE);
                                 }
+                                long endTime = System.currentTimeMillis();
+                                if(endTime - startTime > 10 || counter % 50 == 0){
+                                    Log.d("TimeCount", " " + (endTime - startTime) + " ms");
+                                }
+                                counter++;
                             }
 
                             frameCount += data.length / 2 / FRAME_SIZE;

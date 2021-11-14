@@ -41,8 +41,8 @@ public class HomeFragment extends Fragment {
     }
 
     private AudioPlayer audioPlayer;
-    public AudioRecorder audioRecorder;
-    public AudioProcessor audioProcessor;
+    private AudioRecorder audioRecorder;
+    private AudioProcessor audioProcessor;
 
     private static final boolean[] CHANNEL_MASK = {true, true};
 

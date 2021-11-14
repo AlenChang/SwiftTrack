@@ -187,11 +187,7 @@ void Denoiser::OfflineCalcStaticSignal() {
     cout << "Cali2 frame size: " << total_moving_frames_ << endl;
 
     static_signal_ /=  total_moving_frames_;
-    fout.open("static.txt");
-    for(int i = 0; i < 480; i++){
-        fout << real(static_signal_(i)) << " " << imag(static_signal_(i)) << " ";
-    }
-    fout.close();
+
 }
 
 // donot imapct on the calculation of static signal
