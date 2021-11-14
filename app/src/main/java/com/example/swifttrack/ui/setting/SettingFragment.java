@@ -12,8 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 
 
+import com.example.swifttrack.AudioPlayer;
 import com.example.swifttrack.R;
 import com.example.swifttrack.databinding.SettingFragmentBinding;
 
@@ -36,16 +38,18 @@ public class SettingFragment extends Fragment {
         binding = SettingFragmentBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        String courseList[] = {"C-Programming", "Data Structure", "Database", "Python",
-                "Java", "Operating System", "Compiler Design", "Android Development"};
+        binding.switch2.setChecked(AudioPlayer.USE_FILE);
 
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(),
-                R.layout.item_view, R.id.itemTextView1, courseList);
 
-        ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(getActivity(),
-                R.layout.item_view, R.id.itemTextView2, courseList);
-        binding.listView.setAdapter(arrayAdapter);
-//        binding.listView.setAdapter(arrayAdapter2);
+        binding.switch2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    AudioPlayer.USE_FILE = true;
+                } else {
+                    AudioPlayer.USE_FILE = false;
+                }
+            }
+        });
 
         return root;
     }

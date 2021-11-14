@@ -23,7 +23,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class AudioRecorder {
 
-    private static final boolean USE_FILE = AudioPlayer.USE_FILE;
+    private static boolean USE_FILE;
     private static final int SAMPLE_RATE = AudioPlayer.SAMPLE_RATE;
     private static final int BUFFER_SIZE = AudioPlayer.BUFFER_SIZE;
 
@@ -39,6 +39,8 @@ public class AudioRecorder {
     private static BufferedWriter bufferedWriter;
     private static long timestamp;
     private static boolean needSave;
+
+    public static String playFile = "atest1.txt";
 
 
     private static abstract class Phone extends Thread {
@@ -145,7 +147,9 @@ public class AudioRecorder {
 
 
     private Phone phone;
-    public AudioRecorder() { }
+    public AudioRecorder() {
+        USE_FILE = AudioPlayer.USE_FILE;
+    }
 
     public void setTimestamp(long timestamp) {
         AudioRecorder.timestamp = timestamp;
@@ -163,7 +167,7 @@ public class AudioRecorder {
 
     public void start() {
         if (USE_FILE) {
-            fileInputStream = FileUtil.getFileInputStream("recorder/test1.txt");
+            fileInputStream = FileUtil.getFileInputStream("recorder/"+playFile);
             inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
             bufferedReader = new BufferedReader(inputStreamReader);
         } else {
