@@ -1,5 +1,5 @@
-#ifndef SONAR_MATRIX_UTIL_HPP
-#define SONAR_MATRIX_UTIL_HPP
+#ifndef ACOUSTICTRACKER_MATRIX_UTIL_HPP
+#define ACOUSTICTRACKER_MATRIX_UTIL_HPP
 
 #include "Eigen/Core"
 #include "unsupported/Eigen/FFT"
@@ -307,9 +307,9 @@ public:
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (j < (cols + 1) / 2) {
-                    dst(i, j) = src(i, j);
+                    dst(i, j) = conj(src(i, j));
                 } else {
-                    dst(i, len + j) = src(i, j);
+                    dst(i, len + j) = conj(src(i, j));
                 }
             }
         }

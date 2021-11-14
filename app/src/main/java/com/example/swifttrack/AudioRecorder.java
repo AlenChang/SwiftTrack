@@ -163,7 +163,7 @@ public class AudioRecorder {
 
     public void start() {
         if (USE_FILE) {
-            fileInputStream = FileUtil.getFileInputStream("recorder/rx_1636723526953.txt");
+            fileInputStream = FileUtil.getFileInputStream("recorder/rx_1636881646522.txt");
             inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
             bufferedReader = new BufferedReader(inputStreamReader);
         } else {
