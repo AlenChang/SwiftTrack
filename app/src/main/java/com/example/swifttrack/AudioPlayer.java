@@ -29,7 +29,7 @@ public class AudioPlayer {
     public static final int N_ZC_UP = 480;
     public static final int FC = 20000;
 
-    public static boolean USE_FILE = true;
+    public static boolean USE_FILE = false;
 
 
     public static int SAMPLE_RATE = 48000;

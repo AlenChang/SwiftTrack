@@ -66,6 +66,10 @@ public class MainActivity extends AppCompatActivity {
         if(Build.MODEL.equals("Redmi K20 Pro Premium Edition")){
             CHANNEL_MASK = new boolean[]{true, false};
         }
+        if(Build.MODEL.equals("Pixel 3")){
+            CHANNEL_MASK = new boolean[]{true, false};
+        }
+
 
         FileUtil.init(this);
 
