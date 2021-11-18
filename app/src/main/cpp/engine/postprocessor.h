@@ -13,7 +13,7 @@
 class Postprocessor {
   
 public:
-    Postprocessor();
+    Postprocessor(int N_ZC_UP_);
 
     ~Postprocessor();
 
@@ -62,9 +62,9 @@ private:
     const double PHASE_DIFF_2_THRESHOLD = 1.0 * M_PI;
     const double use_diff_flag = true;
     const int tail_tap = 20;
-    const int N_ZC_UP = 480;
+    int N_ZC_UP;
 
-    const double complementary_factor = 0.95;
+    const double complementary_factor = 0.995;
 
     int last_tap = 0;
 

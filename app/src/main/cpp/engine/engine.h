@@ -9,9 +9,11 @@
 
 class Engine {
 public:
+    static Engine* GetInstance(int id, int N);
+
     static Engine* GetInstance(int id);
 
-    static void ProcessFrame(int id, const double *data, int n);
+    static void ProcessFrame(int id, const double *data, int n, int N);
 
     static void GetCIR(int id, double *cir_abs, int n);
 
@@ -19,14 +21,18 @@ public:
 
     static void GetBeta(int id, double* beta_real, double* beta_imag);
 
-    static void Reset(int id);
+    static void Reset(int id, int N);
 
     static void GetHistoryData(int id, double *history, int n, int history_id, int history_type);
+
+    void setup(int N);
 
 private:
     Engine();
 
     ~Engine();
+
+    int N_ZC_UP_;
 
     void ProcessFrameCore(const MatrixX<double> &rx_signal);
 

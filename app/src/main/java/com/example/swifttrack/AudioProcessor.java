@@ -247,10 +247,10 @@ public class AudioProcessor {
                                 }
                                 long startTime = System.currentTimeMillis();
                                 if (CHANNEL_MASK[inputChannel.LEFT]) {
-                                    processFrame(inputChannel.LEFT, frame1, FRAME_SIZE);
+                                    processFrame(inputChannel.LEFT, frame1, FRAME_SIZE, AudioPlayer.N_ZC_UP);
                                 }
                                 if (CHANNEL_MASK[inputChannel.RIGHT]) {
-                                    processFrame(inputChannel.RIGHT, frame2, FRAME_SIZE);
+                                    processFrame(inputChannel.RIGHT, frame2, FRAME_SIZE, AudioPlayer.N_ZC_UP);
                                 }
                                 long endTime = System.currentTimeMillis();
                                 if(endTime - startTime > 10 || counter % 50 == 0){
@@ -357,10 +357,10 @@ public class AudioProcessor {
         fragID = 0;
 
         if (CHANNEL_MASK[inputChannel.LEFT]) {
-            reset(inputChannel.LEFT);
+            reset(inputChannel.LEFT, AudioPlayer.N_ZC_UP);
         }
         if (CHANNEL_MASK[inputChannel.RIGHT]) {
-            reset(inputChannel.RIGHT);
+            reset(inputChannel.RIGHT, AudioPlayer.N_ZC_UP);
         }
 
         engine = new Engine();
@@ -374,10 +374,10 @@ public class AudioProcessor {
         needSave = false;
 
         if (CHANNEL_MASK[inputChannel.LEFT]) {
-            reset(inputChannel.LEFT);
+            reset(inputChannel.LEFT, AudioPlayer.N_ZC_UP);
         }
         if (CHANNEL_MASK[inputChannel.RIGHT]) {
-            reset(inputChannel.RIGHT);
+            reset(inputChannel.RIGHT, AudioPlayer.N_ZC_UP);
         }
         fragID = inFragID;
         engine = new Engine(fragID);
@@ -415,21 +415,21 @@ public class AudioProcessor {
         }
 
         if (CHANNEL_MASK[inputChannel.LEFT]) {
-            reset(inputChannel.LEFT);
+            reset(inputChannel.LEFT, AudioPlayer.N_ZC_UP);
         }
         if (CHANNEL_MASK[inputChannel.RIGHT]) {
-            reset(inputChannel.RIGHT);
+            reset(inputChannel.RIGHT, AudioPlayer.N_ZC_UP);
         }
         MainActivity.rxQueue.clear();
         engine = new Engine(fragID);
     }
 
 
-    private static native void processFrame(int id, double[] data, int n);
+    private static native void processFrame(int id, double[] data, int n, int N_ZC_UP);
 
     private static native void getCIR(int id, double[] cir_abs, int n);
 
-    private static native void reset(int id);
+    private static native void reset(int id, int N_ZC_UP);
 
     private static native void getHistoryData(int id, double[] history, int n, int history_id, int history_type);
 }

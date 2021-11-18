@@ -9,22 +9,26 @@ using namespace std;
 
 Engine::Engine() {
 
-    // from real-valued audio signal to complex-valued cir
-    // methods irrelevant
-    preprocessor_ = new Preprocessor();
-
-    // remove background noise
-    // two different approaches - DDBR or our method
-    denoiser_ = new Denoiser();
-
-    // deploy different methods
-    // Four different approaches - ToF, Strata, SwiftTrack w/o TOF, SwiftTrack
-    postprocessor_ = new Postprocessor();
-
+    // setup();
 
     prev_status_ = Denoiser::CALI_1;
     cur_status_ = Denoiser::CALI_1;
 
+}
+
+void Engine::setup(int N){
+    N_ZC_UP_ = N;
+    // from real-valued audio signal to complex-valued cir
+    // methods irrelevant
+    preprocessor_ = new Preprocessor(N_ZC_UP_);
+
+    // remove background noise
+    // two different approaches - DDBR or our method
+    denoiser_ = new Denoiser(N_ZC_UP_);
+    
+    // deploy different methods
+    // Four different approaches - ToF, Strata, SwiftTrack w/o TOF, SwiftTrack
+    postprocessor_ = new Postprocessor(N_ZC_UP_);
 }
 
 Engine::~Engine() {
@@ -36,10 +40,12 @@ Engine::~Engine() {
 }
 
 
-Engine* Engine::GetInstance(int id) {
+Engine* Engine::GetInstance(int id, int N) {
+
     if (id == 0) {
         if (instance1 == nullptr) {
             instance1 = new Engine();
+            instance1->setup(N);
         }
         return instance1;
     }
@@ -47,6 +53,7 @@ Engine* Engine::GetInstance(int id) {
     if (id == 1) {
         if (instance2 == nullptr) {
             instance2 = new Engine();
+            instance2->setup(N);
         }
         return instance2;
     }
@@ -56,8 +63,23 @@ Engine* Engine::GetInstance(int id) {
     return nullptr;
 }
 
-void Engine::ProcessFrame(int id, const double *data, int n) {
-    Engine *engine = Engine::GetInstance(id);
+Engine* Engine::GetInstance(int id) {
+
+    if (id == 0) {
+        return instance1;
+    }
+
+    if (id == 1) {
+        return instance2;
+    }
+
+    cout << "Engine::GetInstance Invalid engine id." << endl;
+
+    return nullptr;
+}
+
+void Engine::ProcessFrame(int id, const double *data, int n, int N) {
+    Engine *engine = Engine::GetInstance(id, N);
     // 把数据从double array转成eigen能处理的格式
     MatrixX<double> rx_signal(1, n);
     for (int i = 0; i < n; i++) {
@@ -114,10 +136,11 @@ void Engine::GetBeta(int id, double* beta_real, double* beta_imag){
     engine->postprocessor_->GetBeta(beta_real, beta_imag);
 }
 
-void Engine::Reset(int id) {
+void Engine::Reset(int id, int N) {
     if (id == 0) {
         delete instance1;
         instance1 = new Engine();
+        instance1->setup(N);
         // LoggerUtil::Log("Engine::Reset", "Reset instance1 OK.");
         return;
     }
@@ -125,6 +148,7 @@ void Engine::Reset(int id) {
     if (id == 1) {
         delete instance2;
         instance2 = new Engine();
+        instance1->setup(N);
         // LoggerUtil::Log("Engine::Reset", "Reset instance2 OK.");
         return;
     }

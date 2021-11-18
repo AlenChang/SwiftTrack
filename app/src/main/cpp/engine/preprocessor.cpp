@@ -1,7 +1,9 @@
 #include "preprocessor.h"
 
 
-Preprocessor::Preprocessor() {
+Preprocessor::Preprocessor(int N_ZC_UP_) {
+    N_ZC_UP = N_ZC_UP_;
+    N_ZC = N_ZC_UP / 8 - 1;
     phase_ = 0.0;
     center_tap_ = -1;
 
@@ -52,7 +54,10 @@ void Preprocessor::GenerateRefSignal() {
     // Padding zeros in freq domain
     // Perform conjugation when padding
     MatrixUtil::FreqPadding(freq_ref_signal_, freq_zc, N_ZC_UP - N_ZC);
-    addWindow();  
+    if( N_ZC_UP == 480){
+        addWindow();
+    }
+    
 }
 
 void Preprocessor::DownConversion(const MatrixX<double> &rx_signal) {

@@ -10,7 +10,7 @@
 
 class Preprocessor {
 public:
-    Preprocessor();
+    Preprocessor(int N_ZC_UP_);
 
     ~Preprocessor();
 
@@ -27,8 +27,8 @@ private:
 
     void CenterShift();
 
-    const int N_ZC = 59;
-    const int N_ZC_UP = 480;
+    int N_ZC;
+    int N_ZC_UP;
     const int U = 1;
     const double FC = 20000.0;
     const double B = 6000.0;

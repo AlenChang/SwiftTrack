@@ -5,13 +5,13 @@
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_swifttrack_AudioProcessor_processFrame(
-        JNIEnv *env, jobject thiz, jint id, jdoubleArray data, jint n
+        JNIEnv *env, jobject thiz, jint id, jdoubleArray data, jint n, jint N_ZC_UP
 ) {
     // from java type to c type
     jdouble *data_ = (env)->GetDoubleArrayElements(data, nullptr);
 
-    if (Engine::GetInstance(id) != nullptr) {
-        Engine::ProcessFrame(id, data_, n);
+    if (Engine::GetInstance(id, N_ZC_UP) != nullptr) {
+        Engine::ProcessFrame(id, data_, n, N_ZC_UP);
     }
     // from c type to java type
     env->ReleaseDoubleArrayElements(data, data_, JNI_ABORT);
@@ -50,7 +50,7 @@ Java_com_example_swifttrack_AudioProcessor_getCIR(
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_swifttrack_AudioProcessor_reset(
-        JNIEnv *env, jobject thiz, jint id
+        JNIEnv *env, jobject thiz, jint id, jint N
 ) {
-    Engine::Reset(id);
+    Engine::Reset(id, N);
 }

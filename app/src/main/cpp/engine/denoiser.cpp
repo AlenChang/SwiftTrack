@@ -1,11 +1,11 @@
 #include "denoiser.h"
 #include "BackgroundRemoval.h"
 
-Denoiser::Denoiser() {
+Denoiser::Denoiser(int N_ZC_UP_) {
     // first stage calibration -> estimate threshold to determine moving period.
     status_ = CALI_1;
 
-    N_ZC_UP = 480;
+    N_ZC_UP = N_ZC_UP_;
 
     prev_signal_ = MatrixX<complex<double>>::Constant(1, N_ZC_UP, complex<double>(0, 0));
     signal_ = MatrixX<complex<double>>::Constant(1, N_ZC_UP, complex<double>(0, 0));
@@ -85,10 +85,48 @@ void Denoiser::compute_thre(){
         return;
     }
 
-    double signa_diff[2 * N_ZC_UP];
-    complex2double(signal_ - prev_signal_, signa_diff);
-    BackgroundRemoval::compute_thre(signa_diff, compute_thre_taps, compute_thre_iter, 6, &init1_flag ,&moving_threshold_);
+    // double signa_diff[2 * N_ZC_UP];
+    // cout << "test " << endl;
+    // complex2double(signal_ - prev_signal_, signa_diff);
+    // BackgroundRemoval::compute_thre(signa_diff, compute_thre_taps, compute_thre_iter, 6, &init1_flag ,&moving_threshold_);
+
+    // find maximum taps in each frame
+    MatrixX<complex<double>> signa_diff = signal_ - prev_signal_;
+    compute_thre_taps[compute_thre_iter] = 0;
+    for(int ti = 0; ti < N_ZC_UP; ti++){
+        if(abs(signa_diff(ti)) > compute_thre_taps[compute_thre_iter]){
+            compute_thre_taps[compute_thre_iter] = abs(signa_diff(ti));
+        }
+    }
     compute_thre_iter++;
+    cout << "compute_thre_iter = " << compute_thre_iter << endl;
+
+    if(compute_thre_iter == CALI_1_FRAMES){
+        // compute mean values
+        double sum_value = 0;
+        for(int ti = 0; ti < CALI_1_FRAMES; ti++){
+            sum_value += compute_thre_taps[ti];
+        }
+        double mean_value = sum_value / compute_thre_iter;
+
+        // compute standard deviation
+        double sum_square_diff = 0;
+        for(int ti = 0; ti < CALI_1_FRAMES; ti++){
+            sum_square_diff += pow(compute_thre_taps[ti] - mean_value, 2);
+        }
+        double std_value = sqrt(sum_square_diff / (compute_thre_iter - 1));
+
+        // compute threshold
+        moving_threshold_ = mean_value + 6 * std_value;
+
+        init1_flag = true;
+
+        cout << "Threshold is " << moving_threshold_ << endl;
+    }else{
+        init1_flag = false;
+        moving_threshold_ = 0;
+    }
+
 
     if(init1_flag){
         status_ = CALI_2;

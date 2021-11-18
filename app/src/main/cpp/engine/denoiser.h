@@ -13,7 +13,7 @@ public:
         CALI_FAILED = 4
     };
 
-    Denoiser();
+    Denoiser(int N_ZC_UP_);
 
     ~Denoiser();
 

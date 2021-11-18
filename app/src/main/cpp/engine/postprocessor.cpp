@@ -1,7 +1,9 @@
 #include "postprocessor.h"
 #include <stdio.h>
 
-Postprocessor::Postprocessor() {
+Postprocessor::Postprocessor(int N_ZC_UP_) {
+    N_ZC_UP = N_ZC_UP_;
+
     prev_phase_in_wrap_ = 0.0;
     prev_motion2 = complex<double>(0, 0);
     prev_beta = complex<double>(0, 0);
