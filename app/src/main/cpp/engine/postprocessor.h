@@ -53,7 +53,7 @@ private:
 
     // bool USE_KALMAN = false;
 
-    const int N_IRS = 150;
+
     const double C = 34300.0;
     const double FC = 20000.0;
     const double FS = 48000.0;
@@ -63,6 +63,7 @@ private:
     const double use_diff_flag = true;
     const int tail_tap = 20;
     int N_ZC_UP;
+    int N_IRS;
 
     const double complementary_factor = 0.995;
 

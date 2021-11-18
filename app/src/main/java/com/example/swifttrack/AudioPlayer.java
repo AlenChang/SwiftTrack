@@ -25,8 +25,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public class AudioPlayer {
 
     // public variable can be read by other classes
-    public static final int N_ZC = 29;
-    public static final int N_ZC_UP = 240;
+    public static final int N_ZC_UP = 480;
+    public static final int N_ZC = N_ZC_UP / 8 - 1;
     public static final int FC = 20000;
 
     public static boolean USE_FILE = false;

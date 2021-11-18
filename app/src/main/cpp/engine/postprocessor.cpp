@@ -3,6 +3,11 @@
 
 Postprocessor::Postprocessor(int N_ZC_UP_) {
     N_ZC_UP = N_ZC_UP_;
+    if(N_ZC_UP > 150){
+        N_IRS = 150;
+    }else{
+        N_IRS = N_ZC_UP;
+    }
 
     prev_phase_in_wrap_ = 0.0;
     prev_motion2 = complex<double>(0, 0);
@@ -267,8 +272,8 @@ void Postprocessor::PhaseTransform() {
 
     swifttrack_history_.velocity_history_.push_back(velocity);
 
-    double dist = (1 - complementary_factor) * TOF_history_.dist_history_.back() + complementary_factor * (swifttrack_history_.dist_history_.back() + velocity * T);
-
+//    double dist = (1 - complementary_factor) * TOF_history_.dist_history_.back() + complementary_factor * (swifttrack_history_.dist_history_.back() + velocity * T);
+    double dist = swifttrack_history_.dist_history_.back() + velocity * T;
     swifttrack_history_.dist_history_.push_back(dist);
 }
 
@@ -338,9 +343,10 @@ void Postprocessor::BasicChannelEstimation(int rows, int tap){
 
     // double dist = - phase_unwrapped * C / 2 / M_PI / FC / 2;
 
-    double velocity = phase_diff * C / 2 / M_PI / FC / 2;
+    double velocity = - phase_diff * C / 2 / M_PI / FC / 2;
 
-    double dist = (1 - complementary_factor) * TOF_history_.dist_history_.back() + complementary_factor * (Strata_history_.dist_history_.back() + velocity * T);
+//    double dist = (1 - complementary_factor) * TOF_history_.dist_history_.back() + complementary_factor * (Strata_history_.dist_history_.back() + velocity * T);
+    double dist = Strata_history_.dist_history_.back() + velocity * T;
     Strata_history_.dist_history_.push_back(dist);
     Strata_history_.velocity_history_.push_back(0);
 

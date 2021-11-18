@@ -61,6 +61,7 @@ private:
     const int UPDATED_MOVING_PERIODS = 1;
     const double UPDATE_FACTOR = 0.0;
     const double updata_factor = 0.3;
+    const double std_factor = 6;
     int N_ZC_UP;
     int moving_frames_counter = 0;
 
@@ -109,7 +110,6 @@ private:
     int compute_thre_iter = 0;
     boolean_T init1_flag = false;
     void compute_thre();
-    void complex2double(const MatrixX<complex<double>> &x, double * out);
 
 //    ofstream fout;
     

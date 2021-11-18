@@ -1,5 +1,4 @@
 #include "denoiser.h"
-#include "BackgroundRemoval.h"
 
 Denoiser::Denoiser(int N_ZC_UP_) {
     // first stage calibration -> estimate threshold to determine moving period.
@@ -85,11 +84,6 @@ void Denoiser::compute_thre(){
         return;
     }
 
-    // double signa_diff[2 * N_ZC_UP];
-    // cout << "test " << endl;
-    // complex2double(signal_ - prev_signal_, signa_diff);
-    // BackgroundRemoval::compute_thre(signa_diff, compute_thre_taps, compute_thre_iter, 6, &init1_flag ,&moving_threshold_);
-
     // find maximum taps in each frame
     MatrixX<complex<double>> signa_diff = signal_ - prev_signal_;
     compute_thre_taps[compute_thre_iter] = 0;
@@ -117,7 +111,7 @@ void Denoiser::compute_thre(){
         double std_value = sqrt(sum_square_diff / (compute_thre_iter - 1));
 
         // compute threshold
-        moving_threshold_ = mean_value + 6 * std_value;
+        moving_threshold_ = mean_value + std_factor * std_value;
 
         init1_flag = true;
 
@@ -134,16 +128,6 @@ void Denoiser::compute_thre(){
     }
 }
 
-void Denoiser::complex2double(const MatrixX<complex<double>> &x, double* out){
-    int rows = (int) x.rows(), cols = (int) x.cols();
-    assert(rows == 1 && cols * 2 == 2 * N_ZC_UP);
-
-    for (int j = 0; j < cols; j++) {
-        *(out + 2*j) = x(j).real();
-        *(out + 2*j + 1) = x(j).imag();
-    }
-    
-}
 
 // * pass
 void Denoiser::ProcessCalibration2() {
