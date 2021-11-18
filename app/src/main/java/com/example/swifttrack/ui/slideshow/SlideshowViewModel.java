@@ -51,7 +51,7 @@ public class SlideshowViewModel extends ViewModel {
 //        }
 
         for (int i = 0; i < width; i++){
-            int c = (int) Math.round(data[i] * 2000);
+            int c = (int) Math.round(data[i] * 5000);
             if(c > 255){
                 c = 255;
             }

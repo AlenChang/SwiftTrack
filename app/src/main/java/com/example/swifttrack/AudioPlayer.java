@@ -39,7 +39,7 @@ public class AudioPlayer {
     private static final boolean USE_WINDOW = false;
     private static final int U = 1;
     private static final double SCALE = 0.9;
-    private static final byte CHANNEL_MASK = 0x02;
+    public static boolean[] CHANNEL_MASK = {true, false};
     private static final double[][] TX_SEQ = new double[N_ZC_UP][2];
 
     private static FileOutputStream fileOutputStream;
@@ -125,6 +125,7 @@ public class AudioPlayer {
             genZCSeq();
             speaker = new SeqSpeaker();
         }
+        Log.d("Player", " " + CHANNEL_MASK[0] + " " + CHANNEL_MASK[1]);
     }
 
     public void start() {
@@ -218,10 +219,11 @@ public class AudioPlayer {
 
         // Scaling
         for (int i = 0; i < N_ZC_UP; i++) {
-            for (int j = 0; j < 2; j++) {
-                if (((j + 1) & CHANNEL_MASK) != 0) {
-                    TX_SEQ[i][j] = seqFrame[i % N_ZC_UP] / maxValue * SCALE;
-                }
+            if (CHANNEL_MASK[0]) {
+                TX_SEQ[i][0] = seqFrame[i % N_ZC_UP] / maxValue * SCALE;
+            }
+            if (CHANNEL_MASK[1]) {
+                TX_SEQ[i][1] = seqFrame[i % N_ZC_UP] / maxValue * SCALE;
             }
         }
     }

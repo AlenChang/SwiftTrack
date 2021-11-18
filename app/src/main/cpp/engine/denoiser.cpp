@@ -35,6 +35,10 @@ Denoiser::~Denoiser() {
     cout << "Denoiser was recycled." << endl;
 }
 
+void Denoiser::GetMovingStatus(bool * status){
+    *status = is_moving_;
+}
+
 void Denoiser::FeedSignal(const MatrixX<complex<double>> &signal) {
     assert(status_ != CALI_FAILED);
 
@@ -96,7 +100,7 @@ void Denoiser::compute_thre(){
 
     double signa_diff[960];
     complex2double(signal_ - prev_signal_, signa_diff);
-    BackgroundRemoval::compute_thre(signa_diff, compute_thre_taps, compute_thre_iter, 4, &init1_flag ,&moving_threshold_);
+    BackgroundRemoval::compute_thre(signa_diff, compute_thre_taps, compute_thre_iter, 6, &init1_flag ,&moving_threshold_);
     compute_thre_iter++;
 
     if(init1_flag){
@@ -201,10 +205,8 @@ void Denoiser::OfflineRemoveStaticSignal() {
 // offline first - we will have a static signal before online algorithm
 // * pass
 void Denoiser::OnlineUpdateStaticSignal() {
-
     moving_frames_counter ++;
-    static_signal_ = (moving_frames_counter * static_signal_ +  updated_static_signal_) / (moving_frames_counter + 1);
-
+    static_signal_ = (1 - updata_factor) * static_signal_ + updata_factor * updated_static_signal_;
 }
 
 // * pass

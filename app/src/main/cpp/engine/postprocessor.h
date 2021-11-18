@@ -33,7 +33,7 @@ public:
 private:
     void CutOffCIRSignal(const MatrixX<complex<double>> &cir_signal);
 
-    void CalcPhase(bool is_moving);
+    void CalcPhase();
 
     double CalcPhase(complex<double> tapSel, double & pre_phase);
 
@@ -41,7 +41,7 @@ private:
 
     void PhaseTransform();
 
-    void TapSelectionTOF(bool is_moving);
+    void TapSelectionTOF();
 
     void BasicChannelEstimation(int rows, int tap);
 
@@ -53,7 +53,7 @@ private:
 
     // bool USE_KALMAN = false;
 
-    const int N_IRS = 480;
+    const int N_IRS = 150;
     const double C = 34300.0;
     const double FC = 20000.0;
     const double FS = 48000.0;
@@ -61,10 +61,15 @@ private:
     const double PHASE_DIFF_THRESHOLD = 1.0 * M_PI;
     const double PHASE_DIFF_2_THRESHOLD = 1.0 * M_PI;
     const double use_diff_flag = true;
+    const int tail_tap = 20;
+    const int N_ZC_UP = 480;
+
+    const double complementary_factor = 0.95;
 
     int last_tap = 0;
 
     double prev_phase_in_wrap_;
+    double prev_velocity;
     
     Pre_Data_Store Strata_pre_;
 
@@ -74,6 +79,7 @@ private:
     Histories Strata_history_;
 
     MatrixX<complex<double>> prev_irs_signal_;
+    MatrixX<complex<double>> prev_irs_signal_diff;
     MatrixX<complex<double>> irs_signal_;
     MatrixX<complex<double>> irs_signal_diff;
 
@@ -91,6 +97,8 @@ private:
     double lowpass_taps_a[22];
     double lowpass_taps_fingerIO[22];
     double lowpass(double x, double taps[22]);
+
+    bool is_moving_;
 
 
 };

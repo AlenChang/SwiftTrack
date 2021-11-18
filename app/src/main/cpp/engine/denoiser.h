@@ -17,6 +17,8 @@ public:
 
     ~Denoiser();
 
+    void GetMovingStatus(bool * status);
+
     void FeedSignal(const MatrixX<complex<double>> &signal);
 
     status_type GetStatus();
@@ -58,6 +60,7 @@ private:
     const int MOVING_PERIOD_MIN_FRAMES = 30;
     const int UPDATED_MOVING_PERIODS = 1;
     const double UPDATE_FACTOR = 0.0;
+    const double updata_factor = 0.3;
     int moving_frames_counter = 0;
 
     // Remark the denoiser working stage

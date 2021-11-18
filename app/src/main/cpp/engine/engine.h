@@ -15,6 +15,8 @@ public:
 
     static void GetCIR(int id, double *cir_abs, int n);
 
+    static void getMovingStatus(int id, bool *status);
+
     static void GetBeta(int id, double* beta_real, double* beta_imag);
 
     static void Reset(int id);

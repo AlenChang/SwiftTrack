@@ -104,6 +104,11 @@ void Engine::GetCIR(int id, double *cir_abs, int n){
     engine->postprocessor_->GetCIR(cir_abs, n);
 }
 
+void Engine::getMovingStatus(int id, bool *status){
+    Engine *engine = Engine::GetInstance(id);
+    engine->denoiser_->GetMovingStatus(status);
+}
+
 void Engine::GetBeta(int id, double* beta_real, double* beta_imag){
     Engine *engine = Engine::GetInstance(id);
     engine->postprocessor_->GetBeta(beta_real, beta_imag);
