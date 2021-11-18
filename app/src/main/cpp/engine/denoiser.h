@@ -52,7 +52,7 @@ private:
 
     double MaxDiff(const MatrixX<complex<double>> &m1, const MatrixX<complex<double>> &m2);
 
-    const int FRAME_SIZE = 480;
+    // const int FRAME_SIZE = 480;
     const int CALI_1_FRAMES = 50;
     const float thre_factor = 2;
     const int CALI_2_PERIODS = 1;
@@ -61,6 +61,7 @@ private:
     const int UPDATED_MOVING_PERIODS = 1;
     const double UPDATE_FACTOR = 0.0;
     const double updata_factor = 0.3;
+    int N_ZC_UP;
     int moving_frames_counter = 0;
 
     // Remark the denoiser working stage
@@ -108,7 +109,7 @@ private:
     int compute_thre_iter = 0;
     boolean_T init1_flag = false;
     void compute_thre();
-    void complex2double(const MatrixX<complex<double>> &x, double out[960]);
+    void complex2double(const MatrixX<complex<double>> &x, double * out);
 
 //    ofstream fout;
     

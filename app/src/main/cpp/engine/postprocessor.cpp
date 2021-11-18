@@ -333,7 +333,13 @@ void Postprocessor::BasicChannelEstimation(int rows, int tap){
     double phase_diff = CalcPhase(tapSel, Strata_pre_.pre_phase_in_wrap_);
     double phase_unwrapped = Strata_history_.phase_history_.back() + phase_diff;
     Strata_history_.phase_history_.push_back(phase_unwrapped);
-    Strata_history_.dist_history_.push_back(- phase_unwrapped * C / 2 / M_PI / FC / 2);
+
+    // double dist = - phase_unwrapped * C / 2 / M_PI / FC / 2;
+
+    double velocity = phase_diff * C / 2 / M_PI / FC / 2;
+
+    double dist = (1 - complementary_factor) * TOF_history_.dist_history_.back() + complementary_factor * (Strata_history_.dist_history_.back() + velocity * T);
+    Strata_history_.dist_history_.push_back(dist);
     Strata_history_.velocity_history_.push_back(0);
 
 }
