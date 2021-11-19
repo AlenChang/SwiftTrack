@@ -237,20 +237,29 @@ public class AudioProcessor {
                     if (lock.tryLock()) {
                         float[] data = MainActivity.rxQueue.poll(INTERVAL, TimeUnit.MILLISECONDS);
 
+
                         if (data != null & warmUpFlag) {
 //                            Log.d("Timer", "Start processing audios.");
 //                            Log.d("datasize", "data length " + data.length);
+//                            Log.d("test", "data shape: " + data.length);
                             for (int i = 0; i < data.length / 2 / FRAME_SIZE; i++) {
+//                                Log.d("frame_number", " " + i + " out of " + data.length / 2 / FRAME_SIZE );
                                 for (int j = 0; j < FRAME_SIZE; j++) {
                                     frame1[j] = data[2 * (i * FRAME_SIZE + j)];
                                     frame2[j] = data[2 * (i * FRAME_SIZE + j) + 1];
+//                                    Log.d("frame_data", frame1[j] + " " + frame2[j]);
                                 }
                                 long startTime = System.currentTimeMillis();
+//                                Log.d("Channel", " " + CHANNEL_MASK[inputChannel.LEFT] + " " + CHANNEL_MASK[inputChannel.RIGHT]);
                                 if (CHANNEL_MASK[inputChannel.LEFT]) {
+//                                    Log.d("in_channel_test", "ready to process left channel");
                                     processFrame(inputChannel.LEFT, frame1, FRAME_SIZE, AudioPlayer.N_ZC_UP);
+//                                    Log.d("in_channel_test", "left channel finished");
                                 }
                                 if (CHANNEL_MASK[inputChannel.RIGHT]) {
+//                                    Log.d("in_channel_test", "ready to process right channel");
                                     processFrame(inputChannel.RIGHT, frame2, FRAME_SIZE, AudioPlayer.N_ZC_UP);
+//                                    Log.d("in_channel_test", "right channel finished");
                                 }
                                 long endTime = System.currentTimeMillis();
                                 if(endTime - startTime > 10 || counter % 50 == 0){
@@ -384,6 +393,7 @@ public class AudioProcessor {
     }
 
     public void start() {
+        Log.d("test", "ready to start!");
         fileOutputStream = FileUtil.getFileOutputStream("processor/est_" + timestamp + ".txt");
         outputStreamWriter = new OutputStreamWriter(fileOutputStream, StandardCharsets.UTF_8);
         bufferedWriter = new BufferedWriter(outputStreamWriter);

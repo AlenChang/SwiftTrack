@@ -11,6 +11,7 @@ Java_com_example_swifttrack_AudioProcessor_processFrame(
     jdouble *data_ = (env)->GetDoubleArrayElements(data, nullptr);
 
     if (Engine::GetInstance(id, N_ZC_UP) != nullptr) {
+//        LoggerUtil::Log("in_c_test", "Ready to process data");
         Engine::ProcessFrame(id, data_, n, N_ZC_UP);
     }
     // from c type to java type

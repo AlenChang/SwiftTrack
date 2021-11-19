@@ -25,21 +25,25 @@ import java.util.concurrent.locks.ReentrantLock;
 public class AudioPlayer {
 
     // public variable can be read by other classes
-    public static final int N_ZC_UP = 480;
-    public static final int N_ZC = N_ZC_UP / 8 - 1;
-    public static final int FC = 20000;
+    // tunable parameters
+    public static final int N_ZC_UP = 960;
+    public static boolean[] SPEAKER_CHANNEL_MASK = {true, false};
 
+
+
+    // non-tunable parameters
+    public static final int N_ZC = (int) (N_ZC_UP / 8 - 1);
+    public static final int FC = 20000;
     public static boolean USE_FILE = false;
 
 
     public static int SAMPLE_RATE = 48000;
-    public static int BUFFER_SIZE = 4800;
-
+    public static int BUFFER_SIZE = N_ZC_UP * 10;
 
     private static final boolean USE_WINDOW = false;
     private static final int U = 1;
     private static final double SCALE = 0.9;
-    public static boolean[] CHANNEL_MASK = {true, false};
+
     private static final double[][] TX_SEQ = new double[N_ZC_UP][2];
 
     private static FileOutputStream fileOutputStream;
@@ -125,7 +129,7 @@ public class AudioPlayer {
             genZCSeq();
             speaker = new SeqSpeaker();
         }
-        Log.d("Player", " " + CHANNEL_MASK[0] + " " + CHANNEL_MASK[1]);
+        Log.d("Player", " " + SPEAKER_CHANNEL_MASK[0] + " " + SPEAKER_CHANNEL_MASK[1]);
     }
 
     public void start() {
@@ -219,10 +223,10 @@ public class AudioPlayer {
 
         // Scaling
         for (int i = 0; i < N_ZC_UP; i++) {
-            if (CHANNEL_MASK[0]) {
+            if (SPEAKER_CHANNEL_MASK[0]) {
                 TX_SEQ[i][0] = seqFrame[i % N_ZC_UP] / maxValue * SCALE;
             }
-            if (CHANNEL_MASK[1]) {
+            if (SPEAKER_CHANNEL_MASK[1]) {
                 TX_SEQ[i][1] = seqFrame[i % N_ZC_UP] / maxValue * SCALE;
             }
         }

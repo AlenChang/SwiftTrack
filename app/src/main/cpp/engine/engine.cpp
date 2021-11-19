@@ -9,7 +9,7 @@ using namespace std;
 
 Engine::Engine() {
 
-    // setup();
+//     setup();
 
     prev_status_ = Denoiser::CALI_1;
     cur_status_ = Denoiser::CALI_1;
@@ -41,12 +41,14 @@ Engine::~Engine() {
 
 
 Engine* Engine::GetInstance(int id, int N) {
-
+//    LoggerUtil::Log("in_c_test", "ready to create instance.");
     if (id == 0) {
         if (instance1 == nullptr) {
             instance1 = new Engine();
             instance1->setup(N);
+//            LoggerUtil::Log("in_c_test", "initialize left channel success.");
         }
+//        LoggerUtil::Log("in_c_test", "return instance 1.");
         return instance1;
     }
 
@@ -54,7 +56,9 @@ Engine* Engine::GetInstance(int id, int N) {
         if (instance2 == nullptr) {
             instance2 = new Engine();
             instance2->setup(N);
+//            LoggerUtil::Log("in_c_test", "initialize right channel success.");
         }
+//        LoggerUtil::Log("in_c_test", "return instance 2.");
         return instance2;
     }
 
@@ -85,7 +89,7 @@ void Engine::ProcessFrame(int id, const double *data, int n, int N) {
     for (int i = 0; i < n; i++) {
         rx_signal(0, i) = *(data + i);
     }
-
+//    LoggerUtil::Log("in_c_test", "process data...");
     engine->ProcessFrameCore(rx_signal);
 }
 
@@ -141,15 +145,15 @@ void Engine::Reset(int id, int N) {
         delete instance1;
         instance1 = new Engine();
         instance1->setup(N);
-        // LoggerUtil::Log("Engine::Reset", "Reset instance1 OK.");
+//         LoggerUtil::Log("in_c_test", "Reset instance1 OK.");
         return;
     }
 
     if (id == 1) {
         delete instance2;
         instance2 = new Engine();
-        instance1->setup(N);
-        // LoggerUtil::Log("Engine::Reset", "Reset instance2 OK.");
+        instance2->setup(N);
+//         LoggerUtil::Log("in_c_test", "Reset instance2 OK.");
         return;
     }
 
