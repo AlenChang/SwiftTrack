@@ -49,7 +49,7 @@ public class SettingFragment extends Fragment {
         binding = SettingFragmentBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        binding.switch2.setChecked(AudioPlayer.USE_FILE);
+        binding.switch2.setChecked(MainActivity.USE_FILE);
         binding.switch3.setChecked(MainActivity.CHANNEL_MASK[0]);
         binding.switch4.setChecked(MainActivity.CHANNEL_MASK[1]);
 //        binding.switch5.setChecked(AudioPlayer.CHANNEL_MASK[0]);
@@ -59,11 +59,11 @@ public class SettingFragment extends Fragment {
         binding.switch2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    AudioPlayer.USE_FILE = true;
+                    MainActivity.USE_FILE = true;
                     AudioRecorder.setFileName(getFileName("recorder/"));
                     Log.d("files", getFileName("recorder/"));
                 } else {
-                    AudioPlayer.USE_FILE = false;
+                    MainActivity.USE_FILE = false;
                 }
             }
         });

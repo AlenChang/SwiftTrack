@@ -34,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
 
     public static boolean[] CHANNEL_MASK = {true, false}; // for processor
+    public static final boolean[] SPEAKER_CHANNEL_MAKS = {true, false};
+    public static boolean USE_FILE = false;
+    public static int N_ZC_UP = 480;
+    public static int BUFFER_SIZE = N_ZC_UP * 10;
 
     // ******************************
     // required permissions
@@ -48,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     // ******************************
     // A queue to to store received dataframes
     // ******************************
-    public static final ArrayBlockingQueue<float[]> rxQueue = new ArrayBlockingQueue<>(AudioPlayer.BUFFER_SIZE);
+    public static final ArrayBlockingQueue<float[]> rxQueue = new ArrayBlockingQueue<>(BUFFER_SIZE);
 
 
 

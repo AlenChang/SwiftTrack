@@ -24,9 +24,9 @@ import java.util.concurrent.locks.ReentrantLock;
 public class AudioRecorder {
 
     private static boolean USE_FILE;
-    private static final int SAMPLE_RATE = AudioPlayer.SAMPLE_RATE;
-    private static final int BUFFER_SIZE = AudioPlayer.BUFFER_SIZE;
+    private static int BUFFER_SIZE;
 
+    private static final int SAMPLE_RATE = AudioPlayer.SAMPLE_RATE;
     private static final int CHANNEL_TYPE = AudioFormat.CHANNEL_IN_STEREO;
     private static final int ENCODING_TYPE = AudioFormat.ENCODING_PCM_FLOAT;
 
@@ -149,7 +149,8 @@ public class AudioRecorder {
 
     private Phone phone;
     public AudioRecorder() {
-        USE_FILE = AudioPlayer.USE_FILE;
+        USE_FILE = MainActivity.USE_FILE;
+        BUFFER_SIZE = MainActivity.N_ZC_UP * 10;
     }
 
     public void setTimestamp(long timestamp) {

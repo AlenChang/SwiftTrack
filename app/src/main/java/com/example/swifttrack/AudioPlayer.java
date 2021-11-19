@@ -26,25 +26,30 @@ public class AudioPlayer {
 
     // public variable can be read by other classes
     // tunable parameters
-    public static final int N_ZC_UP = 960;
-    public static boolean[] SPEAKER_CHANNEL_MASK = {true, false};
+
+
+
+
+
 
 
 
     // non-tunable parameters
-    public static final int N_ZC = (int) (N_ZC_UP / 8 - 1);
+    public static int N_ZC_UP;
+    public static int N_ZC;
+    public static int BUFFER_SIZE;
+    public static boolean USE_FILE;
+    public static boolean[] SPEAKER_CHANNEL_MASK;
+
+
     public static final int FC = 20000;
-    public static boolean USE_FILE = false;
-
-
-    public static int SAMPLE_RATE = 48000;
-    public static int BUFFER_SIZE = N_ZC_UP * 10;
-
+    public static final int SAMPLE_RATE = 48000;
     private static final boolean USE_WINDOW = false;
     private static final int U = 1;
     private static final double SCALE = 0.9;
 
-    private static final double[][] TX_SEQ = new double[N_ZC_UP][2];
+    private static double[][] TX_SEQ;
+
 
     private static FileOutputStream fileOutputStream;
     private static OutputStreamWriter outputStreamWriter;
@@ -116,7 +121,14 @@ public class AudioPlayer {
 
     private Speaker speaker;
 
-    public AudioPlayer() { }
+    public AudioPlayer() {
+        USE_FILE = MainActivity.USE_FILE;
+        N_ZC_UP = MainActivity.N_ZC_UP;
+        N_ZC = (N_ZC_UP / 8 - 1);
+        BUFFER_SIZE = N_ZC_UP * 10;
+        SPEAKER_CHANNEL_MASK = MainActivity.SPEAKER_CHANNEL_MAKS;
+        TX_SEQ = new double[N_ZC_UP][2];
+    }
 
     public void setTimestamp(long timestamp) {
         AudioPlayer.timestamp = timestamp;
