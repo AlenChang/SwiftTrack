@@ -136,7 +136,9 @@ public class AudioPlayer {
 
     public void init() {
         needSave = false;
-
+        Log.d("init_value", "player N_ZC_UP " + AudioPlayer.N_ZC_UP);
+        Log.d("init_value", "player BUFFER_SIZE " + AudioPlayer.BUFFER_SIZE);
+        Log.d("init_value", "player TX_SEQ size " + TX_SEQ.length);
         if (!USE_FILE) {
             genZCSeq();
             speaker = new SeqSpeaker();

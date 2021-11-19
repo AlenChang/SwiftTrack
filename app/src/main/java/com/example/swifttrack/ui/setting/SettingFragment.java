@@ -21,6 +21,7 @@ import com.example.swifttrack.AudioRecorder;
 import com.example.swifttrack.MainActivity;
 import com.example.swifttrack.R;
 import com.example.swifttrack.databinding.SettingFragmentBinding;
+import com.example.swifttrack.ui.home.HomeFragment;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,8 +53,11 @@ public class SettingFragment extends Fragment {
         binding.switch2.setChecked(MainActivity.USE_FILE);
         binding.switch3.setChecked(MainActivity.CHANNEL_MASK[0]);
         binding.switch4.setChecked(MainActivity.CHANNEL_MASK[1]);
+        binding.editTextNumberDecimal.setHint(" " + MainActivity.N_ZC_UP);
+//        binding.editTextNumberDecimal.setText(MainActivity.N_ZC_UP);
 //        binding.switch5.setChecked(AudioPlayer.CHANNEL_MASK[0]);
 //        binding.switch6.setChecked(AudioPlayer.CHANNEL_MASK == 0x02);
+
 
 
         binding.switch2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -93,6 +97,22 @@ public class SettingFragment extends Fragment {
                     MainActivity.CHANNEL_MASK[1] = false;
                     binding.switch3.setChecked(true);
                 }
+            }
+        });
+
+        binding.nZcUpSaveButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String text = binding.editTextNumberDecimal.getText().toString();
+                if(!text.isEmpty()){
+                    int N_ZC_UP = Integer.parseInt(text);
+                    Log.d("test_edit_number", text + " " + N_ZC_UP);
+                    if(N_ZC_UP % 24 == 0 && N_ZC_UP > 48 && N_ZC_UP <=1200){
+                        MainActivity.N_ZC_UP = N_ZC_UP;
+                        binding.editTextNumberDecimal.setHint(" " + MainActivity.N_ZC_UP);
+                        Log.d("test_edit_number", "Sequence length is " + MainActivity.N_ZC_UP);
+                    }
+                }
+
             }
         });
 

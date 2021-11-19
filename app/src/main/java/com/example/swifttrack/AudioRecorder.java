@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -42,6 +43,10 @@ public class AudioRecorder {
 
 
     public static String playFile = "atest1.txt";
+    // ******************************
+    // A queue to to store received dataframes
+    // ******************************
+    public static ArrayBlockingQueue<float[]> rxQueue;
 
 
     private static abstract class Phone extends Thread {
@@ -94,7 +99,7 @@ public class AudioRecorder {
         }
 
         private void processBuffer() {
-            MainActivity.rxQueue.offer(buffer);
+            AudioRecorder.rxQueue.offer(buffer);
 
             FileUtil.streamWriteMusic(bufferedWriter, buffer);
         }
@@ -118,7 +123,7 @@ public class AudioRecorder {
                             running = false;
                         }
 
-                        MainActivity.rxQueue.offer(buffer);
+                        AudioRecorder.rxQueue.offer(buffer);
 
                         lock.unlock();
                     } else {
@@ -151,6 +156,7 @@ public class AudioRecorder {
     public AudioRecorder() {
         USE_FILE = MainActivity.USE_FILE;
         BUFFER_SIZE = MainActivity.N_ZC_UP * 10;
+        rxQueue = new ArrayBlockingQueue<>(BUFFER_SIZE);
     }
 
     public void setTimestamp(long timestamp) {
@@ -159,6 +165,8 @@ public class AudioRecorder {
 
     public void init() {
         needSave = false;
+        Log.d("init_value", "recorder rxQueue Size " + rxQueue.size());
+
 
         if (USE_FILE) {
             phone = new FakerPhone();

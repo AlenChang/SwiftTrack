@@ -33,8 +33,8 @@ public class AudioProcessor {
         System.loadLibrary("acoustic");
     }
 
-    private static final int FRAME_SIZE = AudioPlayer.N_ZC_UP;
-    private static boolean[] CHANNEL_MASK = { false, true };
+    private static int FRAME_SIZE;
+    private static boolean[] CHANNEL_MASK = MainActivity.CHANNEL_MASK;
 
     private static FileOutputStream fileOutputStream;
     private static OutputStreamWriter outputStreamWriter;
@@ -235,7 +235,7 @@ public class AudioProcessor {
             while (running) {
                 try {
                     if (lock.tryLock()) {
-                        float[] data = MainActivity.rxQueue.poll(INTERVAL, TimeUnit.MILLISECONDS);
+                        float[] data = AudioRecorder.rxQueue.poll(INTERVAL, TimeUnit.MILLISECONDS);
 
 
                         if (data != null & warmUpFlag) {
@@ -355,7 +355,10 @@ public class AudioProcessor {
 
 
     public AudioProcessor() {}
-    public AudioProcessor(boolean[] mask) {CHANNEL_MASK = mask;}
+    public AudioProcessor(boolean[] mask) {
+        CHANNEL_MASK = mask;
+        FRAME_SIZE = MainActivity.N_ZC_UP;
+    }
 
     public void setTimestamp(long timestamp) {
         AudioProcessor.timestamp = timestamp;
@@ -430,7 +433,7 @@ public class AudioProcessor {
         if (CHANNEL_MASK[inputChannel.RIGHT]) {
             reset(inputChannel.RIGHT, AudioPlayer.N_ZC_UP);
         }
-        MainActivity.rxQueue.clear();
+        AudioRecorder.rxQueue.clear();
         engine = new Engine(fragID);
     }
 
