@@ -3,6 +3,7 @@
 
 Postprocessor::Postprocessor(int N_ZC_UP_) {
     N_ZC_UP = N_ZC_UP_;
+    T = N_ZC_UP / FS;
     if(N_ZC_UP > 150){
         N_IRS = 150;
     }else{
@@ -10,6 +11,7 @@ Postprocessor::Postprocessor(int N_ZC_UP_) {
     }
 
     prev_phase_in_wrap_ = 0.0;
+    phase_prev_motion2 = 0.0;
     prev_motion2 = complex<double>(0, 0);
     prev_beta = complex<double>(0, 0);
 
@@ -170,7 +172,12 @@ void Postprocessor::CalcPhase() {
 
     double phase_unwrapped;
     if(is_moving_){
-        phase_unwrapped = - prev_velocity / C * (4 * M_PI * FC * T) + phase_diff;
+        if( abs(swifttrack_history_.acc_phase_history_.back()) < (2.0 / 3.0 * M_PI) ){
+            phase_unwrapped = - prev_velocity / C * (4 * M_PI * FC * T) + phase_diff;
+        }else{
+            phase_unwrapped = - prev_velocity / C * (4 * M_PI * FC * T) + swifttrack_history_.acc_phase_history_.back();
+        }
+
     }else{
         phase_unwrapped = arg(beta);
     }
@@ -188,19 +195,22 @@ void Postprocessor::MotionCoeff2(complex<double> beta){
     if(abs(prev_beta) != 0 & abs(beta) != 0){
 //        double phase_prev_motion2 = arg(prev_motion2);
         complex<double> motion2 = beta / prev_beta;
-//        prev_motion2 = motion2;
-//
-//        phase_diff = CalcPhase(motion2, phase_prev_motion2);
-//        phase_unwrapped = swifttrack_history_.acc_phase_history_.back() + phase_diff;
-        acc = -arg(motion2);
-        // if(abs(acc) > 2){
-        //     acc = 0;
-        // }
-        acc = acc * C / (4 * M_PI * FC * T * T);
+        prev_motion2 = motion2;
 
-        acc = mvMedian(acc, mvAcc.buffer, &mvAcc.iter);
-        // acc = lowpass(acc, lowpass_taps_a);
+        phase_diff = CalcPhase(motion2, phase_prev_motion2);
+        if(is_moving_){
+            phase_unwrapped = swifttrack_history_.acc_phase_history_.back() + phase_diff;
+        }else{
+            phase_unwrapped = arg(motion2);
+        }
 
+//        phase_unwrapped = -arg(motion2);
+
+        acc = - phase_unwrapped * C / (4 * M_PI * FC * T * T);
+
+
+//        acc = mvMedian(acc, mvAcc.buffer, &mvAcc.iter);
+//         acc = lowpass(acc, lowpass_taps_a);
         velocity = swifttrack_history_.acc2velocity_history_.back() + acc * T;
         dist = swifttrack_history_.acc2dist_history_.back() + velocity * T;
     }else{
@@ -268,7 +278,7 @@ void Postprocessor::PhaseTransform() {
 
 
     // velocity = mvMedian(velocity, mvVelocity.buffer, &mvVelocity.iter);
-    // velocity = lowpass(velocity, lowpass_taps_v);
+     velocity = lowpass(velocity, lowpass_taps_v);
 
     swifttrack_history_.velocity_history_.push_back(velocity);
 

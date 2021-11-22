@@ -57,13 +57,13 @@ private:
     const double C = 34300.0;
     const double FC = 20000.0;
     const double FS = 48000.0;
-    const double T = 0.01;
     const double PHASE_DIFF_THRESHOLD = 1.0 * M_PI;
     const double PHASE_DIFF_2_THRESHOLD = 1.0 * M_PI;
     const double use_diff_flag = true;
     const int tail_tap = 20;
     int N_ZC_UP;
     int N_IRS;
+    double T;
 
     const double complementary_factor = 0.995;
 
@@ -71,6 +71,7 @@ private:
 
     double prev_phase_in_wrap_;
     double prev_velocity;
+    double phase_prev_motion2;
     
     Pre_Data_Store Strata_pre_;
 

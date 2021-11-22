@@ -155,7 +155,7 @@ void Denoiser::ProcessCalibration2() {
     // case 3: if moving for a long time, break 
     if (calibration_2_signal_history_.size() > CALI_2_MAX_FRAMES) {
         status_ = CALI_FAILED;
-        cout << "Motion is not detected for " << CALI_2_MAX_FRAMES * 0.01 << " seconds!" << endl;
+        cout << "Motion is not detected for " << CALI_2_MAX_FRAMES * N_ZC_UP / 48e3 << " seconds!" << endl;
         cout << "Program terminated!" << endl;
     }
 }

@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.swifttrack.AudioPlayer;
+import com.example.swifttrack.MainActivity;
 import com.example.swifttrack.ui.acc.AccViewModel;
 import com.example.swifttrack.utils.PlotUtil;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -24,7 +25,7 @@ public class SlideshowViewModel extends ViewModel {
     private static MutableLiveData<Bitmap> bitmap;
     private static MutableLiveData<LineDataSet> xChart;
     public static final int height = 600;
-    public static final int width = 480;
+    public static final int width = MainActivity.N_ZC_UP;
     public static int iter = 0;
 
     public SlideshowViewModel() {
