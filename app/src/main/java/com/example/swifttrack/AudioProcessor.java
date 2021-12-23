@@ -170,6 +170,10 @@ public class AudioProcessor {
                 getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_a);
                 AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.acceleration2dist);
 
+                double[] time_count = new double[2];
+                getTime(inputChannel.RIGHT, time_count);
+                Log.d("C_TIME_COUNT", ""+time_count[0]);
+
             } else {
                 getHistoryData(inputChannel.LEFT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.velocity_);
                 AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.velocity);
@@ -185,6 +189,10 @@ public class AudioProcessor {
 
                 getHistoryData(inputChannel.LEFT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_a);
                 AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.acceleration2dist);
+
+                double[] time_count = new double[2];
+                getTime(inputChannel.LEFT, time_count);
+                Log.d("C_TIME_COUNT", ""+time_count[0]);
 
             }
         }
@@ -249,21 +257,17 @@ public class AudioProcessor {
                                     frame2[j] = data[2 * (i * FRAME_SIZE + j) + 1];
 //                                    Log.d("frame_data", frame1[j] + " " + frame2[j]);
                                 }
-                                long startTime = System.currentTimeMillis();
-//                                Log.d("Channel", " " + CHANNEL_MASK[inputChannel.LEFT] + " " + CHANNEL_MASK[inputChannel.RIGHT]);
+//                                long startTime = System.currentTimeMillis();
+                                long startTime = System.nanoTime();
                                 if (CHANNEL_MASK[inputChannel.LEFT]) {
-//                                    Log.d("in_channel_test", "ready to process left channel");
                                     processFrame(inputChannel.LEFT, frame1, FRAME_SIZE, AudioPlayer.N_ZC_UP);
-//                                    Log.d("in_channel_test", "left channel finished");
                                 }
                                 if (CHANNEL_MASK[inputChannel.RIGHT]) {
-//                                    Log.d("in_channel_test", "ready to process right channel");
                                     processFrame(inputChannel.RIGHT, frame2, FRAME_SIZE, AudioPlayer.N_ZC_UP);
-//                                    Log.d("in_channel_test", "right channel finished");
                                 }
-                                long endTime = System.currentTimeMillis();
-                                if(endTime - startTime > 10 || counter % 50 == 0){
-                                    Log.d("TimeCount", " " + (endTime - startTime) + " ms");
+                                long endTime = System.nanoTime();
+                                if( counter % 10 == 0){
+                                    Log.d("TimeCount", " " + (endTime - startTime)/1000000.0 + " ms");
                                 }
                                 counter++;
                             }
@@ -445,4 +449,6 @@ public class AudioProcessor {
     private static native void reset(int id, int N_ZC_UP);
 
     private static native void getHistoryData(int id, double[] history, int n, int history_id, int history_type);
+
+    private static native void getTime(int id, double[] time_count);
 }

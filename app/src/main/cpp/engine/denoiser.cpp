@@ -242,7 +242,7 @@ double Denoiser::MaxDiff(const MatrixX<complex<double>> &m1, const MatrixX<compl
     double res = 0.0;
 
     for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
+        for (int j = 0; j < 150; j++) {
             double diff = abs(m1(i, j) - m2(i, j));
             if (diff > res) {
                 res = diff;

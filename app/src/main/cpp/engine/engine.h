@@ -27,6 +27,10 @@ public:
 
     void setup(int N);
 
+    static void getTime(int id, double* time);
+
+    double time_count;
+
 private:
     Engine();
 

@@ -9,9 +9,10 @@ Postprocessor::Postprocessor(int N_ZC_UP_) {
     }else{
         N_IRS = N_ZC_UP;
     }
-
+//    N_IRS = N_ZC_UP;
     prev_phase_in_wrap_ = 0.0;
     phase_prev_motion2 = 0.0;
+    init_velocity = 0.0;
     prev_motion2 = complex<double>(0, 0);
     prev_beta = complex<double>(0, 0);
 
@@ -68,7 +69,7 @@ double Postprocessor::ProcessCIRSignal(const MatrixX<complex<double>> &cir_signa
 
     TapSelectionTOF();
 
-    PhaseTransform();
+//    PhaseTransform();
 
     return swifttrack_history_.dist_history_.back();
 }
@@ -165,8 +166,7 @@ void Postprocessor::CalcPhase() {
     prev_irs_signal_ = irs_signal_;
     prev_irs_signal_diff = irs_signal_diff;
 
-    // second order motion coefficients
-    MotionCoeff2(beta);
+
 
     double phase_diff = CalcPhase(beta, prev_phase_in_wrap_);
 
@@ -183,10 +183,19 @@ void Postprocessor::CalcPhase() {
     }
 
 
+
+
     assert( !isnan(phase_unwrapped) );
 
     // todo: to implement with kalman filter
     swifttrack_history_.phase_history_.push_back(phase_unwrapped);
+
+    if(!init_velocity_flag && phase_unwrapped != 0){
+        init_velocity = -phase_unwrapped * C / (4 * M_PI * FC * T);;
+    }
+
+    // second order motion coefficients
+    MotionCoeff2(beta);
 }
 
 // for motion2, the phase do not produce ambiguity
@@ -212,6 +221,10 @@ void Postprocessor::MotionCoeff2(complex<double> beta){
 //        acc = mvMedian(acc, mvAcc.buffer, &mvAcc.iter);
 //         acc = lowpass(acc, lowpass_taps_a);
         velocity = swifttrack_history_.acc2velocity_history_.back() + acc * T;
+        if(!init_velocity_flag && init_velocity!=0){
+            velocity += init_velocity;
+            init_velocity_flag = true;
+        }
         dist = swifttrack_history_.acc2dist_history_.back() + velocity * T;
     }else{
         
@@ -222,6 +235,8 @@ void Postprocessor::MotionCoeff2(complex<double> beta){
     }
 
     prev_beta = beta;
+
+    PhaseTransform();
     
 
     swifttrack_history_.acc_phase_history_.push_back(phase_unwrapped);
@@ -262,6 +277,9 @@ void Postprocessor::PhaseTransform() {
     // }
 
     velocity = -swifttrack_history_.phase_history_.back() * C / (4 * M_PI * FC * T);
+    if(init_velocity == 0){
+        init_velocity = velocity;
+    }
 
     // if(is_moving_){
     //     if(velocity - swifttrack_history_.velocity_history_.back() > 35 ){

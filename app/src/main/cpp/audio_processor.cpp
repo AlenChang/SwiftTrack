@@ -18,6 +18,21 @@ Java_com_example_swifttrack_AudioProcessor_processFrame(
     env->ReleaseDoubleArrayElements(data, data_, JNI_ABORT);
 }
 
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_swifttrack_AudioProcessor_getTime(
+        JNIEnv *env, jobject thiz, jint id, jdoubleArray time_count
+) {
+    // from java type to c type
+    jdouble *time_count_ = (env)->GetDoubleArrayElements(time_count, nullptr);
+    if (Engine::GetInstance(id) != nullptr) {
+//        LoggerUtil::Log("in_c_test", "Ready to process data");
+        Engine::getTime(id, time_count_);
+    }
+    env->ReleaseDoubleArrayElements(time_count, time_count_, JNI_ABORT);
+}
+
+
 
 
 extern "C"

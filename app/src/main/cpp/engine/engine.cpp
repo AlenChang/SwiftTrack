@@ -2,6 +2,8 @@
 //#include "logger_util.hpp"
 #include <string>
 
+using namespace std::chrono;
+
 Engine *Engine::instance1 = nullptr;
 Engine *Engine::instance2 = nullptr;
 
@@ -18,6 +20,7 @@ Engine::Engine() {
 
 void Engine::setup(int N){
     N_ZC_UP_ = N;
+    time_count = 0;
     // from real-valued audio signal to complex-valued cir
     // methods irrelevant
     preprocessor_ = new Preprocessor(N_ZC_UP_);
@@ -30,6 +33,7 @@ void Engine::setup(int N){
     // Four different approaches - ToF, Strata, SwiftTrack w/o TOF, SwiftTrack
     postprocessor_ = new Postprocessor(N_ZC_UP_);
 }
+
 
 Engine::~Engine() {
     delete preprocessor_;
@@ -140,6 +144,12 @@ void Engine::GetBeta(int id, double* beta_real, double* beta_imag){
     engine->postprocessor_->GetBeta(beta_real, beta_imag);
 }
 
+void Engine::getTime(int id, double* time){
+    Engine *engine = Engine::GetInstance(id);
+    *time = engine->time_count;
+}
+
+
 void Engine::Reset(int id, int N) {
     if (id == 0) {
         delete instance1;
@@ -163,8 +173,12 @@ void Engine::Reset(int id, int N) {
 
 void Engine::ProcessFrameCore(const MatrixX<double> &rx_signal) {
 
+    auto start = high_resolution_clock::now();
     // compute CIR
     MatrixX<complex<double>> cir_signal = preprocessor_->GenerateCIRSignal(rx_signal);
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    time_count = duration.count();
 
     // simply feed signal to the denoiser
     // the denoiser will determine the next step

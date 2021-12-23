@@ -64,6 +64,8 @@ private:
     int N_ZC_UP;
     int N_IRS;
     double T;
+    double init_velocity;
+    bool init_velocity_flag = false;
 
     const double complementary_factor = 0.995;
 
