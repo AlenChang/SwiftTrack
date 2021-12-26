@@ -28,6 +28,13 @@
         android:name="com.example.swifttrack.ui.acc.AccFragment"
         android:label="@string/menu_acc"
         tools:layout="@layout/fragment_acc" />
+
+    <fragment
+        android:id="@+id/nav_ml"
+        android:name="com.example.swifttrack.ui.ml.MLFragment"
+        android:label="@string/menu_ml"
+        tools:layout="@layout/fragment_ml" />
+
     <fragment
         android:id="@+id/nav_setting"
         android:name="com.example.swifttrack.ui.setting.SettingFragment"

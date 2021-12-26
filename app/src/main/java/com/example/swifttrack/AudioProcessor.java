@@ -8,6 +8,8 @@ import android.widget.Toast;
 import com.example.swifttrack.ui.acc.AccViewModel;
 import com.example.swifttrack.ui.gallery.GalleryViewModel;
 import com.example.swifttrack.ui.home.HomeFragment;
+import com.example.swifttrack.ui.ml.MLViewModel;
+import com.example.swifttrack.ui.ml.Model;
 import com.example.swifttrack.ui.slideshow.SlideshowFragment;
 import com.example.swifttrack.ui.slideshow.SlideshowViewModel;
 import com.example.swifttrack.utils.FileUtil;
@@ -70,6 +72,7 @@ public class AudioProcessor {
         public static final int galleryFragment = 1;
         public static final int accFragment = 2;
         public static final int slideFragment = 3;
+        public static final int mlFragment = 4;
     }
 
 
@@ -219,6 +222,33 @@ public class AudioProcessor {
 
         }
 
+        private void prepareDataForMLFragment(int winLen){
+            double[] xWindow1 = new double[winLen];
+            double[] xWindow2 = new double[winLen];
+            if (CHANNEL_MASK[inputChannel.RIGHT]) {
+
+                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+                MLViewModel.setLineData(xWindow2, MLViewModel.OutTypes.SWIFT_TRACK);
+
+                double[] cir_abs = new double[FRAME_SIZE];
+                getCIR(inputChannel.RIGHT, cir_abs, FRAME_SIZE);
+                MLViewModel.setLineData(cir_abs, MLViewModel.OutTypes.CIR);
+
+                double[] ml_result = Model.getHistoryData(cir_abs, winLen);
+                MLViewModel.setLineData(ml_result, MLViewModel.OutTypes.ML);
+            } else {
+                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+                MLViewModel.setLineData(xWindow1, MLViewModel.OutTypes.SWIFT_TRACK);
+
+                double[] cir_abs = new double[FRAME_SIZE];
+                getCIR(inputChannel.LEFT, cir_abs, FRAME_SIZE);
+                MLViewModel.setLineData(cir_abs, MLViewModel.OutTypes.CIR);
+
+                double[] ml_result = Model.getHistoryData(cir_abs, winLen);
+                MLViewModel.setLineData(ml_result, MLViewModel.OutTypes.ML);
+            }
+        }
+
         @Override
         public void run() {
             frameCount = 0;
@@ -276,6 +306,7 @@ public class AudioProcessor {
 
                             switch (fragID){
                                 case ActivityID.homeFragment:
+                                    // TODO: memory leak
                                     double[] xWindow1 = new double[WINDOW_SIZE];
                                     double[] xWindow2 = new double[WINDOW_SIZE];
                                     double[] vWindow1 = new double[WINDOW_SIZE];
@@ -291,6 +322,9 @@ public class AudioProcessor {
                                     break;
                                 case ActivityID.slideFragment:
                                     prepareDataForSlideFragment(WINDOW_SIZE);
+                                    break;
+                                case ActivityID.mlFragment:
+                                    prepareDataForMLFragment(WINDOW_SIZE);
                                     break;
                                 default:
                                     break;
@@ -341,6 +375,9 @@ public class AudioProcessor {
                     break;
                 case ActivityID.slideFragment:
                     prepareDataForSlideFragment(frameCount);
+                    break;
+                case ActivityID.mlFragment:
+                    prepareDataForMLFragment(frameCount);
                     break;
                 default:
                     break;
