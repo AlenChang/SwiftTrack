@@ -226,6 +226,8 @@ public class AudioProcessor {
             double[] xWindow1 = new double[winLen];
             double[] xWindow2 = new double[winLen];
             if (CHANNEL_MASK[inputChannel.RIGHT]) {
+                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+                MLViewModel.setLineData(xWindow2, MLViewModel.OutTypes.SWIFT_TRACK);
 
                 getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.tof, HistoryType.dist_v);
                 MLViewModel.setLineData(xWindow2, MLViewModel.OutTypes.TOF);
@@ -237,6 +239,9 @@ public class AudioProcessor {
                 double[] ml_result = Model.getHistoryData(cir_abs, winLen);
                 MLViewModel.setLineData(ml_result, MLViewModel.OutTypes.ML);
             } else {
+                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+                MLViewModel.setLineData(xWindow1, MLViewModel.OutTypes.SWIFT_TRACK);
+
                 getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.tof, HistoryType.dist_v);
                 MLViewModel.setLineData(xWindow1, MLViewModel.OutTypes.TOF);
 
@@ -255,9 +260,15 @@ public class AudioProcessor {
             if (CHANNEL_MASK[inputChannel.RIGHT]) {
                 getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.tof, HistoryType.dist_v);
                 MLViewModel.saveTOF(xWindow2);
+
+                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+                MLViewModel.saveSwift(xWindow2);
             } else {
                 getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.tof, HistoryType.dist_v);
                 MLViewModel.saveTOF(xWindow1);
+
+                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+                MLViewModel.saveSwift(xWindow1);
             }
         }
 

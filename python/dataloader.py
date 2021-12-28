@@ -10,6 +10,8 @@ class CustomDataset(Dataset):
         tof_data = np.loadtxt(tof_filename, dtype=np.double)
         cir_data = np.loadtxt(cir_filename, dtype=np.double, delimiter=',')
 
+        print(tof_data.shape)
+        print(cir_data.shape)
         # self.labels = np.empty(shape=(len(cir_data), 1))
         self.labels = []
         self.data = []

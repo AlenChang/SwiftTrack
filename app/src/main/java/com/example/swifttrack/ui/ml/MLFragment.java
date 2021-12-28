@@ -64,6 +64,9 @@ public class MLFragment extends Fragment {
         binding.mlTof.setData(new LineData());
         binding.mlTof.setBorderWidth(20.0f);
 
+        binding.mlSwift.setData(new LineData());
+        binding.mlSwift.setBorderWidth(20.0f);
+
         binding.mlCir.setData(new LineData());
         binding.mlCir.setBorderWidth(20.0f);
 
@@ -132,6 +135,13 @@ public class MLFragment extends Fragment {
             @Override
             public void onChanged(LineDataSet lineDataSet) {
                 setChart(binding.mlTof, lineDataSet);
+            }
+        });
+
+        mlViewModel.getLiveLineData(MLViewModel.OutTypes.SWIFT_TRACK).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
+            @Override
+            public void onChanged(LineDataSet lineDataSet) {
+                setChart(binding.mlSwift, lineDataSet);
             }
         });
 

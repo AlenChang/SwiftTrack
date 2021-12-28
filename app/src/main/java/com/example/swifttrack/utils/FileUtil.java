@@ -197,8 +197,25 @@ public class FileUtil {
         }
     }
 
+    public static void streamWriteSingleTOF(BufferedWriter writer, double result) {
+        try {
+            String line = result + "\n";
+            writer.write(line);
+        } catch (IOException e) {
+            Log.e("FileUtil", e.getMessage());
+        }
+    }
+
     public static void streamWriteCIR(BufferedWriter writer, double[] result) {
         if (result == null) {
+            return;
+        }
+        double sum = 0.0;
+        for (int i = 0; i < 300; i++) {
+            sum += result[i];
+        }
+        double dis=1e-6;
+        if (Math.abs(sum - 0.0) < dis) {
             return;
         }
 

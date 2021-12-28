@@ -18,11 +18,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Model {
     private static final String TAG = "MLFragment";
     private static final String MODEL_NAME = "model.ptl";
+    private static final int inputNum = 150;
+
     private static Module mModule;
 
     private static List<Double> result;
@@ -57,13 +60,13 @@ public class Model {
     }
 
     public static void prediction(double[] input) {
-        final long[] inputShape = new long[]{10};
-        float[] inputs = new float[10];
-        for (int i = 0; i < 10; i++) {
+        final long[] inputShape = new long[]{inputNum};
+        float[] inputs = new float[inputNum];
+        for (int i = 0; i < inputNum; i++) {
             inputs[i] = (float) input[i];
         }
 
-        FloatBuffer inputTensorBuffer = Tensor.allocateFloatBuffer(10);
+        FloatBuffer inputTensorBuffer = Tensor.allocateFloatBuffer(inputNum);
         inputTensorBuffer.put(inputs);
         Tensor inputTensor = Tensor.fromBlob(inputTensorBuffer, inputShape);
 

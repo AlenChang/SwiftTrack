@@ -10,8 +10,8 @@ from torch import nn
 
 batch_size = 10
 
-training_data = dataloader.CustomDataset("./data/tof_1640595971067.txt", "./data/cir_1640595971067.txt")
-test_data = dataloader.CustomDataset("./data/tof_1640595971067.txt", "./data/cir_1640595971067.txt")
+training_data = dataloader.CustomDataset("./data/tof_1640679633899.txt", "./data/cir_1640679633899.txt")
+test_data = dataloader.CustomDataset("./data/tof_1640679633899.txt", "./data/cir_1640679633899.txt")
 
 train_dataloader = DataLoader(training_data, batch_size=batch_size)
 test_dataloader = DataLoader(test_data, batch_size=batch_size)
@@ -88,12 +88,12 @@ def test(dataloader, model, loss_fn):
             X, y = X.to(device), y.to(device)
             pred = model(X)
             test_loss += loss_fn(pred, y).item()
-            correct += (pred.argmax(1) == y).type(torch.float).sum().item()
+            # print(pred)
     test_loss /= num_batches
     correct /= size
-    print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
+    print(f"Test Error: Avg loss: {test_loss:>8f} \n")
 
-epochs = 500
+epochs = 50
 for t in range(epochs):
     print(f"Epoch {t+1}\n-------------------------------")
     train(train_dataloader, model, loss_fn, optimizer)
@@ -108,8 +108,8 @@ print("Done!")
 
 p = X[0]
 print(model(X).data)
+test(test_dataloader, model, loss_fn)
 
 traced_script_module = torch.jit.trace(model, p)
 traced_script_module_optimized = optimize_for_mobile(traced_script_module)
 traced_script_module_optimized._save_for_lite_interpreter("models/model.ptl")
-
