@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
     // tunable parameters
     public static boolean[] CHANNEL_MASK = {true, false}; // for processor
-    public static final boolean[] SPEAKER_CHANNEL_MAKS = {true, false};
+    public static final boolean[] SPEAKER_CHANNEL_MAKS = {false, true};
     public static boolean USE_FILE = false;
     public static int N_ZC_UP = 960;
 

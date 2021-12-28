@@ -71,6 +71,10 @@ double Postprocessor::ProcessCIRSignal(const MatrixX<complex<double>> &cir_signa
 
 //    PhaseTransform();
 
+    swifttrack_history_.check_size();
+    TOF_history_.check_size();
+    Strata_history_.check_size();
+
     return swifttrack_history_.dist_history_.back();
 }
 
@@ -103,18 +107,27 @@ void Postprocessor::GetHistoryData(double *history, int n, Histories &history_ty
     }
 }
 
-void Postprocessor::get_history(double *history, int n, vector<double> & profiles){
+void Postprocessor::get_history(double *history, int n, list<double> & profiles){
     int l = (int) profiles.size();
 
     if (n >= l) {
+        auto iter = profiles.begin();
         for (int i = 0; i < l; i++) {
-            *(history + i) = profiles[i];
+            *(history + i) = *iter;
+            iter++;
         }
     } else {
+        auto iter = profiles.end();
         for (int i = 0; i < n; i++) {
-            *(history + n - 1 - i) = profiles[l - 1 - i];
+            iter--;
+            *(history + n - 1 - i) = *iter;
         }
     }
+    // while( l > 1024){
+    //     profiles.pop_front();
+    //     l--;
+    // }
+    cout << "history size: " << profiles.size() << endl;
 }
 
 void Postprocessor::GetCIR(double *cir_abs, int n){

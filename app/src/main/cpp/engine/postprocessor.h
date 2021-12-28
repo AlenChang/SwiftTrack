@@ -47,7 +47,7 @@ private:
 
     void MotionCoeff2(complex<double> beta);
 
-    void get_history(double *history, int n, vector<double> & profiles);
+    void get_history(double *history, int n, list<double> & profiles);
 
     void PaddingZero(Histories &history_type);
 
