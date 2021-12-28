@@ -6,14 +6,25 @@ import numpy as np
 
 
 class CustomDataset(Dataset):
-    def __init__(self, num):
-        self.labels = np.random.rand(num, 1) * 100
+    def __init__(self, tof_filename, cir_filename):
+        tof_data = np.loadtxt(tof_filename, dtype=np.double)
+        cir_data = np.loadtxt(cir_filename, dtype=np.double, delimiter=',')
+
+        # self.labels = np.empty(shape=(len(cir_data), 1))
+        self.labels = []
+        self.data = []
+        for i in range(cir_data.shape[0]):
+            if cir_data[i][0] > 0.0:
+                # self.labels[i] = tof_data[i]
+                self.labels.append(tof_data[i])
+                self.data.append(cir_data[i][0:150])
+
+        self.labels = np.array(self.labels).reshape(-1, 1)
         self.labels = np.float32(self.labels)
-        self.data = np.random.rand(num, 10) * 100
         self.data = np.float32(self.data)
 
     def __len__(self):
-        return len(self.labels)
+        return len(self.data)
 
     def __getitem__(self, idx):
         return self.data[idx], self.labels[idx]
