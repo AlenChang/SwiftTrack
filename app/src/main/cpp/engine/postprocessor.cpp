@@ -71,6 +71,10 @@ double Postprocessor::ProcessCIRSignal(const MatrixX<complex<double>> &cir_signa
 
 //    PhaseTransform();
 
+    swifttrack_history_.check_size();
+    TOF_history_.check_size();
+    Strata_history_.check_size();
+
     return swifttrack_history_.dist_history_.back();
 }
 
@@ -103,16 +107,20 @@ void Postprocessor::GetHistoryData(double *history, int n, Histories &history_ty
     }
 }
 
-void Postprocessor::get_history(double *history, int n, vector<double> & profiles){
+void Postprocessor::get_history(double *history, int n, list<double> & profiles){
     int l = (int) profiles.size();
 
     if (n >= l) {
+        auto iter = profiles.begin();
         for (int i = 0; i < l; i++) {
-            *(history + i) = profiles[i];
+            *(history + i) = *iter;
+            iter++;
         }
     } else {
+        auto iter = profiles.end();
         for (int i = 0; i < n; i++) {
-            *(history + n - 1 - i) = profiles[l - 1 - i];
+            iter--;
+            *(history + n - 1 - i) = *iter;
         }
     }
 }
@@ -121,8 +129,14 @@ void Postprocessor::GetCIR(double *cir_abs, int n){
     for (int i = 0; i < N_IRS; i++) {
         *(cir_abs + i) = abs(irs_signal_(0, i));
     }
+    if(n > 2 * N_IRS){
+        for (int i = 0; i < N_IRS; i++) {
+            *(cir_abs + i + N_IRS) = arg(irs_signal_(0, i));
+        }
+    }
 
 }
+
 
 void Postprocessor::GetBeta(double* beta_real, double* beta_imag){
     *beta_real = prev_beta.real();

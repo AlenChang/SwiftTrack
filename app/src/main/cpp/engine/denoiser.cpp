@@ -75,7 +75,11 @@ MatrixX<complex<double>> Denoiser::GetOnlineDenoiseSignal() {
 }
 
 vector<double> Denoiser::GetDiffHistory() {
-    return diff_history_;
+    vector<double> history_out;
+    for(auto item : diff_history_){
+        history_out.push_back(item);
+    }
+    return history_out;
 }
 
 void Denoiser::compute_thre(){
@@ -249,8 +253,11 @@ double Denoiser::MaxDiff(const MatrixX<complex<double>> &m1, const MatrixX<compl
             }
         }
     }
-
     diff_history_.push_back(res);
+    while(diff_history_.size() > 1024){
+        diff_history_.pop_front();
+    }
+    cout << "diff_history_ capacity: " << diff_history_.size() << endl;
 
     return res;
 }

@@ -41,13 +41,59 @@ public:
 
     };
     ~Histories(){};
-    vector<double> phase_history_;
-    vector<double> velocity_history_;
-    vector<double> dist_history_;
-    vector<double> acc_history_;
-    vector<double> acc2velocity_history_;
-    vector<double> acc2dist_history_;
-    vector<double> acc_phase_history_;
+    list<double> phase_history_;
+    list<double> velocity_history_;
+    list<double> dist_history_;
+    list<double> acc_history_;
+    list<double> acc2velocity_history_;
+    list<double> acc2dist_history_;
+    list<double> acc_phase_history_;
+
+    void check_size(){
+        int len;
+        int max_len = 1024;
+        len = phase_history_.size();
+        while(len > max_len){
+            phase_history_.pop_front();
+            len--;
+        }
+
+        len = velocity_history_.size();
+        while(len > max_len){
+            velocity_history_.pop_front();
+            len--;
+        }
+
+        len = dist_history_.size();
+        while(len > max_len){
+            dist_history_.pop_front();
+            len--;
+        }
+
+        len = acc_history_.size();
+        while(len > max_len){
+            acc_history_.pop_front();
+            len--;
+        }
+
+        len = acc2velocity_history_.size();
+        while(len > max_len){
+            acc2velocity_history_.pop_front();
+            len--;
+        }
+
+        len = acc2dist_history_.size();
+        while(len > max_len){
+            acc2dist_history_.pop_front();
+            len--;
+        }
+
+        len = acc_phase_history_.size();
+        while(len > max_len){
+            acc_phase_history_.pop_front();
+            len--;
+        }
+    }
 
 };
 

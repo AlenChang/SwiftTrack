@@ -78,7 +78,7 @@ private:
     MatrixX<complex<double>> online_denoise_signal_;
 
     // Store the max diff history
-    vector<double> diff_history_;
+    list<double> diff_history_;
 
     // Store the prev moving status
     bool prev_is_moving_;
