@@ -227,8 +227,8 @@ public class AudioProcessor {
             double[] xWindow2 = new double[winLen];
             if (CHANNEL_MASK[inputChannel.RIGHT]) {
 
-                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-                MLViewModel.setLineData(xWindow2, MLViewModel.OutTypes.SWIFT_TRACK);
+                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.tof, HistoryType.dist_v);
+                MLViewModel.setLineData(xWindow2, MLViewModel.OutTypes.TOF);
 
                 double[] cir_abs = new double[FRAME_SIZE];
                 getCIR(inputChannel.RIGHT, cir_abs, FRAME_SIZE);
@@ -237,8 +237,8 @@ public class AudioProcessor {
                 double[] ml_result = Model.getHistoryData(cir_abs, winLen);
                 MLViewModel.setLineData(ml_result, MLViewModel.OutTypes.ML);
             } else {
-                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-                MLViewModel.setLineData(xWindow1, MLViewModel.OutTypes.SWIFT_TRACK);
+                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.tof, HistoryType.dist_v);
+                MLViewModel.setLineData(xWindow1, MLViewModel.OutTypes.TOF);
 
                 double[] cir_abs = new double[FRAME_SIZE];
                 getCIR(inputChannel.LEFT, cir_abs, FRAME_SIZE);
@@ -246,6 +246,18 @@ public class AudioProcessor {
 
                 double[] ml_result = Model.getHistoryData(cir_abs, winLen);
                 MLViewModel.setLineData(ml_result, MLViewModel.OutTypes.ML);
+            }
+        }
+
+        private void prepareFinalDataForMLFragment(int winLen){
+            double[] xWindow1 = new double[winLen];
+            double[] xWindow2 = new double[winLen];
+            if (CHANNEL_MASK[inputChannel.RIGHT]) {
+                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.tof, HistoryType.dist_v);
+                MLViewModel.saveTOF(xWindow2);
+            } else {
+                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.tof, HistoryType.dist_v);
+                MLViewModel.saveTOF(xWindow1);
             }
         }
 
@@ -344,6 +356,8 @@ public class AudioProcessor {
         }
 
         public void terminate() {
+            Log.d("terminate frameCount", String.valueOf(frameCount));
+
             running = false;
 
             lock.lock();
@@ -377,7 +391,7 @@ public class AudioProcessor {
                     prepareDataForSlideFragment(frameCount);
                     break;
                 case ActivityID.mlFragment:
-                    prepareDataForMLFragment(frameCount);
+                    prepareFinalDataForMLFragment(frameCount);
                     break;
                 default:
                     break;

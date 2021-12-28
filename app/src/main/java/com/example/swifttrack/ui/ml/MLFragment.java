@@ -61,8 +61,8 @@ public class MLFragment extends Fragment {
         binding.mlMl.setData(new LineData());
         binding.mlMl.setBorderWidth(20.0f);
 
-        binding.mlSwifttrack.setData(new LineData());
-        binding.mlSwifttrack.setBorderWidth(20.0f);
+        binding.mlTof.setData(new LineData());
+        binding.mlTof.setBorderWidth(20.0f);
 
         binding.mlCir.setData(new LineData());
         binding.mlCir.setBorderWidth(20.0f);
@@ -84,6 +84,9 @@ public class MLFragment extends Fragment {
                 audioProcessor.setTimestamp(timestamp);
                 audioProcessor.start();
 
+                mlViewModel.setTimestamp(timestamp);
+                mlViewModel.start();
+
                 Toast.makeText(getActivity(),"Waiting for speaker warm up!",Toast.LENGTH_SHORT).show();
             }
         });
@@ -94,6 +97,7 @@ public class MLFragment extends Fragment {
                 audioPlayer.stop();
                 audioRecorder.stop();
                 audioProcessor.stop();
+                mlViewModel.stop();
             }
         });
 
@@ -103,6 +107,7 @@ public class MLFragment extends Fragment {
                 audioPlayer.reset();
                 audioRecorder.reset();
                 audioProcessor.reset();
+                mlViewModel.reset();
             }
         });
 
@@ -112,6 +117,7 @@ public class MLFragment extends Fragment {
                 audioPlayer.save();
                 audioRecorder.save();
                 audioProcessor.save();
+                mlViewModel.save();
             }
         });
 
@@ -122,10 +128,10 @@ public class MLFragment extends Fragment {
             }
         });
 
-        mlViewModel.getLiveLineData(MLViewModel.OutTypes.SWIFT_TRACK).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
+        mlViewModel.getLiveLineData(MLViewModel.OutTypes.TOF).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
             @Override
             public void onChanged(LineDataSet lineDataSet) {
-                setChart(binding.mlSwifttrack, lineDataSet);
+                setChart(binding.mlTof, lineDataSet);
             }
         });
 
