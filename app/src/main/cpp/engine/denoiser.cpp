@@ -150,9 +150,15 @@ void Denoiser::ProcessCalibration2() {
     if (moving_frames_ > MOVING_PERIOD_MIN_FRAMES) {
         OfflineCalcStaticSignal();
         OfflineRemoveStaticSignal();
+//        BackgroundNotRemove = false;
         status_ = CALI_SUCCESS;
         moving_frames_ = 0;
     }
+
+//    if(!BackgroundNotRemove && !is_moving_ && prev_is_moving_){
+//        status_ = CALI_SUCCESS;
+//        moving_frames_ = 0;
+//    }
 
     prev_is_moving_ = is_moving_;
 

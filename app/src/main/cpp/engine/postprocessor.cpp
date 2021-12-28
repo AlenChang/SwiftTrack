@@ -196,6 +196,10 @@ void Postprocessor::CalcPhase() {
         phase_unwrapped = arg(beta);
     }
 
+    if(swifttrack_history_.phase_history_.size() < 20){
+        phase_unwrapped = arg(beta);
+    }
+
 
 
 
@@ -283,29 +287,11 @@ double Postprocessor::CalcPhase(complex<double> tapSel, double & pre_phase) {
 void Postprocessor::PhaseTransform() {
     double velocity;
 
-    // if(abs(swifttrack_history_.acc_history_.back()) > 2000 && is_moving_){
-    //     velocity = swifttrack_history_.velocity_history_.back() +
-    //         swifttrack_history_.acc_history_.back() * 0.01;
-    // } else {
-    //     velocity = -swifttrack_history_.phase_history_.back() * C / (4 * M_PI * FC * T);
-    // }
-
     velocity = -swifttrack_history_.phase_history_.back() * C / (4 * M_PI * FC * T);
     if(init_velocity == 0){
         init_velocity = velocity;
     }
 
-    // if(is_moving_){
-    //     if(velocity - swifttrack_history_.velocity_history_.back() > 35 ){
-    //         velocity = velocity - 2 * M_PI * C / (4 * M_PI * FC * T);
-    //     }else{
-    //         if(velocity - swifttrack_history_.velocity_history_.back() < -35){
-    //             velocity = velocity + 2 * M_PI * C / (4 * M_PI * FC * T);
-    //         }
-    //     }
-    // }
-
-    
     prev_velocity = velocity;
 
 
