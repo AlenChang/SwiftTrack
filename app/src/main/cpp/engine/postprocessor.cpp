@@ -63,18 +63,13 @@ double Postprocessor::ProcessCIRSignal(const MatrixX<complex<double>> &cir_signa
     is_moving_ = is_moving;
     // choose the first N_IRS taps
     CutOffCIRSignal(cir_signal);
-    
     // calculate motion coefficients
     CalcPhase();
-
     TapSelectionTOF();
-
 //    PhaseTransform();
-
     swifttrack_history_.check_size();
     TOF_history_.check_size();
     Strata_history_.check_size();
-
     return swifttrack_history_.dist_history_.back();
 }
 
@@ -168,13 +163,15 @@ complex<double> Postprocessor::LeastSquare(){
 }
 
 void Postprocessor::CalcPhase() {
+    // define the first motion coefficient
     complex<double> beta;
-    
-    
+
+    // compute diff signal for tap selection
     for (int i = 0; i < N_IRS; i++) {
         irs_signal_diff(0, i) = irs_signal_(0, i) - prev_irs_signal_(0, i);
     }
 
+    // Least square for prev_irs_signal_ and irs_signal
     beta = LeastSquare();
 
     prev_irs_signal_ = irs_signal_;
@@ -182,7 +179,7 @@ void Postprocessor::CalcPhase() {
 
 
 
-    double phase_diff = CalcPhase(beta, prev_phase_in_wrap_);
+    double phase_diff = unwrap(beta, prev_phase_in_wrap_);
 
     double phase_unwrapped;
     if(is_moving_){
@@ -224,7 +221,7 @@ void Postprocessor::MotionCoeff2(complex<double> beta){
         complex<double> motion2 = beta / prev_beta;
         prev_motion2 = motion2;
 
-        phase_diff = CalcPhase(motion2, phase_prev_motion2);
+        phase_diff = unwrap(motion2, phase_prev_motion2);
         if(is_moving_){
             phase_unwrapped = swifttrack_history_.acc_phase_history_.back() + phase_diff;
         }else{
@@ -265,7 +262,7 @@ void Postprocessor::MotionCoeff2(complex<double> beta){
 }
 
 
-double Postprocessor::CalcPhase(complex<double> tapSel, double & pre_phase) {
+double Postprocessor::unwrap(complex<double> tapSel, double & pre_phase) {
 
     double phase_in_wrap = arg(tapSel);
 
@@ -365,7 +362,7 @@ void Postprocessor::TapSelectionTOF(){
 // Strata implementation
 void Postprocessor::BasicChannelEstimation(int rows, int tap){
     complex<double> tapSel = irs_signal_(rows, tap);
-    double phase_diff = CalcPhase(tapSel, Strata_pre_.pre_phase_in_wrap_);
+    double phase_diff = unwrap(tapSel, Strata_pre_.pre_phase_in_wrap_);
     double phase_unwrapped = Strata_history_.phase_history_.back() + phase_diff;
     Strata_history_.phase_history_.push_back(phase_unwrapped);
 

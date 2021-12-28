@@ -35,7 +35,7 @@ private:
 
     void CalcPhase();
 
-    double CalcPhase(complex<double> tapSel, double & pre_phase);
+    double unwrap(complex<double> tapSel, double & pre_phase);
 
     complex<double> LeastSquare();
 
