@@ -64,6 +64,7 @@ private:
     const double std_factor = 6;
     int N_ZC_UP;
     int moving_frames_counter = 0;
+    bool BackgroundNotRemove = true;
 
     // Remark the denoiser working stage
     status_type status_;

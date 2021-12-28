@@ -195,7 +195,7 @@ void Engine::ProcessFrameCore(const MatrixX<double> &rx_signal) {
         postprocessor_->ProcessCIRSignal(denoise_signal, is_moving);
         // }
     } else if (cur_status_ == Denoiser::CALI_1) {
-        // postprocessor_->PaddingZero();
+//         postprocessor_->PaddingZero();
     }
 
     prev_status_ = cur_status_;
