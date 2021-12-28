@@ -123,19 +123,20 @@ void Postprocessor::get_history(double *history, int n, list<double> & profiles)
             *(history + n - 1 - i) = *iter;
         }
     }
-    // while( l > 1024){
-    //     profiles.pop_front();
-    //     l--;
-    // }
-    cout << "history size: " << profiles.size() << endl;
 }
 
 void Postprocessor::GetCIR(double *cir_abs, int n){
     for (int i = 0; i < N_IRS; i++) {
         *(cir_abs + i) = abs(irs_signal_(0, i));
     }
+    if(n > 2 * N_IRS){
+        for (int i = 0; i < N_IRS; i++) {
+            *(cir_abs + i + N_IRS) = arg(irs_signal_(0, i));
+        }
+    }
 
 }
+
 
 void Postprocessor::GetBeta(double* beta_real, double* beta_imag){
     *beta_real = prev_beta.real();
