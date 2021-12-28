@@ -196,7 +196,7 @@ void Postprocessor::CalcPhase() {
         phase_unwrapped = arg(beta);
     }
 
-    if(swifttrack_history_.phase_history_.size() < 5){
+    if(swifttrack_history_.phase_history_.size() < 20){
         phase_unwrapped = arg(beta);
     }
 
