@@ -22,8 +22,6 @@ public:
     // operating histories
     Histories & GetHistories(int history_type);
 
-    void PaddingZero();
-
     void GetCIR(double *cir_abs, int n);
 
     void GetBeta(double* beta_real, double* beta_imag);
@@ -33,13 +31,13 @@ public:
 private:
     void CutOffCIRSignal(const MatrixX<complex<double>> &cir_signal);
 
-    void CalcPhase();
+    void swifttrack();
 
     double unwrap(complex<double> tapSel, double & pre_phase);
 
     complex<double> LeastSquare();
 
-    void PhaseTransform();
+    void Phase2Dist();
 
     void TapSelectionTOF();
 
@@ -83,7 +81,7 @@ private:
     Histories Strata_history_;
 
     MatrixX<complex<double>> prev_irs_signal_;
-    MatrixX<complex<double>> prev_irs_signal_diff;
+    // MatrixX<complex<double>> prev_irs_signal_diff;
     MatrixX<complex<double>> irs_signal_;
     MatrixX<complex<double>> irs_signal_diff;
 

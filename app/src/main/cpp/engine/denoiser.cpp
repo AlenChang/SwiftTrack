@@ -263,7 +263,7 @@ double Denoiser::MaxDiff(const MatrixX<complex<double>> &m1, const MatrixX<compl
     while(diff_history_.size() > 1024){
         diff_history_.pop_front();
     }
-    cout << "diff_history_ capacity: " << diff_history_.size() << endl;
+    // cout << "diff_history_ capacity: " << diff_history_.size() << endl;
 
     return res;
 }

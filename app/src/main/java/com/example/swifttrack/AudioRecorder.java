@@ -155,7 +155,7 @@ public class AudioRecorder {
     private Phone phone;
     public AudioRecorder() {
         USE_FILE = MainActivity.USE_FILE;
-        BUFFER_SIZE = MainActivity.N_ZC_UP * 10;
+        BUFFER_SIZE = MainActivity.N_ZC_UP * 2;
         rxQueue = new ArrayBlockingQueue<>(BUFFER_SIZE);
     }
 
