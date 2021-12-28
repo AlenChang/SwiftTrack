@@ -103,6 +103,7 @@ public class FileUtil {
         File dirs1 = new File(mainActivity.getExternalFilesDir(null), "player");
         File dirs2 = new File(mainActivity.getExternalFilesDir(null), "recorder");
         File dirs3 = new File(mainActivity.getExternalFilesDir(null), "processor");
+        File dirs4 = new File(mainActivity.getExternalFilesDir(null), "ml");
         if(!dirs1.exists()){
             dirs1.mkdir();
         }
@@ -111,6 +112,9 @@ public class FileUtil {
         }
         if(!dirs3.exists()){
             dirs3.mkdir();
+        }
+        if(!dirs4.exists()){
+            dirs4.mkdir();
         }
         try {
             return new FileOutputStream(file);
@@ -173,6 +177,56 @@ public class FileUtil {
                 String line = sample[0] + " " + sample[1] + " " + sample[2] + " " + sample[3] + "\n";
                 writer.write(line);
             }
+        } catch (IOException e) {
+            Log.e("FileUtil", e.getMessage());
+        }
+    }
+
+    public static void streamWriteTOF(BufferedWriter writer, double[] result) {
+        if (result == null) {
+            return;
+        }
+
+        try {
+            for (double sample : result) {
+                String line = sample + "\n";
+                writer.write(line);
+            }
+        } catch (IOException e) {
+            Log.e("FileUtil", e.getMessage());
+        }
+    }
+
+    public static void streamWriteSingleTOF(BufferedWriter writer, double result) {
+        try {
+            String line = result + "\n";
+            writer.write(line);
+        } catch (IOException e) {
+            Log.e("FileUtil", e.getMessage());
+        }
+    }
+
+    public static void streamWriteCIR(BufferedWriter writer, double[] result) {
+        if (result == null) {
+            return;
+        }
+        double sum = 0.0;
+        for (int i = 0; i < 300; i++) {
+            sum += result[i];
+        }
+        double dis=1e-6;
+        if (Math.abs(sum - 0.0) < dis) {
+            return;
+        }
+
+        try {
+            StringBuilder stringBuilder = new StringBuilder();
+            for (double sample : result) {
+                stringBuilder.append(sample).append(",");
+            }
+            stringBuilder.delete(stringBuilder.length()-1, stringBuilder.length());
+            stringBuilder.append("\n");
+            writer.write(stringBuilder.toString());
         } catch (IOException e) {
             Log.e("FileUtil", e.getMessage());
         }
