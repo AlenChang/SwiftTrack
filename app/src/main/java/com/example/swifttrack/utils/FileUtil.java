@@ -104,6 +104,7 @@ public class FileUtil {
         File dirs2 = new File(mainActivity.getExternalFilesDir(null), "recorder");
         File dirs3 = new File(mainActivity.getExternalFilesDir(null), "processor");
         File dirs4 = new File(mainActivity.getExternalFilesDir(null), "ml");
+        File dirs5 = new File(mainActivity.getExternalFilesDir(null), "lstm");
         if(!dirs1.exists()){
             dirs1.mkdir();
         }
@@ -115,6 +116,9 @@ public class FileUtil {
         }
         if(!dirs4.exists()){
             dirs4.mkdir();
+        }
+        if(!dirs5.exists()){
+            dirs5.mkdir();
         }
         try {
             return new FileOutputStream(file);

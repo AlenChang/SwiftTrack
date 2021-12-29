@@ -36,6 +36,12 @@
         tools:layout="@layout/fragment_ml" />
 
     <fragment
+        android:id="@+id/nav_lstm"
+        android:name="com.example.swifttrack.ui.lstm.LSTMFragment"
+        android:label="@string/menu_lstm"
+        tools:layout="@layout/fragment_lstm" />
+
+    <fragment
         android:id="@+id/nav_setting"
         android:name="com.example.swifttrack.ui.setting.SettingFragment"
         android:label="@string/menu_setting"

@@ -8,6 +8,8 @@ import android.widget.Toast;
 import com.example.swifttrack.ui.acc.AccViewModel;
 import com.example.swifttrack.ui.gallery.GalleryViewModel;
 import com.example.swifttrack.ui.home.HomeFragment;
+import com.example.swifttrack.ui.lstm.LSTMModel;
+import com.example.swifttrack.ui.lstm.LSTMViewModel;
 import com.example.swifttrack.ui.ml.MLViewModel;
 import com.example.swifttrack.ui.ml.Model;
 import com.example.swifttrack.ui.slideshow.SlideshowFragment;
@@ -73,6 +75,7 @@ public class AudioProcessor {
         public static final int accFragment = 2;
         public static final int slideFragment = 3;
         public static final int mlFragment = 4;
+        public static final int lstmFragment = 5;
     }
 
 
@@ -254,6 +257,38 @@ public class AudioProcessor {
             }
         }
 
+        private void prepareDataForLSTMFragment(int winLen){
+            double[] xWindow1 = new double[winLen];
+            double[] xWindow2 = new double[winLen];
+            if (CHANNEL_MASK[inputChannel.RIGHT]) {
+                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+                LSTMViewModel.setLineData(xWindow2, LSTMViewModel.OutTypes.SWIFT_TRACK);
+
+                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.tof, HistoryType.dist_v);
+                LSTMViewModel.setLineData(xWindow2, LSTMViewModel.OutTypes.TOF);
+
+                double[] cir_abs = new double[FRAME_SIZE];
+                getCIR(inputChannel.RIGHT, cir_abs, FRAME_SIZE);
+                LSTMViewModel.setLineData(cir_abs, LSTMViewModel.OutTypes.CIR);
+
+                double[] ml_result = LSTMModel.getHistoryData(cir_abs, winLen);
+                LSTMViewModel.setLineData(ml_result, LSTMViewModel.OutTypes.LSTM);
+            } else {
+                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+                LSTMViewModel.setLineData(xWindow1, LSTMViewModel.OutTypes.SWIFT_TRACK);
+
+                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.tof, HistoryType.dist_v);
+                LSTMViewModel.setLineData(xWindow1, LSTMViewModel.OutTypes.TOF);
+
+                double[] cir_abs = new double[FRAME_SIZE];
+                getCIR(inputChannel.LEFT, cir_abs, FRAME_SIZE);
+                LSTMViewModel.setLineData(cir_abs, LSTMViewModel.OutTypes.CIR);
+
+                double[] ml_result = LSTMModel.getHistoryData(cir_abs, winLen);
+                LSTMViewModel.setLineData(ml_result, LSTMViewModel.OutTypes.LSTM);
+            }
+        }
+
         private void prepareFinalDataForMLFragment(int winLen){
             double[] xWindow1 = new double[winLen];
             double[] xWindow2 = new double[winLen];
@@ -269,6 +304,24 @@ public class AudioProcessor {
 
                 getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
                 MLViewModel.saveSwift(xWindow1);
+            }
+        }
+
+        private void prepareFinalDataForLSTMFragment(int winLen){
+            double[] xWindow1 = new double[winLen];
+            double[] xWindow2 = new double[winLen];
+            if (CHANNEL_MASK[inputChannel.RIGHT]) {
+                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.tof, HistoryType.dist_v);
+                LSTMViewModel.saveTOF(xWindow2);
+
+                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+                LSTMViewModel.saveSwift(xWindow2);
+            } else {
+                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.tof, HistoryType.dist_v);
+                LSTMViewModel.saveTOF(xWindow1);
+
+                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+                LSTMViewModel.saveSwift(xWindow1);
             }
         }
 
@@ -349,6 +402,9 @@ public class AudioProcessor {
                                 case ActivityID.mlFragment:
                                     prepareDataForMLFragment(WINDOW_SIZE);
                                     break;
+                                case ActivityID.lstmFragment:
+                                    prepareDataForLSTMFragment(WINDOW_SIZE);
+                                    break;
                                 default:
                                     break;
                             }
@@ -403,6 +459,9 @@ public class AudioProcessor {
                     break;
                 case ActivityID.mlFragment:
                     prepareFinalDataForMLFragment(frameCount);
+                    break;
+                case ActivityID.lstmFragment:
+                    prepareFinalDataForLSTMFragment(frameCount);
                     break;
                 default:
                     break;
