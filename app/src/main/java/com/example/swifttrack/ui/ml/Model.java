@@ -24,7 +24,7 @@ import java.util.List;
 public class Model {
     private static final String TAG = "MLFragment";
     private static final String MODEL_NAME = "model.ptl";
-    private static final int inputNum = 150;
+    private static final int inputNum = 300;
 
     private static Module mModule;
 
@@ -72,8 +72,10 @@ public class Model {
 
         Tensor outputTensor = mModule.forward(IValue.from(inputTensor)).toTensor();
         float[] outputs = outputTensor.getDataAsFloatArray();
-        Log.d(TAG, String.valueOf(outputs[0]));
-        result.add((double) outputs[0]);
+
+        double pred = (double) outputs[0] * 100;
+        Log.d(TAG, String.valueOf(pred));
+        result.add(pred);
     }
 
     private String assetFilePath(Context context, String assetName) throws IOException {
