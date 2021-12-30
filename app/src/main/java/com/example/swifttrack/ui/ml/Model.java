@@ -72,10 +72,15 @@ public class Model {
 
         Tensor outputTensor = mModule.forward(IValue.from(inputTensor)).toTensor();
         float[] outputs = outputTensor.getDataAsFloatArray();
+<<<<<<< Updated upstream
 
         double pred = (double) outputs[0] * 100;
         Log.d(TAG, String.valueOf(pred));
         result.add(pred);
+=======
+        Log.d(TAG, String.valueOf(outputs[0]));
+        result.add((double) outputs[0]*100);
+>>>>>>> Stashed changes
     }
 
     private String assetFilePath(Context context, String assetName) throws IOException {

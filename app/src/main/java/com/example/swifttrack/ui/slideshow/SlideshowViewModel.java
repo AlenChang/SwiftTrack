@@ -25,7 +25,7 @@ public class SlideshowViewModel extends ViewModel {
     private static MutableLiveData<Bitmap> bitmap;
     private static MutableLiveData<LineDataSet> xChart;
     public static final int height = 600;
-    public static final int width = MainActivity.N_ZC_UP;
+    public static final int width = 150;
     public static int iter = 0;
 
     public SlideshowViewModel() {
