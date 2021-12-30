@@ -60,7 +60,7 @@ public class LSTMModel {
     }
 
     public static void prediction(double[] input) {
-        final long[] inputShape = new long[]{inputNum};
+        final long[] inputShape = new long[]{1, inputNum};
         float[] inputs = new float[inputNum];
         for (int i = 0; i < inputNum; i++) {
             inputs[i] = (float) input[i];
