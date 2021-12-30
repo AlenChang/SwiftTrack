@@ -350,12 +350,21 @@ void Postprocessor::get_history(double *history, int n, list<double> & profiles)
 }
 
 void Postprocessor::GetCIR(double *cir_abs, int n){
+//    for (int i = 0; i < N_IRS; i++) {
+//        *(cir_abs + i) = abs(irs_signal_(0, i));
+//    }
+//    if(n > 2 * N_IRS){
+//        for (int i = 0; i < N_IRS; i++) {
+//            *(cir_abs + i + N_IRS) = arg(irs_signal_(0, i));
+//        }
+//    }
+
     for (int i = 0; i < N_IRS; i++) {
-        *(cir_abs + i) = abs(irs_signal_(0, i));
+        *(cir_abs + i) = abs(irs_signal_diff(0, i));
     }
     if(n > 2 * N_IRS){
         for (int i = 0; i < N_IRS; i++) {
-            *(cir_abs + i + N_IRS) = arg(irs_signal_(0, i));
+            *(cir_abs + i + N_IRS) = arg(irs_signal_diff(0, i));
         }
     }
 
