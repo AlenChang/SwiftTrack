@@ -23,16 +23,17 @@ import java.util.List;
 
 public class LSTMModel {
     private static final String TAG = "LSTMFragment";
-    private static final String MODEL_NAME = "test_model.ptl";
+    private static final String MODEL_NAME = "lstm_aug4.ptl";
     private static final int inputNum = 150;
+    private static final int nlayer = 3;
+    private static final int hidden_len = 60;
+    private static final float[] h0 = new float[hidden_len * nlayer];
+    private static final FloatBuffer h0TensorBuffer = Tensor.allocateFloatBuffer(hidden_len * nlayer).put(h0);
+    private static Tensor h0Tensor = Tensor.fromBlob(h0TensorBuffer, new long[]{nlayer,1,hidden_len});
 
-    private static final float[] h0 = new float[30];
-    private static final FloatBuffer h0TensorBuffer = Tensor.allocateFloatBuffer(30).put(h0);
-    private static Tensor h0Tensor = Tensor.fromBlob(h0TensorBuffer, new long[]{1,1,30});
-
-    private static final float[] c0 = new float[30];
-    private static final FloatBuffer c0TensorBuffer = Tensor.allocateFloatBuffer(30).put(c0);
-    private static Tensor c0Tensor = Tensor.fromBlob(c0TensorBuffer, new long[]{1,1,30});
+    private static final float[] c0 = new float[hidden_len * nlayer];
+    private static final FloatBuffer c0TensorBuffer = Tensor.allocateFloatBuffer(hidden_len * nlayer).put(c0);
+    private static Tensor c0Tensor = Tensor.fromBlob(c0TensorBuffer, new long[]{nlayer,1,hidden_len});
 
 
     private static Module mModule;
@@ -69,10 +70,10 @@ public class LSTMModel {
     }
 
     public static void prediction(double[] input) {
-        final long[] inputShape = new long[]{1, inputNum};
+        final long[] inputShape = new long[]{1, 1, inputNum};
         float[] inputs = new float[inputNum];
         for (int i = 0; i < inputNum; i++) {
-            inputs[i] = (float) input[i];
+            inputs[i] = (float) input[i] * 1000;
         }
 
         FloatBuffer inputTensorBuffer = Tensor.allocateFloatBuffer(inputNum);
