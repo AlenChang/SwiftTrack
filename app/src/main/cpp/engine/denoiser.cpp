@@ -118,7 +118,7 @@ void Denoiser::compute_thre(){
 
         // compute threshold
         moving_threshold_ = mean_value + std_factor * std_value;
-        moving_threshold_ = 0;
+//        moving_threshold_ = 0;
 
         init1_flag = true;
 
