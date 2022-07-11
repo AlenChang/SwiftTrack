@@ -4,10 +4,11 @@ project(acoustic)
 
 add_subdirectory(util)
 add_subdirectory(lib)
+add_subdirectory(generated)
 add_subdirectory(engine)
 
 add_library(acoustic SHARED audio_processor.cpp)
 
 find_library(log-lib log)
 
-target_link_libraries(acoustic ${log-lib} util engine lib)
+target_link_libraries(acoustic ${log-lib} util lib generated engine)

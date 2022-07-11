@@ -32,7 +32,9 @@ public class Model {
 
     public Model(FragmentActivity activity) {
         try {
-            mModule = LiteModuleLoader.load(assetFilePath(activity.getApplicationContext(), MODEL_NAME));
+            final String FILE_NAME = assetFilePath(activity.getApplicationContext(), MODEL_NAME);
+            mModule = LiteModuleLoader.load(FILE_NAME);
+            Log.d("files", "Machine Learning Model path: " + FILE_NAME);
         } catch (IOException e) {
             Log.e(TAG, "Error reading assets", e);
             activity.finish();

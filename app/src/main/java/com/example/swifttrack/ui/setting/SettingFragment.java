@@ -2,6 +2,7 @@ package com.example.swifttrack.ui.setting;
 
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -24,6 +25,10 @@ import com.example.swifttrack.databinding.SettingFragmentBinding;
 import com.example.swifttrack.ui.home.HomeFragment;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -64,8 +69,20 @@ public class SettingFragment extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     MainActivity.USE_FILE = true;
-                    AudioRecorder.setFileName(getFileName("recorder/"));
-                    Log.d("files", getFileName("recorder/"));
+                    listAssetFiles("");
+//                    final String FILE_NAME = "new_seq.txt";
+                    Log.d("USE_FILE", getActivity().getExternalFilesDir(null).toString());
+                    final String FILE_NAME;
+                    try {
+                        FILE_NAME = assetFilePath(getActivity().getApplicationContext(), "new_seq.txt");
+                        Log.d("USE_FILE", FILE_NAME);
+                        AudioRecorder.setFileName(FILE_NAME);
+//                        final String files = getFileName(getActivity().getApplicationContext().getFilesDir());
+                    } catch (IOException e) {
+                        Log.d("USE_FILE", "File not find.");
+                        e.printStackTrace();
+                    }
+
                 } else {
                     MainActivity.USE_FILE = false;
                 }
@@ -162,6 +179,49 @@ public class SettingFragment extends Fragment {
         }
 
         return files[counter].getName();
+    }
+
+    private String assetFilePath(Context context, String assetName) throws IOException {
+        File file = new File(context.getFilesDir(), assetName);
+        if (file.exists() && file.length() > 0) {
+            return file.getAbsolutePath();
+        }
+
+        try (InputStream is = context.getAssets().open(assetName)) {
+            try (OutputStream os = new FileOutputStream(file)) {
+                byte[] buffer = new byte[4 * 1024];
+                int read;
+                while ((read = is.read(buffer)) != -1) {
+                    os.write(buffer, 0, read);
+                }
+                os.flush();
+            }
+            return file.getAbsolutePath();
+        }
+    }
+
+    private boolean listAssetFiles(String path) {
+
+        String [] list;
+        try {
+            list = getActivity().getAssets().list(path);
+            if (list.length > 0) {
+                // This is a folder
+                for (String file : list) {
+                    if (!listAssetFiles(path + "/" + file))
+                        return false;
+                    else {
+                        // This is a file
+                        // TODO: add file name to an array list
+                        Log.d("LIST_FILE", file);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            return false;
+        }
+
+        return true;
     }
 
 

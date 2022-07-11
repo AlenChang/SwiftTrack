@@ -3,6 +3,7 @@
 
 #include "matrix_util.hpp"
 #include "NoiseSupression.h"
+#include "logger_util.hpp"
 
 class Denoiser {
 public:
@@ -30,6 +31,9 @@ public:
     vector<double> GetDiffHistory();
 
     bool getMovingStatus();
+
+//    void main_offerRxUpsample(void);
+    void cdouble2creal_T(MatrixX<complex<double>> &v, creal_T R[480]);
 
 private:
     // void ProcessCalibration1();
@@ -61,7 +65,7 @@ private:
     const int UPDATED_MOVING_PERIODS = 1;
     const double UPDATE_FACTOR = 0.0;
     const double updata_factor = 0.3;
-    const double std_factor = 6;
+    const double std_factor = 0;
     int N_ZC_UP;
     int moving_frames_counter = 0;
     bool BackgroundNotRemove = true;

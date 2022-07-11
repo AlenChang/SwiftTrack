@@ -18,12 +18,15 @@ Engine::Engine() {
 
 }
 
-void Engine::setup(int N){
+void Engine::setup(int N, int FC, int BW){
     N_ZC_UP_ = N;
+    FC_ = FC;
+    BW_ = BW;
+
     time_count = 0;
     // from real-valued audio signal to complex-valued cir
     // methods irrelevant
-    preprocessor_ = new Preprocessor(N_ZC_UP_);
+    preprocessor_ = new Preprocessor(N_ZC_UP_, FC_, BW_);
 
     // remove background noise
     // two different approaches - DDBR or our method
@@ -32,6 +35,8 @@ void Engine::setup(int N){
     // deploy different methods
     // Four different approaches - ToF, Strata, SwiftTrack w/o TOF, SwiftTrack
     postprocessor_ = new Postprocessor(N_ZC_UP_);
+
+    processFramePipe_init();
 }
 
 
@@ -44,12 +49,12 @@ Engine::~Engine() {
 }
 
 
-Engine* Engine::GetInstance(int id, int N) {
+Engine* Engine::GetInstance(int id, int N, int FC, int BW) {
 //    LoggerUtil::Log("in_c_test", "ready to create instance.");
     if (id == 0) {
         if (instance1 == nullptr) {
             instance1 = new Engine();
-            instance1->setup(N);
+            instance1->setup(N, FC, BW);
 //            LoggerUtil::Log("in_c_test", "initialize left channel success.");
         }
 //        LoggerUtil::Log("in_c_test", "return instance 1.");
@@ -59,7 +64,7 @@ Engine* Engine::GetInstance(int id, int N) {
     if (id == 1) {
         if (instance2 == nullptr) {
             instance2 = new Engine();
-            instance2->setup(N);
+            instance2->setup(N, FC, BW);
 //            LoggerUtil::Log("in_c_test", "initialize right channel success.");
         }
 //        LoggerUtil::Log("in_c_test", "return instance 2.");
@@ -86,8 +91,9 @@ Engine* Engine::GetInstance(int id) {
     return nullptr;
 }
 
-void Engine::ProcessFrame(int id, const double *data, int n, int N) {
-    Engine *engine = Engine::GetInstance(id, N);
+void Engine::ProcessFrame(int id, const double *data, int n, int N, int FC, int BW) {
+    Engine *engine = Engine::GetInstance(id, N, FC, BW);
+
     // 把数据从double array转成eigen能处理的格式
     MatrixX<double> rx_signal(1, n);
     for (int i = 0; i < n; i++) {
@@ -95,6 +101,21 @@ void Engine::ProcessFrame(int id, const double *data, int n, int N) {
     }
 //    LoggerUtil::Log("in_c_test", "process data...");
     engine->ProcessFrameCore(rx_signal);
+
+//    double rx_signal[480];
+//    for (int i = 0; i < n; i++) {
+//        rx_signal[i] = *(data + i);
+//    }
+//    engine->ProcessFrameUpsample(rx_signal);
+}
+
+void Engine::ProcessFrame_02(int id, const double *data, int n, int N, int FC, int BW){
+    Engine *engine = Engine::GetInstance(id, N, FC, BW);
+    double rx_signal[480];
+    for (int i = 0; i < n; i++) {
+        rx_signal[i] = *(data + i);
+    }
+    engine->ProcessFrameUpsample(rx_signal);
 }
 
 void Engine::GetHistoryData(int id, double *history, int n, int history_id, int history_type){
@@ -153,11 +174,11 @@ void Engine::getTime(int id, double* time){
 }
 
 
-void Engine::Reset(int id, int N) {
+void Engine::Reset(int id, int N, int FC, int BW) {
     if (id == 0) {
         delete instance1;
         instance1 = new Engine();
-        instance1->setup(N);
+        instance1->setup(N, FC, BW);
 //         LoggerUtil::Log("in_c_test", "Reset instance1 OK.");
         return;
     }
@@ -165,12 +186,18 @@ void Engine::Reset(int id, int N) {
     if (id == 1) {
         delete instance2;
         instance2 = new Engine();
-        instance2->setup(N);
+        instance2->setup(N, FC, BW);
 //         LoggerUtil::Log("in_c_test", "Reset instance2 OK.");
         return;
     }
 
     // LoggerUtil::Log("Engine::Reset", "Invalid engine id.");
+}
+
+void Engine::ProcessFrameUpsample(double *data){
+    coder::array<creal_T, 2U> dist;
+    boolean_T isValid;
+    processFramePipe(data, 480, 60, dist, &isValid);
 }
 
 

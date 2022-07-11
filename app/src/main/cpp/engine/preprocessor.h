@@ -6,11 +6,12 @@
 #include "NoiseSupression.h"
 
 
+
 #define M_PI		3.14159265358979323846
 
 class Preprocessor {
 public:
-    Preprocessor(int N_ZC_UP_);
+    Preprocessor(int N_ZC_UP_, int FC_, int BW_);
 
     ~Preprocessor();
 
@@ -29,11 +30,11 @@ private:
 
     int N_ZC;
     int N_ZC_UP;
-    const int U = 1;
-    const double FC = 20000.0;
-    const double B = 6000.0;
-    const double FS = 48000.0;
-    const double DELTA_PHASE = -2 * M_PI * FC / FS;
+    int U;
+    double FC;
+    double B;
+    double FS = 48000.0;
+    double DELTA_PHASE;
 
 
     double phase_;

@@ -1,11 +1,15 @@
 #include "preprocessor.h"
 
 
-Preprocessor::Preprocessor(int N_ZC_UP_) {
+Preprocessor::Preprocessor(int N_ZC_UP_, int FC_, int BW_) {
     N_ZC_UP = N_ZC_UP_;
-    N_ZC = N_ZC_UP / 8 - 1;
+    FC = FC_ * 1.0;
+    B = BW_ * 1.0;
+    N_ZC = N_ZC_UP * B / FS - 1;
+    U = (int) (N_ZC - 1) / 2;
     phase_ = 0.0;
     center_tap_ = -1;
+    DELTA_PHASE = -2 * M_PI * FC / FS;
 
     
 
@@ -21,7 +25,6 @@ Preprocessor::Preprocessor(int N_ZC_UP_) {
 }
 
 Preprocessor::~Preprocessor() {
-    
     cout << "Preprocessor was recycled." << endl;
 }
 
@@ -54,9 +57,9 @@ void Preprocessor::GenerateRefSignal() {
     // Padding zeros in freq domain
     // Perform conjugation when padding
     MatrixUtil::FreqPadding(freq_ref_signal_, freq_zc, N_ZC_UP - N_ZC);
-    if( N_ZC_UP == 480){
-        addWindow();
-    }
+//    if( N_ZC_UP == 480){
+//        addWindow();
+//    }
     
 }
 

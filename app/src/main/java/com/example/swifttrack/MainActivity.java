@@ -25,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.swifttrack.databinding.ActivityMainBinding;
 
 import com.example.swifttrack.utils.FileUtil;
+import java.lang.Math;
 
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -37,7 +38,17 @@ public class MainActivity extends AppCompatActivity {
     public static boolean[] CHANNEL_MASK = {true, false}; // for processor
     public static final boolean[] SPEAKER_CHANNEL_MAKS = {false, true};
     public static boolean USE_FILE = false;
-    public static int N_ZC_UP = 960;
+    public static int N_ZC_UP = 480;
+    public static int FS = 48000;
+    public static int FC = 19000;
+    public static int BW = 4000;
+    public static int N_ZC = N_ZC_UP * BW / FS - 1;
+    public static int ZC_ROOT = (N_ZC - 1) / 2;
+    public static int DOWN_SAMPLE_FACTOR = N_ZC_UP;
+
+
+
+
 
     // ******************************
     // required permissions

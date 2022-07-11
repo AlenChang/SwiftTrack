@@ -42,7 +42,7 @@ public class AudioRecorder {
     private static boolean needSave;
 
 
-    public static String playFile = "atest1.txt";
+    public static String playFile = "new_seq.txt";
     // ******************************
     // A queue to to store received dataframes
     // ******************************
@@ -177,7 +177,8 @@ public class AudioRecorder {
 
     public void start() {
         if (USE_FILE) {
-            fileInputStream = FileUtil.getFileInputStream("recorder/"+playFile);
+//            fileInputStream = FileUtil.getFileInputStream("recorder/"+playFile);
+            fileInputStream = FileUtil.getFileInputStream(playFile);
             inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
             bufferedReader = new BufferedReader(inputStreamReader);
         } else {

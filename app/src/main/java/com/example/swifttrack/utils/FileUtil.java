@@ -83,7 +83,8 @@ public class FileUtil {
             return null;
         }
 
-        File file = new File(mainActivity.getExternalFilesDir(null), filePath);
+//        File file = new File(mainActivity.getExternalFilesDir(null), filePath);
+        File file = new File(filePath);
 
         try {
             return new FileInputStream(file);

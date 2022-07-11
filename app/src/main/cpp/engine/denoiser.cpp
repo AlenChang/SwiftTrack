@@ -13,6 +13,8 @@ Denoiser::Denoiser(int N_ZC_UP_) {
     prev_is_moving_ = false;
     is_moving_ = false;
 
+//    genparams(N_ZC_UP, 60, &params);
+
     calibration_1_frame_count_ = 0;
     moving_threshold_ = 0.0;
 
@@ -116,6 +118,7 @@ void Denoiser::compute_thre(){
 
         // compute threshold
         moving_threshold_ = mean_value + std_factor * std_value;
+        moving_threshold_ = 0;
 
         init1_flag = true;
 
@@ -231,7 +234,19 @@ void Denoiser::OnlineUpdateStaticSignal() {
 // * pass
 void Denoiser::OnlineRemoveStaticSignal() {
     online_denoise_signal_ = signal_ - static_signal_;
+
+//    std::string s2 = std::to_string(out->size[1]);
+//    char const *pchar2 = s2.c_str();
+//    LoggerUtil::Log("generated dim 2", pchar2);
 }
+
+void Denoiser::cdouble2creal_T(MatrixX<complex<double>> &v, creal_T R[480]){
+    for (int ti = 0; ti < N_ZC_UP; ti++){
+        R[ti].re = v(0, ti).real();
+        R[ti].im = v(0, ti).imag();
+    }
+}
+
 
 // * pass
 void Denoiser::CheckMoving() {
@@ -252,7 +267,7 @@ double Denoiser::MaxDiff(const MatrixX<complex<double>> &m1, const MatrixX<compl
     double res = 0.0;
 
     for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < 150; j++) {
+        for (int j = 0; j < 100; j++) {
             double diff = abs(m1(i, j) - m2(i, j));
             if (diff > res) {
                 res = diff;

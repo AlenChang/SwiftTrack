@@ -37,15 +37,16 @@ public class AudioPlayer {
     // non-tunable parameters
     public static int N_ZC_UP;
     public static int N_ZC;
+    public static int BW;
     public static int BUFFER_SIZE;
     public static boolean USE_FILE;
     public static boolean[] SPEAKER_CHANNEL_MASK;
 
 
-    public static final int FC = 20000;
-    public static final int SAMPLE_RATE = 48000;
+    public static final int FC = MainActivity.FC;
+    public static final int SAMPLE_RATE = MainActivity.FS;
     private static final boolean USE_WINDOW = false;
-    private static final int U = 1;
+    private static final int U = MainActivity.ZC_ROOT;
     private static final double SCALE = 0.9;
 
     private static double[][] TX_SEQ;
@@ -124,7 +125,9 @@ public class AudioPlayer {
     public AudioPlayer() {
         USE_FILE = MainActivity.USE_FILE;
         N_ZC_UP = MainActivity.N_ZC_UP;
-        N_ZC = (N_ZC_UP / 8 - 1);
+        N_ZC = MainActivity.N_ZC;
+        BW = MainActivity.BW;
+
         BUFFER_SIZE = N_ZC_UP * 10;
         SPEAKER_CHANNEL_MASK = MainActivity.SPEAKER_CHANNEL_MAKS;
         TX_SEQ = new double[N_ZC_UP][2];

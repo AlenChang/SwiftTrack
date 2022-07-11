@@ -4,6 +4,7 @@ package com.example.swifttrack;
 import android.graphics.Color;
 import android.util.Log;
 import android.widget.Toast;
+import android.os.Process;
 
 import com.example.swifttrack.ui.acc.AccViewModel;
 import com.example.swifttrack.ui.gallery.GalleryViewModel;
@@ -327,6 +328,7 @@ public class AudioProcessor {
 
         @Override
         public void run() {
+            Process.setThreadPriority(Process.THREAD_PRIORITY_URGENT_AUDIO);
             frameCount = 0;
 
             running = true;
@@ -366,15 +368,15 @@ public class AudioProcessor {
 //                                long startTime = System.currentTimeMillis();
                                 long startTime = System.nanoTime();
                                 if (CHANNEL_MASK[inputChannel.LEFT]) {
-                                    processFrame(inputChannel.LEFT, frame1, FRAME_SIZE, AudioPlayer.N_ZC_UP);
+                                    processFrame(inputChannel.LEFT, frame1, FRAME_SIZE, AudioPlayer.N_ZC_UP, AudioPlayer.FC, AudioPlayer.BW);
                                 }
                                 if (CHANNEL_MASK[inputChannel.RIGHT]) {
-                                    processFrame(inputChannel.RIGHT, frame2, FRAME_SIZE, AudioPlayer.N_ZC_UP);
+                                    processFrame(inputChannel.RIGHT, frame2, FRAME_SIZE, AudioPlayer.N_ZC_UP, AudioPlayer.FC, AudioPlayer.BW);
                                 }
                                 long endTime = System.nanoTime();
-                                if( counter % 10 == 0){
-                                    Log.d("TimeCount", " " + (endTime - startTime)/1000000.0 + " ms");
-                                }
+//                                if( counter % 10 == 0){
+                                Log.d("TimeCount", " " + (endTime - startTime)/1000000.0 + " ms");
+//                                }
                                 counter++;
                             }
 
@@ -482,7 +484,7 @@ public class AudioProcessor {
     public AudioProcessor() {}
     public AudioProcessor(boolean[] mask) {
         CHANNEL_MASK = mask;
-        FRAME_SIZE = MainActivity.N_ZC_UP;
+        FRAME_SIZE = MainActivity.DOWN_SAMPLE_FACTOR;
     }
 
     public void setTimestamp(long timestamp) {
@@ -494,10 +496,10 @@ public class AudioProcessor {
         fragID = 0;
 
         if (CHANNEL_MASK[inputChannel.LEFT]) {
-            reset(inputChannel.LEFT, AudioPlayer.N_ZC_UP);
+            reset(inputChannel.LEFT, AudioPlayer.N_ZC_UP, AudioPlayer.FC, AudioPlayer.BW);
         }
         if (CHANNEL_MASK[inputChannel.RIGHT]) {
-            reset(inputChannel.RIGHT, AudioPlayer.N_ZC_UP);
+            reset(inputChannel.RIGHT, AudioPlayer.N_ZC_UP, AudioPlayer.FC, AudioPlayer.BW);
         }
 
         engine = new Engine();
@@ -511,10 +513,10 @@ public class AudioProcessor {
         needSave = false;
 
         if (CHANNEL_MASK[inputChannel.LEFT]) {
-            reset(inputChannel.LEFT, AudioPlayer.N_ZC_UP);
+            reset(inputChannel.LEFT, AudioPlayer.N_ZC_UP, AudioPlayer.FC, AudioPlayer.BW);
         }
         if (CHANNEL_MASK[inputChannel.RIGHT]) {
-            reset(inputChannel.RIGHT, AudioPlayer.N_ZC_UP);
+            reset(inputChannel.RIGHT, AudioPlayer.N_ZC_UP, AudioPlayer.FC, AudioPlayer.BW);
         }
         fragID = inFragID;
         engine = new Engine(fragID);
@@ -553,21 +555,21 @@ public class AudioProcessor {
         }
 
         if (CHANNEL_MASK[inputChannel.LEFT]) {
-            reset(inputChannel.LEFT, AudioPlayer.N_ZC_UP);
+            reset(inputChannel.LEFT, AudioPlayer.N_ZC_UP, AudioPlayer.FC, AudioPlayer.BW);
         }
         if (CHANNEL_MASK[inputChannel.RIGHT]) {
-            reset(inputChannel.RIGHT, AudioPlayer.N_ZC_UP);
+            reset(inputChannel.RIGHT, AudioPlayer.N_ZC_UP, AudioPlayer.FC, AudioPlayer.BW);
         }
         AudioRecorder.rxQueue.clear();
         engine = new Engine(fragID);
     }
 
 
-    private static native void processFrame(int id, double[] data, int n, int N_ZC_UP);
+    private static native void processFrame(int id, double[] data, int n, int N_ZC_UP, int FC, int BW);
 
     private static native void getCIR(int id, double[] cir_abs, int n);
 
-    private static native void reset(int id, int N_ZC_UP);
+    private static native void reset(int id, int N_ZC_UP, int FC, int BW);
 
     private static native void getHistoryData(int id, double[] history, int n, int history_id, int history_type);
 
