@@ -14,9 +14,10 @@
     <string name="stop">Stop</string>
     <string name="save">Save</string>
     <string name="start">Start</string>
-    <string name="menu_acc">Acceleration Estimation</string>
+    <string name="menu_acc">Respiration Waveforms</string>
     <string name="menu_ml">Machine Learning</string>
     <string name="menu_lstm">LSTM</string>
+    <string name='menu_resp'>Respiration</string>
     <string name="menu_setting">Setting</string>
     <string name="n_zc_up">N_ZC_UP</string>
 </resources>

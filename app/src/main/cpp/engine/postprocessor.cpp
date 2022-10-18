@@ -10,6 +10,11 @@ Postprocessor::Postprocessor(int N_ZC_UP_) {
         N_IRS = N_ZC_UP;
     }
 
+    for(int ti = 0; ti < 9; ti++){
+        xtmp[ti] = 0.0;
+        ytmp[ti] = 0.0;
+    }
+
     prev_phase_in_wrap_ = 0.0;
     phase_prev_motion2 = 0.0;
     init_velocity = 0.0;
@@ -100,6 +105,7 @@ void Postprocessor::swifttrack() {
 
     assert( !isnan(phase_unwrapped) );
     swifttrack_history_.phase_history_.push_back(phase_unwrapped);
+//    swifttrack_history_.phase_history_.push_back(arg(beta));
 
     if(!init_velocity_flag && phase_unwrapped != 0){
         init_velocity = -phase_unwrapped * C / (4 * M_PI * FC * T);;
@@ -207,10 +213,13 @@ void Postprocessor::Phase2Dist() {
     // velocity = mvMedian(velocity, mvVelocity.buffer, &mvVelocity.iter);
     //  velocity = lowpass(velocity, lowpass_taps_v);
 
+    velocity = bandpassfilter_resp(velocity, xtmp, ytmp);
+
     swifttrack_history_.velocity_history_.push_back(velocity);
 
 //    double dist = (1 - complementary_factor) * TOF_history_.dist_history_.back() + complementary_factor * (swifttrack_history_.dist_history_.back() + velocity * T);
     double dist = swifttrack_history_.dist_history_.back() + velocity * T;
+//    dist = bandpassfilter_resp(dist, xtmp, ytmp);
     swifttrack_history_.dist_history_.push_back(dist);
 }
 
@@ -285,7 +294,7 @@ void Postprocessor::BasicChannelEstimation(int rows, int tap){
 //    double dist = (1 - complementary_factor) * TOF_history_.dist_history_.back() + complementary_factor * (Strata_history_.dist_history_.back() + velocity * T);
     double dist = Strata_history_.dist_history_.back() + velocity * T;
     Strata_history_.dist_history_.push_back(dist);
-    Strata_history_.velocity_history_.push_back(0);
+    Strata_history_.velocity_history_.push_back(phase_diff);
 
 }
 
@@ -402,4 +411,64 @@ void Postprocessor::GetHistoryData(double *history, int n, Histories &history_ty
         default:
             break;
     }
+}
+
+double Postprocessor::bandpassfilter_resp(double x, double xtmp[respfilter_len], double ytmp[respfilter_len]) {
+    // bandpass filter
+//    double b[9] = {0.00010958156812944314171653220624236,0,-0.00043832627251777256686612882496945,0,0.00065748940877665882319413892531657,0,-0.00043832627251777256686612882496945,0,0.00010958156812944314171653220624236};;
+//    double a[9] = {1.0,-7.4095732886727185828590336313937,24.051598062643432029972245800309,-44.674600809450318195104046026245,51.937580026394755350338527932763,-38.701058484781242441385984420776,18.05077527858343700017940136604,-4.8182664583192069684969283116516,0.5635456740956032994915858580498};
+
+    // high pass filter
+//    double b[6] = {0.96831969148056540319657869986258,-4.8415984574028270159828934993129,9.6831969148056540319657869986258,-9.6831969148056540319657869986258,4.8415984574028270159828934993129,-0.96831969148056540319657869986258};
+//    double a[6] = {1.0,-4.9356156496366665464847756084055,9.7445304036221589427668732241727,-9.6198563876336820044343767222017,4.7485846615765634481931556365453,-0.93764302490901729747463377862005};
+
+    // band pass filter2
+    double b[respfilter_len] = {
+            -0.007364071461727886638848339373453200096264481544
+            ,0.002541500194949617135592445649194814905058592558
+            ,0.004953507163435371361825954039659336558543145657
+            ,0.008947394881960720608438109024973527994006872177
+            ,0.014426922936018028720273065346191287972033023834
+            ,0.021249707616999933407209155689088220242410898209
+            ,0.029184229724439569864102850260678678750991821289
+            ,0.037897175197590275697034911672744783572852611542
+            ,0.046962973988042895634453799402763252146542072296
+            ,0.055888113179456168355674350323170074261724948883
+            ,0.064145765296197795879429293108842102810740470886
+            ,0.071218026036823686708565617209387710317969322205
+            ,0.076641780452006813550980268701096065342426300049
+            ,0.080051895399725958579750795252039097249507904053
+            ,0.081215276588081253272832782386103644967079162598
+            ,0.080051895399725958579750795252039097249507904053
+            ,0.076641780452006813550980268701096065342426300049
+            ,0.071218026036823686708565617209387710317969322205
+            ,0.064145765296197795879429293108842102810740470886
+            ,0.055888113179456168355674350323170074261724948883
+            ,0.046962973988042895634453799402763252146542072296
+            ,0.037897175197590275697034911672744783572852611542
+            ,0.029184229724439569864102850260678678750991821289
+            ,0.021249707616999933407209155689088220242410898209
+            ,0.014426922936018028720273065346191287972033023834
+            ,0.008947394881960720608438109024973527994006872177
+            ,0.004953507163435371361825954039659336558543145657
+            ,0.002541500194949617135592445649194814905058592558
+            ,-0.007364071461727886638848339373453200096264481544
+    };
+
+    double y = 0.0;
+
+    xtmp[0] = x;
+    for(int ti = 0; ti < respfilter_len; ti++){
+        y += b[ti] * xtmp[ti];
+    }
+    for(int ti = respfilter_len-1; ti > 0; ti--){
+        xtmp[ti] = xtmp[ti-1];
+    }
+
+    if(filter_delay_counter < respfilter_len){
+        y = 0;
+        filter_delay_counter++;
+    }
+    return y;
+
 }

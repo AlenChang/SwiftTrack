@@ -5,6 +5,10 @@ Denoiser::Denoiser(int N_ZC_UP_) {
     status_ = CALI_1;
 
     N_ZC_UP = N_ZC_UP_;
+    CALI_1_FRAMES = ceil(Fs * 0.5 / N_ZC_UP);
+    CALI_2_MAX_FRAMES = ceil(20 * Fs / N_ZC_UP);
+    MOVING_PERIOD_MIN_FRAMES = ceil(0.3 * Fs / N_ZC_UP);
+
 
     prev_signal_ = MatrixX<complex<double>>::Constant(1, N_ZC_UP, complex<double>(0, 0));
     signal_ = MatrixX<complex<double>>::Constant(1, N_ZC_UP, complex<double>(0, 0));
@@ -117,7 +121,8 @@ void Denoiser::compute_thre(){
         double std_value = sqrt(sum_square_diff / (compute_thre_iter - 1));
 
         // compute threshold
-        moving_threshold_ = mean_value + std_factor * std_value;
+//        moving_threshold_ = mean_value + std_factor * std_value;
+        moving_threshold_ = mean_value * 1.2;
 //        moving_threshold_ = 0;
 
         init1_flag = true;

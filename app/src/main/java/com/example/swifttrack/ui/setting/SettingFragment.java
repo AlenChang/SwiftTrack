@@ -123,8 +123,9 @@ public class SettingFragment extends Fragment {
                 if(!text.isEmpty()){
                     int N_ZC_UP = Integer.parseInt(text);
                     Log.d("test_edit_number", text + " " + N_ZC_UP);
-                    if(N_ZC_UP % 24 == 0 && N_ZC_UP > 48 && N_ZC_UP <=1200){
+                    if(N_ZC_UP % 24 == 0 && N_ZC_UP > 48 && N_ZC_UP <=4000){
                         MainActivity.N_ZC_UP = N_ZC_UP;
+                        MainActivity.N_ZC = MainActivity.N_ZC_UP * MainActivity.BW / MainActivity.FS - 1;
                         binding.editTextNumberDecimal.setHint(" " + MainActivity.N_ZC_UP);
                         Log.d("test_edit_number", "Sequence length is " + MainActivity.N_ZC_UP);
                     }

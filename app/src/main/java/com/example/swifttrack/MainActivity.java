@@ -40,8 +40,8 @@ public class MainActivity extends AppCompatActivity {
     public static boolean USE_FILE = false;
     public static int N_ZC_UP = 480;
     public static int FS = 48000;
-    public static int FC = 19000;
-    public static int BW = 4000;
+    public static int FC = 20000;
+    public static int BW = 6000;
     public static int N_ZC = N_ZC_UP * BW / FS - 1;
     public static int ZC_ROOT = (N_ZC - 1) / 2;
     public static int DOWN_SAMPLE_FACTOR = N_ZC_UP;
@@ -121,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+//        NavController navController = Navigation.findNavController(this, R.id.acc);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }

@@ -59,6 +59,8 @@ private:
     const double PHASE_DIFF_2_THRESHOLD = 1.0 * M_PI;
     const double use_diff_flag = true;
     const int tail_tap = 20;
+    static const int respfilter_len = 29;
+    int filter_delay_counter = 0;
     int N_ZC_UP;
     int N_IRS;
     double T;
@@ -94,6 +96,9 @@ private:
     mvMedian_data mvVelocity;
     mvMedian_data mvAcc;
     double mvMedian(double x, double buffer[5], double* iter);
+    double bandpassfilter_resp(double x, double xtmp[respfilter_len], double ytmp[respfilter_len]);
+    double xtmp[respfilter_len];
+    double ytmp[respfilter_len];
 
     double lowpass_taps_v[22];
     double lowpass_taps_a[22];

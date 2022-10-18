@@ -47,6 +47,7 @@ public class AudioProcessor {
     private static long timestamp;
     private static boolean needSave;
     private int fragID;
+    AccViewModel accViewModel;
 
 
     public static class deployMethods{
@@ -160,48 +161,30 @@ public class AudioProcessor {
         private void prepareDataForAccFragment(int winLen){
             double[] xWindow1 = new double[winLen];
             double[] xWindow2 = new double[winLen];
+            int targetChannel;
             if (CHANNEL_MASK[inputChannel.RIGHT]) {
-
-                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.velocity_);
-                AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.velocity);
-
-                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.acceleration_);
-                AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.acceleration);
-
-                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-                AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.velocity2dist);
-
-                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.velocity_a);
-                AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.acceleration2velocity);
-
-                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_a);
-                AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.acceleration2dist);
-
-                double[] time_count = new double[2];
-                getTime(inputChannel.RIGHT, time_count);
-                Log.d("C_TIME_COUNT", ""+time_count[0]);
-
+                targetChannel = inputChannel.RIGHT;
             } else {
-                getHistoryData(inputChannel.LEFT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.velocity_);
-                AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.velocity);
-
-                getHistoryData(inputChannel.LEFT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.acceleration_);
-                AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.acceleration);
-
-                getHistoryData(inputChannel.LEFT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-                AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.velocity2dist);
-
-                getHistoryData(inputChannel.LEFT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.velocity_a);
-                AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.acceleration2velocity);
-
-                getHistoryData(inputChannel.LEFT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_a);
-                AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.acceleration2dist);
-
-                double[] time_count = new double[2];
-                getTime(inputChannel.LEFT, time_count);
-                Log.d("C_TIME_COUNT", ""+time_count[0]);
-
+                targetChannel = inputChannel.LEFT;
             }
+            getHistoryData(targetChannel, xWindow2, winLen, deployMethods.swifttrack, HistoryType.velocity_);
+            AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.velocity);
+
+            getHistoryData(targetChannel, xWindow2, winLen, deployMethods.swifttrack, HistoryType.acceleration_);
+            AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.acceleration);
+
+            getHistoryData(targetChannel, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+            AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.velocity2dist);
+
+            getHistoryData(targetChannel, xWindow2, winLen, deployMethods.swifttrack, HistoryType.velocity_a);
+            AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.acceleration2velocity);
+
+            getHistoryData(targetChannel, xWindow2, winLen, deployMethods.strata, HistoryType.dist_v);
+            AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.acceleration2dist);
+
+            double[] time_count = new double[2];
+            getTime(inputChannel.RIGHT, time_count);
+            Log.d("C_TIME_COUNT", ""+time_count[0]);
         }
 
         private void prepareDataForSlideFragment(int winLen){
@@ -431,43 +414,43 @@ public class AudioProcessor {
 
             lock.lock();
 
-            double[] xHistory1 = new double[frameCount];
-            double[] vHistory1 = new double[frameCount];
-            double[] xHistory2 = new double[frameCount];
-            double[] vHistory2 = new double[frameCount];
-
-            double[][] result = new double[frameCount][4];
-
-            switch (fragID){
-                case ActivityID.homeFragment:
-                    prepareDataForHomeFragment(xHistory1, vHistory1, xHistory2, vHistory2, frameCount);
-                    for (int i = 0; i < frameCount; i++) {
-                        result[i][0] = xHistory1[i];
-                        result[i][1] = xHistory2[i];
-                        result[i][2] = vHistory1[i];
-                        result[i][3] = vHistory2[i];
-                    }
-                    FileUtil.streamWriteResult(bufferedWriter, result);
-                    break;
-                case ActivityID.galleryFragment:
-                    prepareDataForGalleryFragment(frameCount);
-
-                    break;
-                case ActivityID.accFragment:
-                    prepareDataForAccFragment(frameCount);
-                    break;
-                case ActivityID.slideFragment:
-                    prepareDataForSlideFragment(frameCount);
-                    break;
-                case ActivityID.mlFragment:
-                    prepareFinalDataForMLFragment(frameCount);
-                    break;
-                case ActivityID.lstmFragment:
-                    prepareFinalDataForLSTMFragment(frameCount);
-                    break;
-                default:
-                    break;
-            }
+//            double[] xHistory1 = new double[frameCount];
+//            double[] vHistory1 = new double[frameCount];
+//            double[] xHistory2 = new double[frameCount];
+//            double[] vHistory2 = new double[frameCount];
+//
+//            double[][] result = new double[frameCount][4];
+//
+//            switch (fragID){
+//                case ActivityID.homeFragment:
+//                    prepareDataForHomeFragment(xHistory1, vHistory1, xHistory2, vHistory2, frameCount);
+//                    for (int i = 0; i < frameCount; i++) {
+//                        result[i][0] = xHistory1[i];
+//                        result[i][1] = xHistory2[i];
+//                        result[i][2] = vHistory1[i];
+//                        result[i][3] = vHistory2[i];
+//                    }
+//                    FileUtil.streamWriteResult(bufferedWriter, result);
+//                    break;
+//                case ActivityID.galleryFragment:
+//                    prepareDataForGalleryFragment(frameCount);
+//
+//                    break;
+//                case ActivityID.accFragment:
+//                    prepareDataForAccFragment(frameCount);
+//                    break;
+//                case ActivityID.slideFragment:
+//                    prepareDataForSlideFragment(frameCount);
+//                    break;
+//                case ActivityID.mlFragment:
+//                    prepareFinalDataForMLFragment(frameCount);
+//                    break;
+//                case ActivityID.lstmFragment:
+//                    prepareFinalDataForLSTMFragment(frameCount);
+//                    break;
+//                default:
+//                    break;
+//            }
 
 
 

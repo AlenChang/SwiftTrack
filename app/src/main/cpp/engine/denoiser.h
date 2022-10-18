@@ -57,16 +57,18 @@ private:
     double MaxDiff(const MatrixX<complex<double>> &m1, const MatrixX<complex<double>> &m2);
 
     // const int FRAME_SIZE = 480;
-    const int CALI_1_FRAMES = 50;
+    int Fs = 48e3;
+    int N_ZC_UP;
+    int CALI_1_FRAMES = 50;
     const float thre_factor = 2;
     const int CALI_2_PERIODS = 1;
-    const int CALI_2_MAX_FRAMES = 2000;
-    const int MOVING_PERIOD_MIN_FRAMES = 30;
+    int CALI_2_MAX_FRAMES = 2000;
+    int MOVING_PERIOD_MIN_FRAMES = 30;
     const int UPDATED_MOVING_PERIODS = 1;
     const double UPDATE_FACTOR = 0.0;
     const double updata_factor = 0.3;
-    const double std_factor = 0;
-    int N_ZC_UP;
+    const double std_factor = 4;
+
     int moving_frames_counter = 0;
     bool BackgroundNotRemove = true;
 
