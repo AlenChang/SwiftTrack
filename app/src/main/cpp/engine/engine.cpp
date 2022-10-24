@@ -12,6 +12,28 @@ using namespace std;
 Engine::Engine() {
 
 //     setup();
+    // --------------------------------
+    // Check if SDK is expired
+    time_t now;
+    time(&now);                 // get current time
+
+    struct tm timeinfo;
+    timeinfo = *localtime(&now); // convert from time_t to struct tm
+    timeinfo.tm_year = expiryYear - 1900;
+    timeinfo.tm_mon  = expiryMon - 1;
+    timeinfo.tm_mday = expiryDay;
+    timeinfo.tm_hour = 0;
+    timeinfo.tm_min  = 0;
+    timeinfo.tm_sec  = 0;
+    expiryDate = mktime(&timeinfo);
+
+    double seconds = difftime(expiryDate, now);
+    if(seconds < 0) {
+        ifExpiry = true;
+//        Util::showDebugMsg("[ERROR] Hauoli", "Hauoli Tracking SDK has expired");
+    }else{
+        ifExpiry = false;
+    }
 
     prev_status_ = Denoiser::CALI_1;
     cur_status_ = Denoiser::CALI_1;
@@ -19,6 +41,7 @@ Engine::Engine() {
 }
 
 void Engine::setup(int N, int FC, int BW){
+    if(ifExpiry) {return;}
     N_ZC_UP_ = N;
     FC_ = FC;
     BW_ = BW;
@@ -51,6 +74,7 @@ Engine::~Engine() {
 
 Engine* Engine::GetInstance(int id, int N, int FC, int BW) {
 //    LoggerUtil::Log("in_c_test", "ready to create instance.");
+//    if(ifExpiry) {return;}
     if (id == 0) {
         if (instance1 == nullptr) {
             instance1 = new Engine();
@@ -92,6 +116,7 @@ Engine* Engine::GetInstance(int id) {
 }
 
 void Engine::ProcessFrame(int id, const double *data, int n, int N, int FC, int BW) {
+//    if(ifExpiry) {return;}
     Engine *engine = Engine::GetInstance(id, N, FC, BW);
 
     // 把数据从double array转成eigen能处理的格式
@@ -110,6 +135,7 @@ void Engine::ProcessFrame(int id, const double *data, int n, int N, int FC, int 
 }
 
 void Engine::ProcessFrame_02(int id, const double *data, int n, int N, int FC, int BW){
+//    if(ifExpiry) {return;}
     Engine *engine = Engine::GetInstance(id, N, FC, BW);
     double rx_signal[480];
     for (int i = 0; i < n; i++) {
@@ -119,6 +145,7 @@ void Engine::ProcessFrame_02(int id, const double *data, int n, int N, int FC, i
 }
 
 void Engine::GetHistoryData(int id, double *history, int n, int history_id, int history_type){
+//    if(ifExpiry) {return;}
     Engine *engine = Engine::GetInstance(id);
     Histories history_profile = engine->postprocessor_->GetHistories(history_id);
 
@@ -151,6 +178,7 @@ void Engine::GetHistoryData(int id, double *history, int n, int history_id, int 
 }
 
 void Engine::GetCIR(int id, double *cir_abs, int n){
+//    if(ifExpiry) {return;}
     Engine *engine = Engine::GetInstance(id);
     if(engine->denoiser_->GetStatus() == Denoiser::CALI_SUCCESS){
         engine->postprocessor_->GetCIR(cir_abs, n);
@@ -159,22 +187,26 @@ void Engine::GetCIR(int id, double *cir_abs, int n){
 }
 
 void Engine::getMovingStatus(int id, bool *status){
+//    if(ifExpiry) {return;}
     Engine *engine = Engine::GetInstance(id);
     engine->denoiser_->GetMovingStatus(status);
 }
 
 void Engine::GetBeta(int id, double* beta_real, double* beta_imag){
+//    if(ifExpiry) {return;}
     Engine *engine = Engine::GetInstance(id);
     engine->postprocessor_->GetBeta(beta_real, beta_imag);
 }
 
 void Engine::getTime(int id, double* time){
+//    if(ifExpiry) {return;}
     Engine *engine = Engine::GetInstance(id);
     *time = engine->time_count;
 }
 
 
 void Engine::Reset(int id, int N, int FC, int BW) {
+//    if(ifExpiry) {return;}
     if (id == 0) {
         delete instance1;
         instance1 = new Engine();
@@ -195,6 +227,7 @@ void Engine::Reset(int id, int N, int FC, int BW) {
 }
 
 void Engine::ProcessFrameUpsample(double *data){
+    if(ifExpiry) {return;}
     coder::array<creal_T, 2U> dist;
     boolean_T isValid;
     processFramePipe(data, 480, 60, dist, &isValid);
@@ -202,6 +235,7 @@ void Engine::ProcessFrameUpsample(double *data){
 
 
 void Engine::ProcessFrameCore(const MatrixX<double> &rx_signal) {
+    if(ifExpiry) {return;}
 
     auto start = high_resolution_clock::now();
     // compute CIR

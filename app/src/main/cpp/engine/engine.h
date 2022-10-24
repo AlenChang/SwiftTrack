@@ -45,6 +45,15 @@ private:
     int BW_;
     int FC_;
 
+    // -------------------
+    // expiry
+    bool ifExpiry = false;
+    int expiryYear              = 2022;
+    int expiryMon               = 9;
+    int expiryDay               = 31;
+    time_t expiryDate;
+    // -------------------
+
     void ProcessFrameCore(const MatrixX<double> &rx_signal);
     void ProcessFrameUpsample(double *data);
 
