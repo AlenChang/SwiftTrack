@@ -189,21 +189,21 @@ public class AudioProcessor {
 
         private void prepareDataForSlideFragment(int winLen){
             if(CHANNEL_MASK[inputChannel.RIGHT]){
-                double[] cir_abs = new double[FRAME_SIZE];
-                getCIR(inputChannel.RIGHT, cir_abs, FRAME_SIZE);
+                double[] cir_abs = new double[MainActivity.N_ZC_UP];
+                getCIR(inputChannel.RIGHT, cir_abs, MainActivity.N_ZC_UP);
                 SlideshowViewModel.draw(cir_abs);
 
-                double[] xWindow1 = new double[winLen];
-                getHistoryData(inputChannel.RIGHT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-                SlideshowViewModel.setLineData(xWindow1);
+//                double[] xWindow1 = new double[winLen];
+//                getHistoryData(inputChannel.RIGHT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+//                SlideshowViewModel.setLineData(xWindow1);
             }else{
-                double[] cir_abs = new double[FRAME_SIZE];
-                getCIR(inputChannel.LEFT, cir_abs, FRAME_SIZE);
+                double[] cir_abs = new double[MainActivity.N_ZC_UP];
+                getCIR(inputChannel.LEFT, cir_abs, MainActivity.N_ZC_UP);
                 SlideshowViewModel.draw(cir_abs);
 
-                double[] xWindow1 = new double[winLen];
-                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-                SlideshowViewModel.setLineData(xWindow1);
+//                double[] xWindow1 = new double[winLen];
+//                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+//                SlideshowViewModel.setLineData(xWindow1);
             }
 
 

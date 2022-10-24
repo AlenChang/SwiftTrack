@@ -24,8 +24,8 @@ public class SlideshowViewModel extends ViewModel {
 
     private static MutableLiveData<Bitmap> bitmap;
     private static MutableLiveData<LineDataSet> xChart;
-    public static final int height = 600;
-    public static final int width = 150;
+    public static final int height = 1500;
+    public static final int width = MainActivity.N_ZC_UP;
     public static int iter = 0;
 
     public SlideshowViewModel() {
@@ -45,14 +45,8 @@ public class SlideshowViewModel extends ViewModel {
 
     static public void draw(double[] data) {
         Bitmap tmp = bitmap.getValue();
-//        for(int j = 0; j < height - 1; j++){
-//            for (int i = 0; i < width; i++){
-//                tmp.setPixel(i, j, tmp.getPixel(i, j+1));
-//            }
-//        }
-
         for (int i = 0; i < width; i++){
-            int c = (int) Math.round(data[i] * 5000);
+            int c = (int) Math.round(data[i] * 3000);
             if(c > 255){
                 c = 255;
             }

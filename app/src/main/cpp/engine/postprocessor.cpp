@@ -4,12 +4,12 @@
 Postprocessor::Postprocessor(int N_ZC_UP_) {
     N_ZC_UP = N_ZC_UP_;
     T = N_ZC_UP / FS;
-    if(N_ZC_UP > 150){
-        N_IRS = 150;
-    }else{
-        N_IRS = N_ZC_UP;
-    }
-
+//    if(N_ZC_UP > 150){
+//        N_IRS = 150;
+//    }else{
+//        N_IRS = N_ZC_UP;
+//    }
+    N_IRS = N_ZC_UP;
     for(int ti = 0; ti < 9; ti++){
         xtmp[ti] = 0.0;
         ytmp[ti] = 0.0;
@@ -369,13 +369,13 @@ void Postprocessor::GetCIR(double *cir_abs, int n){
 //    }
 
     for (int i = 0; i < N_IRS; i++) {
-        *(cir_abs + i) = abs(irs_signal_diff(0, i));
+        *(cir_abs + i) = abs(irs_signal_(0, i));
     }
-    if(n > 2 * N_IRS){
-        for (int i = 0; i < N_IRS; i++) {
-            *(cir_abs + i + N_IRS) = arg(irs_signal_diff(0, i));
-        }
-    }
+//    if(n > 2 * N_IRS){
+//        for (int i = 0; i < N_IRS; i++) {
+//            *(cir_abs + i + N_IRS) = arg(irs_signal_(0, i));
+//        }
+//    }
 
 }
 

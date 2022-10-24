@@ -60,8 +60,15 @@ public class SlideshowFragment extends Fragment {
         // initialization of chart data
 
         binding.imageView.setImageBitmap(Bitmap.createBitmap(SlideshowViewModel.width, SlideshowViewModel.height, Bitmap.Config.ARGB_8888));
-        binding.xChart.setData(new LineData());
-        binding.xChart.setBorderWidth(20.0f);
+//        binding.xChart.setData(new LineData());
+//        binding.xChart.setBorderWidth(20.0f);
+
+//        binding.xChart.setData(new LineData());
+//        binding.xChart.setBorderWidth(20.0f);
+//        binding.xChart.getXAxis().setDrawLabels(false);
+//        binding.xChart.getAxisLeft().setDrawLabels(false);
+//        binding.xChart.getAxisRight().setDrawLabels(false);
+//        binding.xChart.getDescription().setEnabled(false);
 
         //=====================
         // set button onclick listener
@@ -124,7 +131,7 @@ public class SlideshowFragment extends Fragment {
         slideshowViewModel.getLiveLineData().observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
             @Override
             public void onChanged(LineDataSet lineDataSet) {
-                setChart(binding.xChart, lineDataSet);
+//                setChart(binding.xChart, lineDataSet);
             }
         });
 
@@ -164,11 +171,20 @@ public class SlideshowFragment extends Fragment {
         }
     }
     private void setChart(LineChart chart, LineDataSet lineDataSet){
-        LineData lineData = chart.getLineData();
-        lineData.removeDataSet(lineData.getDataSetCount() - 1);
-        lineData.addDataSet(lineDataSet);
-
-        chart.notifyDataSetChanged();
-        chart.invalidate();
+        if(lineDataSet != null){
+            LineData lineData = chart.getLineData();
+            if(lineData.getDataSetCount() == 0){
+                lineData.addDataSet(lineDataSet);
+            }
+            else{
+                for(int ti = 0; ti < lineData.getDataSetByIndex(0).getEntryCount(); ti++){
+                    lineData.getDataSetByIndex(0).getEntryForIndex(ti).setY(lineDataSet.getEntryForIndex(ti).getY());
+                }
+            }
+            lineData.getDataSetByIndex(0).calcMinMax();
+            lineData.notifyDataChanged();
+            chart.notifyDataSetChanged();
+            chart.invalidate();
+        }
     }
 }
