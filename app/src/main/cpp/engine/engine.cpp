@@ -186,6 +186,13 @@ void Engine::GetCIR(int id, double *cir_abs, int n){
     
 }
 
+void Engine::GetThreshold(int id, double *thre){
+    Engine *engine = Engine::GetInstance(id);
+    if(engine->denoiser_->GetStatus() == Denoiser::CALI_SUCCESS){
+        *thre = engine->denoiser_->moving_threshold_;
+    }
+}
+
 void Engine::getMovingStatus(int id, bool *status){
 //    if(ifExpiry) {return;}
     Engine *engine = Engine::GetInstance(id);

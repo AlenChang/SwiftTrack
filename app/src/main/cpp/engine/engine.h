@@ -26,6 +26,8 @@ public:
 
     static void GetBeta(int id, double* beta_real, double* beta_imag);
 
+    static void GetThreshold(int id, double* thre);
+
     static void Reset(int id, int N, int FC, int BW);
 
     static void GetHistoryData(int id, double *history, int n, int history_id, int history_type);

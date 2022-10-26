@@ -60,15 +60,15 @@ public class SlideshowFragment extends Fragment {
         // initialization of chart data
 
         binding.imageView.setImageBitmap(Bitmap.createBitmap(SlideshowViewModel.width, SlideshowViewModel.height, Bitmap.Config.ARGB_8888));
-//        binding.xChart.setData(new LineData());
-//        binding.xChart.setBorderWidth(20.0f);
+        binding.cir.setData(new LineData());
+        binding.cir.setBorderWidth(20.0f);
 
-//        binding.xChart.setData(new LineData());
-//        binding.xChart.setBorderWidth(20.0f);
-//        binding.xChart.getXAxis().setDrawLabels(false);
-//        binding.xChart.getAxisLeft().setDrawLabels(false);
-//        binding.xChart.getAxisRight().setDrawLabels(false);
-//        binding.xChart.getDescription().setEnabled(false);
+        binding.cir.setData(new LineData());
+        binding.cir.setBorderWidth(20.0f);
+        binding.cir.getXAxis().setDrawLabels(false);
+        binding.cir.getAxisLeft().setDrawLabels(false);
+        binding.cir.getAxisRight().setDrawLabels(false);
+        binding.cir.getDescription().setEnabled(false);
 
         //=====================
         // set button onclick listener
@@ -131,7 +131,7 @@ public class SlideshowFragment extends Fragment {
         slideshowViewModel.getLiveLineData().observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
             @Override
             public void onChanged(LineDataSet lineDataSet) {
-//                setChart(binding.xChart, lineDataSet);
+                setChart(binding.cir, lineDataSet);
             }
         });
 

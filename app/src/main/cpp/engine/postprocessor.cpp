@@ -4,12 +4,12 @@
 Postprocessor::Postprocessor(int N_ZC_UP_) {
     N_ZC_UP = N_ZC_UP_;
     T = N_ZC_UP / FS;
-//    if(N_ZC_UP > 150){
-//        N_IRS = 150;
-//    }else{
-//        N_IRS = N_ZC_UP;
-//    }
-    N_IRS = N_ZC_UP;
+    if(N_ZC_UP > 150){
+        N_IRS = 150;
+    }else{
+        N_IRS = N_ZC_UP;
+    }
+//    N_IRS = N_ZC_UP;
     for(int ti = 0; ti < 9; ti++){
         xtmp[ti] = 0.0;
         ytmp[ti] = 0.0;
@@ -215,6 +215,10 @@ void Postprocessor::Phase2Dist() {
 
     velocity = bandpassfilter_resp(velocity, xtmp, ytmp);
 
+//    if(abs(velocity) > 1.5){
+//        velocity = 0;
+//    }
+
     swifttrack_history_.velocity_history_.push_back(velocity);
 
 //    double dist = (1 - complementary_factor) * TOF_history_.dist_history_.back() + complementary_factor * (swifttrack_history_.dist_history_.back() + velocity * T);
@@ -282,6 +286,7 @@ void Postprocessor::TapSelectionTOF(){
 
 //* Strata implementation
 void Postprocessor::BasicChannelEstimation(int rows, int tap){
+//    tap = 30;
     complex<double> tapSel = irs_signal_(rows, tap);
     double phase_diff = unwrap(tapSel, Strata_pre_.pre_phase_in_wrap_);
     double phase_unwrapped = Strata_history_.phase_history_.back() + phase_diff;
@@ -369,7 +374,8 @@ void Postprocessor::GetCIR(double *cir_abs, int n){
 //    }
 
     for (int i = 0; i < N_IRS; i++) {
-        *(cir_abs + i) = abs(irs_signal_(0, i));
+//        *(cir_abs + i) = abs(irs_signal_diff(0, i));
+        *(cir_abs + i) = abs(irs_signal_diff(0, i));
     }
 //    if(n > 2 * N_IRS){
 //        for (int i = 0; i < N_IRS; i++) {

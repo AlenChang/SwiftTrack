@@ -158,29 +158,47 @@ public class AudioProcessor {
             }
         }
 
-        private void prepareDataForAccFragment(int winLen){
+        private void prepareDataForAccFragment(int winLen, boolean needSave){
+            double[] xWindow0 = new double[winLen];
             double[] xWindow1 = new double[winLen];
             double[] xWindow2 = new double[winLen];
+            double[] xWindow3 = new double[winLen];
+            double[] xWindow4 = new double[winLen];
+
+
             int targetChannel;
             if (CHANNEL_MASK[inputChannel.RIGHT]) {
                 targetChannel = inputChannel.RIGHT;
             } else {
                 targetChannel = inputChannel.LEFT;
             }
-            getHistoryData(targetChannel, xWindow2, winLen, deployMethods.swifttrack, HistoryType.velocity_);
-            AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.velocity);
+            getHistoryData(targetChannel, xWindow0, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+            AccViewModel.setLineData(xWindow0, AccViewModel.OutTypes.velocity2dist);
+
+            getHistoryData(targetChannel, xWindow1, winLen, deployMethods.swifttrack, HistoryType.velocity_);
+            AccViewModel.setLineData(xWindow1, AccViewModel.OutTypes.velocity);
 
             getHistoryData(targetChannel, xWindow2, winLen, deployMethods.swifttrack, HistoryType.acceleration_);
             AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.acceleration);
 
-            getHistoryData(targetChannel, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-            AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.velocity2dist);
 
-            getHistoryData(targetChannel, xWindow2, winLen, deployMethods.swifttrack, HistoryType.velocity_a);
-            AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.acceleration2velocity);
+            getHistoryData(targetChannel, xWindow3, winLen, deployMethods.swifttrack, HistoryType.velocity_a);
+            AccViewModel.setLineData(xWindow3, AccViewModel.OutTypes.acceleration2velocity);
 
-            getHistoryData(targetChannel, xWindow2, winLen, deployMethods.strata, HistoryType.dist_v);
-            AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.acceleration2dist);
+            getHistoryData(targetChannel, xWindow4, winLen, deployMethods.strata, HistoryType.dist_v);
+            AccViewModel.setLineData(xWindow4, AccViewModel.OutTypes.acceleration2dist);
+
+            if(needSave){
+                double[][] result = new double[winLen][5];
+                for (int i = 0; i < winLen; i++) {
+                    result[i][0] = xWindow0[i];
+                    result[i][1] = xWindow1[i];
+                    result[i][2] = xWindow2[i];
+                    result[i][3] = xWindow3[i];
+                    result[i][4] = xWindow4[i];
+                }
+                FileUtil.streamWriteResult(bufferedWriter, result);
+            }
 
             double[] time_count = new double[2];
             getTime(inputChannel.RIGHT, time_count);
@@ -189,21 +207,21 @@ public class AudioProcessor {
 
         private void prepareDataForSlideFragment(int winLen){
             if(CHANNEL_MASK[inputChannel.RIGHT]){
-                double[] cir_abs = new double[MainActivity.N_ZC_UP];
-                getCIR(inputChannel.RIGHT, cir_abs, MainActivity.N_ZC_UP);
-                SlideshowViewModel.draw(cir_abs);
+                double[] cir_abs = new double[150];
+                getCIR(inputChannel.RIGHT, cir_abs, 150);
+                double[] thre = new double[1];
+                getThre(inputChannel.RIGHT, thre);
 
-//                double[] xWindow1 = new double[winLen];
-//                getHistoryData(inputChannel.RIGHT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-//                SlideshowViewModel.setLineData(xWindow1);
+                SlideshowViewModel.draw(cir_abs, thre);
+                SlideshowViewModel.setLineData(cir_abs, thre);
             }else{
-                double[] cir_abs = new double[MainActivity.N_ZC_UP];
-                getCIR(inputChannel.LEFT, cir_abs, MainActivity.N_ZC_UP);
-                SlideshowViewModel.draw(cir_abs);
+                double[] cir_abs = new double[150];
+                getCIR(inputChannel.LEFT, cir_abs, 150);
+                double[] thre = new double[1];
+                SlideshowViewModel.draw(cir_abs, thre);
+                getThre(inputChannel.LEFT, thre);
 
-//                double[] xWindow1 = new double[winLen];
-//                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-//                SlideshowViewModel.setLineData(xWindow1);
+                SlideshowViewModel.setLineData(cir_abs, thre);
             }
 
 
@@ -379,7 +397,7 @@ public class AudioProcessor {
 
                                     break;
                                 case ActivityID.accFragment:
-                                    prepareDataForAccFragment(WINDOW_SIZE);
+                                    prepareDataForAccFragment(WINDOW_SIZE, false);
                                     break;
                                 case ActivityID.slideFragment:
                                     prepareDataForSlideFragment(WINDOW_SIZE);
@@ -414,43 +432,43 @@ public class AudioProcessor {
 
             lock.lock();
 
-//            double[] xHistory1 = new double[frameCount];
-//            double[] vHistory1 = new double[frameCount];
-//            double[] xHistory2 = new double[frameCount];
-//            double[] vHistory2 = new double[frameCount];
+            double[] xHistory1 = new double[frameCount];
+            double[] vHistory1 = new double[frameCount];
+            double[] xHistory2 = new double[frameCount];
+            double[] vHistory2 = new double[frameCount];
+
+            double[][] result = new double[frameCount][4];
 //
-//            double[][] result = new double[frameCount][4];
-//
-//            switch (fragID){
-//                case ActivityID.homeFragment:
-//                    prepareDataForHomeFragment(xHistory1, vHistory1, xHistory2, vHistory2, frameCount);
-//                    for (int i = 0; i < frameCount; i++) {
-//                        result[i][0] = xHistory1[i];
-//                        result[i][1] = xHistory2[i];
-//                        result[i][2] = vHistory1[i];
-//                        result[i][3] = vHistory2[i];
-//                    }
-//                    FileUtil.streamWriteResult(bufferedWriter, result);
-//                    break;
-//                case ActivityID.galleryFragment:
-//                    prepareDataForGalleryFragment(frameCount);
-//
-//                    break;
-//                case ActivityID.accFragment:
-//                    prepareDataForAccFragment(frameCount);
-//                    break;
-//                case ActivityID.slideFragment:
-//                    prepareDataForSlideFragment(frameCount);
-//                    break;
-//                case ActivityID.mlFragment:
-//                    prepareFinalDataForMLFragment(frameCount);
-//                    break;
-//                case ActivityID.lstmFragment:
-//                    prepareFinalDataForLSTMFragment(frameCount);
-//                    break;
-//                default:
-//                    break;
-//            }
+            switch (fragID){
+                case ActivityID.homeFragment:
+                    prepareDataForHomeFragment(xHistory1, vHistory1, xHistory2, vHistory2, frameCount);
+                    for (int i = 0; i < frameCount; i++) {
+                        result[i][0] = xHistory1[i];
+                        result[i][1] = xHistory2[i];
+                        result[i][2] = vHistory1[i];
+                        result[i][3] = vHistory2[i];
+                    }
+                    FileUtil.streamWriteResult(bufferedWriter, result);
+                    break;
+                case ActivityID.galleryFragment:
+                    prepareDataForGalleryFragment(frameCount);
+
+                    break;
+                case ActivityID.accFragment:
+                    prepareDataForAccFragment(2048, true);
+                    break;
+                case ActivityID.slideFragment:
+                    prepareDataForSlideFragment(frameCount);
+                    break;
+                case ActivityID.mlFragment:
+                    prepareFinalDataForMLFragment(frameCount);
+                    break;
+                case ActivityID.lstmFragment:
+                    prepareFinalDataForLSTMFragment(frameCount);
+                    break;
+                default:
+                    break;
+            }
 
 
 
@@ -557,4 +575,6 @@ public class AudioProcessor {
     private static native void getHistoryData(int id, double[] history, int n, int history_id, int history_type);
 
     private static native void getTime(int id, double[] time_count);
+
+    private static native void getThre(int id, double[] thre);
 }

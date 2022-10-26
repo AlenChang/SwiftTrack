@@ -30,7 +30,9 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Timer;
 
 public class AccFragment extends Fragment {
@@ -40,6 +42,8 @@ public class AccFragment extends Fragment {
     private AudioPlayer audioPlayer;
     private AudioRecorder audioRecorder;
     private AudioProcessor audioProcessor;
+
+    private boolean abnormal_flag = false;
 //    private Boolean chartFlat = false;
 //    private int counter = 0;
 
@@ -248,6 +252,48 @@ public class AccFragment extends Fragment {
     // update chart
     public void setChart(LineChart chart, LineDataSet lineDataSet){
         if(lineDataSet != null){
+            // check dataset
+//            double ymean = 0.0;
+//            double[] y = new double[lineDataSet.getEntryCount()];
+//            for(int ti = 0; ti < lineDataSet.getEntryCount(); ti++){
+//                y[ti] = lineDataSet.getEntryForIndex(ti).getY();
+//            }
+
+            if(Objects.equals(lineDataSet.getLabel(), "Distance (SwiftTrack)")){
+                double ymin = lineDataSet.getYMin();
+                double ymax = lineDataSet.getYMax();
+
+                // check abnormal flag
+                if(ymax - ymin > 5){// if abnormal, set all values to zero
+                    abnormal_flag = true;
+                    for(int ti = 0; ti < lineDataSet.getEntryCount(); ti++){
+                        lineDataSet.getEntryForIndex(ti).setY((float) 0.0);
+                    }
+                }else{
+                    abnormal_flag = false;
+//                    double a = 0.0;
+//                    double b = 0.0;
+//                    double ybar = 0.0;
+//                    double xbar = y.length / 2;
+//                    for(int ti = 0; ti < y.length; ti++){
+//
+//                    }
+
+//                    ymean = ymean / lineDataSet.getEntryCount();
+                }
+
+
+
+            }else{ // if other datasets
+                if(abnormal_flag){
+                    for(int ti = 0; ti < lineDataSet.getEntryCount(); ti++) {
+                        lineDataSet.getEntryForIndex(ti).setY((float) 0.0);
+                    }
+                }
+            }
+
+
+//            Log.d("ChartLabel", lineDataSet.getLabel());
             LineData lineData = chart.getLineData();
             if(lineData.getDataSetCount() == 0){
                 lineData.addDataSet(lineDataSet);

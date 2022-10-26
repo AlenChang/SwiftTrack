@@ -70,3 +70,18 @@ Java_com_example_swifttrack_AudioProcessor_reset(
 ) {
     Engine::Reset(id, N, FC, BW);
 }
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_swifttrack_AudioProcessor_getThre(
+        JNIEnv *env, jobject thiz, jint id, jdoubleArray thre
+) {
+    jdouble *history_ = (env)->GetDoubleArrayElements(thre, nullptr);
+
+
+    if (Engine::GetInstance(id) != nullptr) {
+        Engine::GetThreshold(id, history_);
+    }
+
+    env->ReleaseDoubleArrayElements(thre, history_, 0);
+}

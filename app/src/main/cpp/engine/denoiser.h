@@ -14,6 +14,8 @@ public:
         CALI_FAILED = 4
     };
 
+    double moving_threshold_;
+
     Denoiser(int N_ZC_UP_);
 
     ~Denoiser();
@@ -55,6 +57,7 @@ private:
     void CheckMoving();
 
     double MaxDiff(const MatrixX<complex<double>> &m1, const MatrixX<complex<double>> &m2);
+    double TapDiff(const MatrixX<complex<double>> &m1, const MatrixX<complex<double>> &m2);
 
     // const int FRAME_SIZE = 480;
     int Fs = 48e3;
@@ -63,10 +66,10 @@ private:
     const float thre_factor = 2;
     const int CALI_2_PERIODS = 1;
     int CALI_2_MAX_FRAMES = 2000;
-    int MOVING_PERIOD_MIN_FRAMES = 30;
+    int MOVING_PERIOD_MIN_FRAMES = 10;
     const int UPDATED_MOVING_PERIODS = 1;
     const double UPDATE_FACTOR = 0.0;
-    const double updata_factor = 0.3;
+    const double updata_factor = 0.05;
     const double std_factor = 4;
 
     int moving_frames_counter = 0;
@@ -96,7 +99,7 @@ private:
     // Variables for offline calculate moving threshold
     int calibration_1_frame_count_;
     // vector<double> calibration_1_diff_history_;
-    double moving_threshold_;
+
 
     // Variables for offline calculate static signal
     int calibration_2_moving_periods_;

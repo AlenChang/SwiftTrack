@@ -25,7 +25,7 @@ public class SlideshowViewModel extends ViewModel {
     private static MutableLiveData<Bitmap> bitmap;
     private static MutableLiveData<LineDataSet> xChart;
     public static final int height = 1500;
-    public static final int width = MainActivity.N_ZC_UP;
+    public static final int width = 150;
     public static int iter = 0;
 
     public SlideshowViewModel() {
@@ -43,10 +43,14 @@ public class SlideshowViewModel extends ViewModel {
 
     public LiveData<Bitmap> getLiveBitmapData() {return bitmap;}
 
-    static public void draw(double[] data) {
+    static public void draw(double[] data, double[] thre) {
         Bitmap tmp = bitmap.getValue();
         for (int i = 0; i < width; i++){
-            int c = (int) Math.round(data[i] * 3000);
+            int c = 0;
+            if(data[i] > thre[0]){
+                c = (int) Math.round(data[i] * 3000);
+            }
+
             if(c > 255){
                 c = 255;
             }
@@ -71,8 +75,9 @@ public class SlideshowViewModel extends ViewModel {
         return xChart;
     }
 
-    public static void setLineData(double[] values) {
+    public static void setLineData(double[] values, double[] thre) {
         xChart.postValue(PlotUtil.getLineDataSet(values, "Distance", Color.RED));
+        Log.d("threshold", thre[0]+"");
     }
 
     private static int[] getCmap(int c){
