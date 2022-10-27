@@ -12,7 +12,7 @@ add_subdirectory(${FFTW3_DIR} ${CMAKE_CURRENT_BINARY_DIR}/fftw_build)
 include_directories(/usr/local/Cellar/fftw/3.3.10/include/)
 #target_link_libraries (native-lib fftw3 AudioEngine log oboe android)
 
-file(GLOB_RECURSE generated_srcs *.cpp)
+file(GLOB_RECURSE generated_srcs *.cpp detrend_alg.cpp)
 
 add_library(
     ${TARGET}

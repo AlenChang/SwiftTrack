@@ -62,14 +62,14 @@ private:
     // const int FRAME_SIZE = 480;
     int Fs = 48e3;
     int N_ZC_UP;
-    int CALI_1_FRAMES = 50;
-    const float thre_factor = 2;
-    const int CALI_2_PERIODS = 1;
-    int CALI_2_MAX_FRAMES = 2000;
-    int MOVING_PERIOD_MIN_FRAMES = 10;
+    static const int CALI_1_FRAMES = 200;
+    const double thre_factor = 2;
+    static const int CALI_2_PERIODS = 1;
+    const int CALI_2_MAX_FRAMES = ceil(40 * Fs / N_ZC_UP);
+    const int MOVING_PERIOD_MIN_FRAMES = ceil(0.1 * Fs / N_ZC_UP);
     const int UPDATED_MOVING_PERIODS = 1;
     const double UPDATE_FACTOR = 0.0;
-    const double updata_factor = 0.05;
+    const double updata_factor = 0.1;
     const double std_factor = 4;
 
     int moving_frames_counter = 0;
@@ -104,6 +104,7 @@ private:
     // Variables for offline calculate static signal
     int calibration_2_moving_periods_;
     vector<MatrixX<complex<double>>> calibration_2_signal_history_;
+    vector<MatrixX<complex<double>>> calibration_1_singal_history_;
     vector<MatrixX<complex<double>>> offline_denoise_signals_;
 
     // Variables for online update static signal
@@ -116,9 +117,14 @@ private:
     double mvMedian_buffer[5];
     double mvMedian(double x);
 
-    double compute_thre_taps[50];
+    double compute_thre_taps[CALI_1_FRAMES];
     int compute_thre_iter = 0;
     boolean_T init1_flag = false;
+    int selected_tap_for_thresholding = 30;
+    double thresholding_factor = 1.2;
+    double thresholding_update = 0.04;
+    double max_diff_histry = 0.0;
+
     void compute_thre();
 
 //    ofstream fout;

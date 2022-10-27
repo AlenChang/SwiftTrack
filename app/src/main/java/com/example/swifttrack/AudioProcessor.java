@@ -577,4 +577,6 @@ public class AudioProcessor {
     private static native void getTime(int id, double[] time_count);
 
     private static native void getThre(int id, double[] thre);
+
+    public static native void detrend(double[] data);
 }

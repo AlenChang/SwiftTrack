@@ -3,6 +3,7 @@ package com.example.swifttrack.ui.acc;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -249,6 +250,12 @@ public class AccFragment extends Fragment {
         }
     }
 
+    public void setLineData(double[] y, LineDataSet lineDataSet){
+        for(int ti = 0; ti < lineDataSet.getEntryCount(); ti++){
+            lineDataSet.getEntryForIndex(ti).setY((float) y[ti]);
+        }
+    }
+
     // update chart
     public void setChart(LineChart chart, LineDataSet lineDataSet){
         if(lineDataSet != null){
@@ -262,6 +269,11 @@ public class AccFragment extends Fragment {
             if(Objects.equals(lineDataSet.getLabel(), "Distance (SwiftTrack)")){
                 double ymin = lineDataSet.getYMin();
                 double ymax = lineDataSet.getYMax();
+                int entry_count = lineDataSet.getEntryCount();
+                double[] y = new double[entry_count];
+                for(int ti = 0; ti < entry_count; ti++){
+                    y[ti] = lineDataSet.getEntryForIndex(ti).getY();
+                }
 
                 // check abnormal flag
                 if(ymax - ymin > 5){// if abnormal, set all values to zero
@@ -271,6 +283,11 @@ public class AccFragment extends Fragment {
                     }
                 }else{
                     abnormal_flag = false;
+                    AudioProcessor.detrend(y);
+//                    setLineData(y, lineDataSet);
+                    for(int ti = 0; ti < lineDataSet.getEntryCount(); ti++){
+                        lineDataSet.getEntryForIndex(ti).setY((float) y[ti]);
+                    }
 //                    double a = 0.0;
 //                    double b = 0.0;
 //                    double ybar = 0.0;

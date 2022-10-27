@@ -9,6 +9,7 @@
 #include "processFramePipe.h"
 #include "processFramePipe_terminate.h"
 #include "coder_array.h"
+#include "detrend_alg.h"
 
 
 class Engine {
@@ -35,6 +36,8 @@ public:
     void setup(int N, int FC, int BW);
 
     static void getTime(int id, double* time);
+
+    static void detrend_frames(double *data);
 
     double time_count;
 

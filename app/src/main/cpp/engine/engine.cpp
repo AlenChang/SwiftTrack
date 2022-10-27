@@ -2,6 +2,7 @@
 //#include "logger_util.hpp"
 #include <string>
 
+
 using namespace std::chrono;
 
 Engine *Engine::instance1 = nullptr;
@@ -268,4 +269,9 @@ void Engine::ProcessFrameCore(const MatrixX<double> &rx_signal) {
 
     prev_status_ = cur_status_;
 
+}
+
+
+void Engine::detrend_frames(double *data){
+    detrend_alg(data);
 }
