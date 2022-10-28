@@ -91,40 +91,38 @@ void Denoiser::compute_thre(){
 
     // find maximum taps in each frame
     MatrixX<complex<double>> signa_diff = signal_ - prev_signal_;
-
     compute_thre_taps[compute_thre_iter] = 0;
-//    for(int ti = 0; ti < N_ZC_UP; ti++){
-//        if(abs(signa_diff(ti)) > compute_thre_taps[compute_thre_iter]){
-//            compute_thre_taps[compute_thre_iter] = abs(signa_diff(ti));
-//        }
-//    }
-    calibration_1_singal_history_.push_back(signa_diff);
-    compute_thre_taps[compute_thre_iter] = abs(signa_diff(selected_tap_for_thresholding));
+    calibration_1_singal_history_.push_back(signal_);
+//    compute_thre_taps[compute_thre_iter] = abs(signa_diff(selected_tap_for_thresholding));
+    compute_thre_taps[compute_thre_iter] = MaxDiff(signal_, prev_signal_);
     compute_thre_iter++;
     cout << "compute_thre_iter = " << compute_thre_iter << endl;
 
-    if(compute_thre_iter == CALI_1_FRAMES){
+    if(compute_thre_iter >= CALI_1_FRAMES){
         // compute mean values
         double sum_value = 0;
         for(int ti = 0; ti < CALI_1_FRAMES; ti++){
             sum_value += compute_thre_taps[ti];
         }
-        double mean_value = sum_value / compute_thre_iter;
+        mean_compute_thre = sum_value / compute_thre_iter;
 
         // compute standard deviation
         double sum_square_diff = 0;
         for(int ti = 0; ti < CALI_1_FRAMES; ti++){
-            sum_square_diff += pow(compute_thre_taps[ti] - mean_value, 2);
+            sum_square_diff += pow(compute_thre_taps[ti] - mean_compute_thre, 2);
         }
         double std_value = sqrt(sum_square_diff / (compute_thre_iter - 1));
 
-        for(int ti = 0; ti < CALI_1_FRAMES; ti++){
+        OfflineCalcStaticSignal();
+        OfflineRemoveStaticSignal();
 
-        }
+//        for(int ti = 0; ti < CALI_1_FRAMES; ti++){
+//
+//        }
 
         // compute threshold
 //        moving_threshold_ = mean_value + std_factor * std_value;
-        moving_threshold_ = mean_value * thresholding_factor;
+        moving_threshold_ = mean_compute_thre;
         max_diff_histry = moving_threshold_;
 //        moving_threshold_ = 0;
 
@@ -139,7 +137,8 @@ void Denoiser::compute_thre(){
 
 
     if(init1_flag){
-        status_ = CALI_2;
+//        status_ = CALI_2;
+        status_ = CALI_SUCCESS;
         cout << "Threshold is " << moving_threshold_ << endl;
     }
 }
@@ -214,15 +213,28 @@ void Denoiser::ProcessCalibrationSuccess() {
 
 // * pass
 void Denoiser::OfflineCalcStaticSignal() {
-    int len = calibration_2_signal_history_.size() - 1;
-    for (int i = 0; i <= MOVING_PERIOD_MIN_FRAMES; i++) {
-        static_signal_ += calibration_2_signal_history_[len - i];
-        total_moving_frames_++;
+//    int len = calibration_2_signal_history_.size() - 1;
+//    for (int i = 0; i <= MOVING_PERIOD_MIN_FRAMES; i++) {
+//        static_signal_ += calibration_2_signal_history_[len - i];
+//        total_moving_frames_++;
+//    }
+//
+//    cout << "Cali2 frame size: " << total_moving_frames_ << endl;
+//
+//    static_signal_ /=  total_moving_frames_;
+
+    int len = calibration_1_singal_history_.size() - 1;
+    int moving_frame_counter = 0;
+    for (int i = 0; i <= len; i++) {
+        if(compute_thre_taps[len - i] > mean_compute_thre){
+            static_signal_ += calibration_1_singal_history_[len - i];
+            moving_frame_counter++;
+        }
     }
 
-    cout << "Cali2 frame size: " << total_moving_frames_ << endl;
+    cout << "Cali2 frame size: " << moving_frame_counter << endl;
 
-    static_signal_ /=  total_moving_frames_;
+    static_signal_ /=  moving_frame_counter;
 
 }
 
@@ -260,10 +272,10 @@ void Denoiser::cdouble2creal_T(MatrixX<complex<double>> &v, creal_T R[480]){
 
 // * pass
 void Denoiser::CheckMoving() {
-//    double max_diff = MaxDiff(prev_signal_, signal_);
-    double max_diff = TapDiff(prev_signal_, signal_);
+    double max_diff = MaxDiff(prev_signal_, signal_);
+//    double max_diff = TapDiff(prev_signal_, signal_);
 
-    double max_diff_update_factore = 0.02;
+    double max_diff_update_factore = 0.04;
     max_diff_histry = max_diff_histry * (1-max_diff_update_factore) + max_diff_update_factore * max_diff;
 
 
@@ -272,9 +284,12 @@ void Denoiser::CheckMoving() {
     if (is_moving_) {
         moving_frames_++;
     }
+    double minimum_update = 0.0;
     if(moving_threshold_ > thresholding_factor * max_diff_histry){
-        moving_threshold_ = moving_threshold_ * (1 - thresholding_update) + max_diff_histry * thresholding_factor * thresholding_update;
+        minimum_update = max_diff_histry * thresholding_factor * thresholding_update;
     }
+    double ave_update = max_diff_histry * ave_update_factor;
+    moving_threshold_ = moving_threshold_ * (1 - ave_update_factor - thresholding_update) + ave_update + minimum_update;
 }
 
 // * pass
@@ -285,7 +300,7 @@ double Denoiser::MaxDiff(const MatrixX<complex<double>> &m1, const MatrixX<compl
     double res = 0.0;
 
     for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < 100; j++) {
+        for (int j = 30; j < 150; j++) {
             double diff = abs(m1(i, j) - m2(i, j));
             if (diff > res) {
                 res = diff;

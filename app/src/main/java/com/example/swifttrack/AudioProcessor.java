@@ -206,23 +206,21 @@ public class AudioProcessor {
         }
 
         private void prepareDataForSlideFragment(int winLen){
+            int targetChannel;
             if(CHANNEL_MASK[inputChannel.RIGHT]){
-                double[] cir_abs = new double[150];
-                getCIR(inputChannel.RIGHT, cir_abs, 150);
-                double[] thre = new double[1];
-                getThre(inputChannel.RIGHT, thre);
-
-                SlideshowViewModel.draw(cir_abs, thre);
-                SlideshowViewModel.setLineData(cir_abs, thre);
+                targetChannel = inputChannel.RIGHT;
             }else{
-                double[] cir_abs = new double[150];
-                getCIR(inputChannel.LEFT, cir_abs, 150);
-                double[] thre = new double[1];
-                SlideshowViewModel.draw(cir_abs, thre);
-                getThre(inputChannel.LEFT, thre);
-
-                SlideshowViewModel.setLineData(cir_abs, thre);
+                targetChannel = inputChannel.LEFT;
             }
+            double[] xWindow0 = new double[winLen];
+            getHistoryData(targetChannel, xWindow0, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+            double[] cir_abs = new double[150];
+            getCIR(inputChannel.LEFT, cir_abs, 150);
+            double[] thre = new double[1];
+            SlideshowViewModel.draw(cir_abs, thre);
+            getThre(inputChannel.LEFT, thre);
+
+            SlideshowViewModel.setLineData(xWindow0, thre);
 
 
         }
@@ -579,4 +577,6 @@ public class AudioProcessor {
     private static native void getThre(int id, double[] thre);
 
     public static native void detrend(double[] data);
+
+    public static native void resetResults();
 }

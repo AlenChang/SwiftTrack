@@ -95,6 +95,17 @@ public:
         }
     }
 
+    void clearbuff(){
+        phase_history_.clear();
+        velocity_history_.clear();
+        acc_history_.clear();
+        acc2velocity_history_.clear();
+        acc2dist_history_.clear();
+        acc_phase_history_.clear();
+        dist_history_.clear();
+
+    }
+
 };
 
 class Pre_Data_Store {

@@ -39,6 +39,8 @@ public:
 
     static void detrend_frames(double *data);
 
+    static void reset_results(void);
+
     double time_count;
 
 private:

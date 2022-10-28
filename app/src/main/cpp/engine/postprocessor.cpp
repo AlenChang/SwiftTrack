@@ -214,17 +214,42 @@ void Postprocessor::Phase2Dist() {
     //  velocity = lowpass(velocity, lowpass_taps_v);
 
     velocity = bandpassfilter_resp(velocity, xtmp, ytmp);
-
-//    if(abs(velocity) > 1.5){
+//    if(abs(velocity) < 0.02){
 //        velocity = 0;
 //    }
+//    double ave_velocity_update_factor = 0.002;
+//    ave_velocity = ave_velocity * (1 - ave_velocity_update_factor) + velocity * ave_velocity_update_factor;
+//    velocity -= ave_velocity;
+//    if(abs(ave_velocity) > 0.5){
+//        velocity -= ave_velocity;
+////        velocity = 0;
+////        ave_velocity = 0.0;
+//    }
+    double dist = swifttrack_history_.dist_history_.back() + velocity * T;
+    if(reset_result_flag && !is_moving_ && velocity * swifttrack_history_.velocity_history_.back() <= 0){
+        velocity = 0;
+        dist = 0;
+        reset_result_flag = false;
+        swifttrack_history_.clearbuff();
+        TOF_history_.clearbuff();
+        Strata_history_.clearbuff();
 
+
+        for(int ti = 0; ti < respfilter_len; ti++){
+            xtmp[ti] = 0;
+            ytmp[ti] = 0;
+        }
+    }else{
+        if(reset_result_flag){
+            return;
+        }
+    }
     swifttrack_history_.velocity_history_.push_back(velocity);
 
 //    double dist = (1 - complementary_factor) * TOF_history_.dist_history_.back() + complementary_factor * (swifttrack_history_.dist_history_.back() + velocity * T);
-    double dist = swifttrack_history_.dist_history_.back() + velocity * T;
 //    dist = bandpassfilter_resp(dist, xtmp, ytmp);
     swifttrack_history_.dist_history_.push_back(dist);
+
 }
 
 
@@ -477,4 +502,8 @@ double Postprocessor::bandpassfilter_resp(double x, double xtmp[respfilter_len],
     }
     return y;
 
+}
+
+void Postprocessor::reset_results(void){
+    reset_result_flag = true;
 }

@@ -45,6 +45,7 @@ public class AccFragment extends Fragment {
     private AudioProcessor audioProcessor;
 
     private boolean abnormal_flag = false;
+    private boolean toast_flag = false;
 //    private Boolean chartFlat = false;
 //    private int counter = 0;
 
@@ -128,7 +129,7 @@ public class AccFragment extends Fragment {
                 audioProcessor.setTimestamp(timestamp);
                 audioProcessor.start();
 
-                Toast.makeText(getActivity(),"Calibration!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),"Analyzing!",Toast.LENGTH_LONG).show();
 //                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
 //                    @Override
 //                    public void run() {
@@ -143,7 +144,7 @@ public class AccFragment extends Fragment {
                         //Do something after 100ms
                         Toast.makeText(getActivity(),"Start Monitoring!",Toast.LENGTH_SHORT).show();
                     }
-                }, 6000);
+                }, 15000);
 
 
             }
@@ -269,6 +270,7 @@ public class AccFragment extends Fragment {
             if(Objects.equals(lineDataSet.getLabel(), "Distance (SwiftTrack)")){
                 double ymin = lineDataSet.getYMin();
                 double ymax = lineDataSet.getYMax();
+//                lineDataSet.
                 int entry_count = lineDataSet.getEntryCount();
                 double[] y = new double[entry_count];
                 for(int ti = 0; ti < entry_count; ti++){
@@ -276,13 +278,19 @@ public class AccFragment extends Fragment {
                 }
 
                 // check abnormal flag
-                if(ymax - ymin > 5){// if abnormal, set all values to zero
+                if(ymax - ymin > 4){// if abnormal, set all values to zero
                     abnormal_flag = true;
-                    for(int ti = 0; ti < lineDataSet.getEntryCount(); ti++){
-                        lineDataSet.getEntryForIndex(ti).setY((float) 0.0);
+                    AudioProcessor.resetResults();
+                    if(toast_flag != abnormal_flag){
+                        Toast.makeText(getActivity(),"Body Movement!",Toast.LENGTH_LONG).show();
+                        toast_flag = abnormal_flag;
                     }
+
                 }else{
                     abnormal_flag = false;
+                    if(toast_flag != abnormal_flag){
+                        toast_flag = abnormal_flag;
+                    }
                     AudioProcessor.detrend(y);
 //                    setLineData(y, lineDataSet);
                     for(int ti = 0; ti < lineDataSet.getEntryCount(); ti++){

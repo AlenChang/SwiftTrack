@@ -275,3 +275,13 @@ void Engine::ProcessFrameCore(const MatrixX<double> &rx_signal) {
 void Engine::detrend_frames(double *data){
     detrend_alg(data);
 }
+
+void Engine::reset_results() {
+    if(instance1 != nullptr){
+        instance1->postprocessor_->reset_results();
+    }
+    if(instance2 != nullptr){
+        instance2->postprocessor_->reset_results();
+    }
+
+}

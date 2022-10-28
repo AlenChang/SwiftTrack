@@ -96,3 +96,12 @@ Java_com_example_swifttrack_AudioProcessor_detrend(
     env->ReleaseDoubleArrayElements(data, history_, 0);
 }
 
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_swifttrack_AudioProcessor_resetResults(
+        JNIEnv *env, jobject thiz
+) {
+    Engine::reset_results();
+}
+
+

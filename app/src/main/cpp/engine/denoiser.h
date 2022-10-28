@@ -62,15 +62,16 @@ private:
     // const int FRAME_SIZE = 480;
     int Fs = 48e3;
     int N_ZC_UP;
-    static const int CALI_1_FRAMES = 200;
+    static const int CALI_1_FRAMES = 500;
     const double thre_factor = 2;
     static const int CALI_2_PERIODS = 1;
     const int CALI_2_MAX_FRAMES = ceil(40 * Fs / N_ZC_UP);
     const int MOVING_PERIOD_MIN_FRAMES = ceil(0.1 * Fs / N_ZC_UP);
     const int UPDATED_MOVING_PERIODS = 1;
     const double UPDATE_FACTOR = 0.0;
-    const double updata_factor = 0.1;
+    const double updata_factor = 0.01;
     const double std_factor = 4;
+    double mean_compute_thre = 0.0;
 
     int moving_frames_counter = 0;
     bool BackgroundNotRemove = true;
@@ -120,9 +121,10 @@ private:
     double compute_thre_taps[CALI_1_FRAMES];
     int compute_thre_iter = 0;
     boolean_T init1_flag = false;
-    int selected_tap_for_thresholding = 30;
+    const int selected_tap_for_thresholding = 40;
     double thresholding_factor = 1.2;
-    double thresholding_update = 0.04;
+    const double thresholding_update = 0.02;
+    const double ave_update_factor = 0.01;
     double max_diff_histry = 0.0;
 
     void compute_thre();

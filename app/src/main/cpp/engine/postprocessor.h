@@ -28,6 +28,8 @@ public:
 
     void GetHistoryData(double *history, int n, Histories &history_type, HistoryType h_type);
 
+    void reset_results(void);
+
 private:
     void CutOffCIRSignal(const MatrixX<complex<double>> &cir_signal);
 
@@ -66,6 +68,8 @@ private:
     double T;
     double init_velocity;
     bool init_velocity_flag = false;
+    double ave_velocity = 0.0;
+    bool reset_result_flag = false;
 
     const double complementary_factor = 0.995;
 
