@@ -1,6 +1,6 @@
 #include <jni.h>
-#include "engine.h"
-#include "logger_util.hpp"
+#include "include/engine.h"
+//#include "logger_util.hpp"
 
 extern "C"
 JNIEXPORT void JNICALL

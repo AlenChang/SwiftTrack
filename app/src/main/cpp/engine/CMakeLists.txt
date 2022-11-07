@@ -17,6 +17,6 @@ add_library(
         postprocessor.cpp
 )
 
-target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} include)
 
 target_link_libraries(${TARGET} util lib generated)

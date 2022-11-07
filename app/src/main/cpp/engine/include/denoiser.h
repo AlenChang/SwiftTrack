@@ -3,7 +3,7 @@
 
 #include "matrix_util.hpp"
 #include "NoiseSupression.h"
-#include "logger_util.hpp"
+//#include "logger_util.hpp"
 
 class Denoiser {
 public:
@@ -120,7 +120,7 @@ private:
 
     double compute_thre_taps[CALI_1_FRAMES];
     int compute_thre_iter = 0;
-    boolean_T init1_flag = false;
+    bool init1_flag = false;
     const int selected_tap_for_thresholding = 40;
     double thresholding_factor = 1.2;
     const double thresholding_update = 0.02;
