@@ -5,6 +5,10 @@ project(acoustic)
 set(CMAKE_CXX_STANDARD 14)
 set(TARGET engine)
 
+add_subdirectory(util)
+add_subdirectory(lib)
+add_subdirectory(generated)
+
 add_library(
         ${TARGET}
         engine.cpp
