@@ -6,10 +6,10 @@
 #include "preprocessor.h"
 #include "filter_util.hpp"
 #include "matrix_util.hpp"
-#include "processFramePipe.h"
-#include "processFramePipe_terminate.h"
-#include "coder_array.h"
-#include "detrend_alg.h"
+//#include "processFramePipe.h"
+//#include "processFramePipe_terminate.h"
+//#include "coder_array.h"
+//#include "detrend_alg.h"
 
 
 class Engine {
@@ -37,7 +37,7 @@ public:
 
     static void getTime(int id, double* time);
 
-    static void detrend_frames(double *data);
+//    static void detrend_frames(double *data);
 
     static void reset_results(void);
 
@@ -62,7 +62,7 @@ private:
     // -------------------
 
     void ProcessFrameCore(const MatrixX<double> &rx_signal);
-    void ProcessFrameUpsample(double *data);
+//    void ProcessFrameUpsample(double *data);
 
     static Engine *instance1, *instance2;
 

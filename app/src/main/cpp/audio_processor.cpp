@@ -92,7 +92,7 @@ Java_com_example_swifttrack_AudioProcessor_detrend(
         JNIEnv *env, jobject thiz, jdoubleArray data
 ) {
     jdouble *history_ = (env)->GetDoubleArrayElements(data, nullptr);
-    Engine::detrend_frames(history_);
+//    Engine::detrend_frames(history_);
     env->ReleaseDoubleArrayElements(data, history_, 0);
 }
 

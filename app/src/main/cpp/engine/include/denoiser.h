@@ -2,7 +2,7 @@
 #define ACOUSTICTRACKER_DENOISER_H
 
 #include "matrix_util.hpp"
-#include "NoiseSupression.h"
+//#include "NoiseSupression.h"
 //#include "logger_util.hpp"
 
 class Denoiser {
@@ -35,7 +35,7 @@ public:
     bool getMovingStatus();
 
 //    void main_offerRxUpsample(void);
-    void cdouble2creal_T(MatrixX<complex<double>> &v, creal_T R[480]);
+//    void cdouble2creal_T(MatrixX<complex<double>> &v, creal_T R[480]);
 
 private:
     // void ProcessCalibration1();

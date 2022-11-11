@@ -262,12 +262,12 @@ void Denoiser::OnlineRemoveStaticSignal() {
 //    LoggerUtil::Log("generated dim 2", pchar2);
 }
 
-void Denoiser::cdouble2creal_T(MatrixX<complex<double>> &v, creal_T R[480]){
-    for (int ti = 0; ti < N_ZC_UP; ti++){
-        R[ti].re = v(0, ti).real();
-        R[ti].im = v(0, ti).imag();
-    }
-}
+//void Denoiser::cdouble2creal_T(MatrixX<complex<double>> &v, creal_T R[480]){
+//    for (int ti = 0; ti < N_ZC_UP; ti++){
+//        R[ti].re = v(0, ti).real();
+//        R[ti].im = v(0, ti).imag();
+//    }
+//}
 
 
 // * pass
@@ -342,9 +342,9 @@ double Denoiser::TapDiff(const MatrixX<complex<double>> &m1, const MatrixX<compl
     return res;
 }
 
-double Denoiser::mvMedian(double x){
-    return NoiseSupression::mvMedian(x, mvMedian_buffer, &mvMedian_iter);
-}
+//double Denoiser::mvMedian(double x){
+//    return NoiseSupression::mvMedian(x, mvMedian_buffer, &mvMedian_iter);
+//}
 
 bool Denoiser::getMovingStatus(){
     return is_moving_;

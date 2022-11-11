@@ -6,8 +6,8 @@ set(CMAKE_CXX_STANDARD 14)
 set(TARGET engine)
 
 add_subdirectory(util)
-add_subdirectory(lib)
-add_subdirectory(generated)
+#add_subdirectory(lib)
+#add_subdirectory(generated)
 
 add_library(
         ${TARGET}
@@ -19,4 +19,4 @@ add_library(
 
 target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} include)
 
-target_link_libraries(${TARGET} util lib generated)
+target_link_libraries(${TARGET} util)

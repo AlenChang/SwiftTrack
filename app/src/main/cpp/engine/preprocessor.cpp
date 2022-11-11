@@ -106,5 +106,5 @@ void Preprocessor::addWindow(){
 void Preprocessor::genWindow(double win[480])
 {
   // Call the entry-point 'genWindow'.
-  NoiseSupression::genWindow(win);
+//  NoiseSupression::genWindow(win);
 }

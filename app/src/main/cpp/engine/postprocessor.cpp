@@ -1,4 +1,4 @@
-#include "include/postprocessor.h"
+#include "postprocessor.h"
 #include <stdio.h>
 
 Postprocessor::Postprocessor(int N_ZC_UP_) {
@@ -298,8 +298,8 @@ void Postprocessor::TapSelectionTOF(){
             dist = (double) tap / FC * C / 2;
         }
         
-        dist = mvMedian(dist, mvTOF.buffer, &mvTOF.iter);
-        dist = lowpass(dist, lowpass_taps_fingerIO);
+//        dist = mvMedian(dist, mvTOF.buffer, &mvTOF.iter);
+//        dist = lowpass(dist, lowpass_taps_fingerIO);
         TOF_history_.dist_history_.push_back(dist);
         TOF_history_.velocity_history_.push_back(0);
         TOF_history_.phase_history_.push_back(0);
@@ -328,13 +328,13 @@ void Postprocessor::BasicChannelEstimation(int rows, int tap){
 
 }
 
-double Postprocessor::mvMedian(double x, double buffer[5], double* iter){
-    return NoiseSupression::mvMedian(x, buffer, iter);
-}
+//double Postprocessor::mvMedian(double x, double buffer[5], double* iter){
+//    return NoiseSupression::mvMedian(x, buffer, iter);
+//}
 
-double Postprocessor::lowpass(double x, double taps[22]){
-    return NoiseSupression::lowPass6_15_60_100(x, taps);
-}
+//double Postprocessor::lowpass(double x, double taps[22]){
+//    return NoiseSupression::lowPass6_15_60_100(x, taps);
+//}
 
 
 // *********************************************

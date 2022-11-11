@@ -60,7 +60,7 @@ void Engine::setup(int N, int FC, int BW){
     // Four different approaches - ToF, Strata, SwiftTrack w/o TOF, SwiftTrack
     postprocessor_ = new Postprocessor(N_ZC_UP_);
 
-    processFramePipe_init();
+//    processFramePipe_init();
 }
 
 
@@ -142,7 +142,7 @@ void Engine::ProcessFrame_02(int id, const double *data, int n, int N, int FC, i
     for (int i = 0; i < n; i++) {
         rx_signal[i] = *(data + i);
     }
-    engine->ProcessFrameUpsample(rx_signal);
+//    engine->ProcessFrameUpsample(rx_signal);
 }
 
 void Engine::GetHistoryData(int id, double *history, int n, int history_id, int history_type){
@@ -234,12 +234,12 @@ void Engine::Reset(int id, int N, int FC, int BW) {
     // LoggerUtil::Log("Engine::Reset", "Invalid engine id.");
 }
 
-void Engine::ProcessFrameUpsample(double *data){
-    if(ifExpiry) {return;}
-    coder::array<creal_T, 2U> dist;
-    boolean_T isValid;
-    processFramePipe(data, 480, 60, dist, &isValid);
-}
+//void Engine::ProcessFrameUpsample(double *data){
+//    if(ifExpiry) {return;}
+//    coder::array<creal_T, 2U> dist;
+//    boolean_T isValid;
+//    processFramePipe(data, 480, 60, dist, &isValid);
+//}
 
 
 void Engine::ProcessFrameCore(const MatrixX<double> &rx_signal) {
@@ -272,9 +272,9 @@ void Engine::ProcessFrameCore(const MatrixX<double> &rx_signal) {
 }
 
 
-void Engine::detrend_frames(double *data){
-    detrend_alg(data);
-}
+//void Engine::detrend_frames(double *data){
+//    detrend_alg(data);
+//}
 
 void Engine::reset_results() {
     if(instance1 != nullptr){
