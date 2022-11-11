@@ -1,6 +1,7 @@
 #include "include/engine.h"
 //#include "logger_util.hpp"
 #include <string>
+#include "recalibrateHistory.h"
 
 
 using namespace std::chrono;
@@ -176,6 +177,14 @@ void Engine::GetHistoryData(int id, double *history, int n, int history_id, int 
         default:
             break;
     }
+
+    double hist_in[2048];
+    for(int i=0;i<2048;i++) hist_in[i] = history[i];
+    double * pks_data = (double *) malloc(sizeof(double) * 2048);
+    double * locs_data = (double *) malloc(sizeof(double) * 2048);
+    int *pks_size = (int *) malloc(sizeof(int));
+    int *locs_size = (int *) malloc(sizeof(int));
+    recalibrateHistory(hist_in,history,pks_data,pks_size,locs_data,locs_size);
 }
 
 void Engine::GetCIR(int id, double *cir_abs, int n){

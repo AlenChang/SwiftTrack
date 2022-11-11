@@ -84,7 +84,7 @@ public class AudioProcessor {
 
     private static class Engine extends Thread {
         private static final int INTERVAL = 50;
-        private static final int WINDOW_SIZE = 500;
+        private static final int WINDOW_SIZE = 2048;
 
         private final Lock lock = new ReentrantLock();
         private final double[] frame1 = new double[FRAME_SIZE];
@@ -180,7 +180,6 @@ public class AudioProcessor {
 
             getHistoryData(targetChannel, xWindow2, winLen, deployMethods.swifttrack, HistoryType.acceleration_);
             AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.acceleration);
-
 
             getHistoryData(targetChannel, xWindow3, winLen, deployMethods.swifttrack, HistoryType.velocity_a);
             AccViewModel.setLineData(xWindow3, AccViewModel.OutTypes.acceleration2velocity);
