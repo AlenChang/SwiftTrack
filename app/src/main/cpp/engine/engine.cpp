@@ -2,8 +2,8 @@
 //#include "logger_util.hpp"
 #include <string>
 #include "recalibrateHistory.h"
-
-
+#include "fftw3.h"
+#include <vector>
 using namespace std::chrono;
 
 Engine *Engine::instance1 = nullptr;
@@ -177,7 +177,9 @@ void Engine::GetHistoryData(int id, double *history, int n, int history_id, int 
         default:
             break;
     }
-
+//    fftw_complex a;
+//    a[REAL] = 1;
+//    a[IMAG] = 2;
     double hist_in[2048];
     for(int i=0;i<2048;i++) hist_in[i] = history[i];
     double * pks_data = (double *) malloc(sizeof(double) * 2048);
@@ -293,4 +295,76 @@ void Engine::reset_results() {
         instance2->postprocessor_->reset_results();
     }
 
+}
+
+void Engine::genZC(int N_ZC, int N_ZC_UP, int U, int FC, int SAMPLE_RATE, const bool* SPEAKER_CHANNEL, bool USE_WINDOW,double SCALE, vector<vector<double>> & TX_SEQ) {
+    // Generate raw zc seq
+    fftw_complex * rawZC;
+    rawZC = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N_ZC);
+    for(int i = 0; i < N_ZC; i++){
+        double theta = - M_PI * U * i * (i + 1) / N_ZC;
+        rawZC[i][REAL] = cos(theta);
+        rawZC[i][IMAG] = sin(theta);
+    }
+    // Transfer raw zc to freq domain
+    fftw_complex* output_fft;
+    output_fft = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N_ZC);
+
+    int b_sign = FFTW_FORWARD;
+    fftw_plan plan = fftw_plan_dft_1d(N_ZC,rawZC , output_fft, b_sign,FFTW_MEASURE);
+    fftw_execute(plan);
+    fftw_destroy_plan(plan);
+    // Apply hann window based on the reference url: https://ww2.mathworks.cn/help/signal/ref/hann.html
+    if (USE_WINDOW) {
+        for (int i = 0; i < N_ZC; i++) {
+            output_fft[i][REAL] = 0.5 * (1 - cos(2 * M_PI  * i / (N_ZC - 1)));
+            output_fft[i][IMAG] = 0.5 * (1 - cos(2 * M_PI  * i / (N_ZC - 1)));
+        }
+    }
+    // Padding zeros in freq domain
+    fftw_complex * freqPadZC;
+    freqPadZC = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N_ZC_UP);
+
+    int len = N_ZC_UP - N_ZC;
+    for (int i = 0; i < N_ZC_UP;i++){
+        freqPadZC[i][REAL] = 0.0;
+        freqPadZC[i][IMAG] = 0.0;
+    }
+    for (int i = 0; i < N_ZC; i++) {
+        if (i < (N_ZC + 1) / 2 ) {
+            freqPadZC[i][REAL] = output_fft[i][REAL];
+            freqPadZC[i][IMAG] = output_fft[i][IMAG];
+        } else{
+            freqPadZC[i + len][REAL]  = output_fft[i][REAL];
+            freqPadZC[i + len][IMAG]  = output_fft[i][IMAG];
+        }
+    }
+    // Back to time domain
+
+    fftw_complex* output_ifft;
+    output_ifft = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N_ZC_UP);
+    b_sign = FFTW_BACKWARD;
+    plan = fftw_plan_dft_1d(N_ZC_UP,freqPadZC , output_ifft, b_sign,FFTW_MEASURE);
+    fftw_execute(plan);
+    fftw_destroy_plan(plan);
+
+    // Up conversion
+
+    vector<double> seqFrame(N_ZC_UP,0.0);
+    double maxValue = 0.0;
+    for (int i = 0; i < N_ZC_UP; i++) {
+        double theta =  - 2 * M_PI * FC * (i + 1) / SAMPLE_RATE;
+        double real = cos(theta);
+        double imag = sin(theta);
+        seqFrame[i] = output_ifft[i][REAL] * real + output_ifft[i][IMAG] * imag;
+        maxValue = max(maxValue, abs(seqFrame[i]));
+    }
+    for (int i = 0; i < N_ZC_UP; i++) {
+        if (SPEAKER_CHANNEL[0]) {
+            TX_SEQ[i][0] = seqFrame[i] / maxValue * SCALE;
+        }
+        if (SPEAKER_CHANNEL[1]) {
+            TX_SEQ[i][1] = seqFrame[i] / maxValue * SCALE;
+        }
+    }
 }

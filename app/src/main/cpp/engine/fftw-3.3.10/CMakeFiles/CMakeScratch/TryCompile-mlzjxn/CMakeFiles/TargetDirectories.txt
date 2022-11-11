@@ -1,0 +1,2 @@
+C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-mlzjxn/CMakeFiles/cmTC_d86c7.dir
+C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-mlzjxn/CMakeFiles/ALL_BUILD.dir

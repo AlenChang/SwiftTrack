@@ -10,7 +10,15 @@
 //#include "processFramePipe_terminate.h"
 //#include "coder_array.h"
 //#include "detrend_alg.h"
+#include "fftw3.h"
 
+
+#define REAL 0
+#define IMAG 1
+
+#ifndef M_PI
+#define M_PI acos(-1)*1.0
+#endif
 
 class Engine {
 public:
@@ -40,6 +48,8 @@ public:
 //    static void detrend_frames(double *data);
 
     static void reset_results(void);
+
+    static void genZC(int N_ZC, int N_ZC_UP, int U, int FC, int SAMPLE_RATE, const bool* SPEAKER_CHANNEL, bool USE_WINDOW,double SCALE, vector<vector<double>> & TX_SEQ);
 
     double time_count;
 

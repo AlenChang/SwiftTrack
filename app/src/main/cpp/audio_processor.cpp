@@ -1,6 +1,8 @@
 #include <jni.h>
 #include "include/engine.h"
 //#include "logger_util.hpp"
+#include <math.h>
+
 
 extern "C"
 JNIEXPORT void JNICALL
@@ -103,5 +105,27 @@ Java_com_example_swifttrack_AudioProcessor_resetResults(
 ) {
     Engine::reset_results();
 }
+extern "C"
+JNIEXPORT void JNICALL Java_com_example_swifttrack_AudioProcessor_genZCSeq(JNIEnv* env, jclass thisObj,
+                                                                        jint N_ZC, jint U, jboolean USE_WINDOW,
+                                                                        jint N_ZC_UP, jint FC, jint SAMPLE_RATE,
+                                                                        jbooleanArray SPEAKER_CHANNEL_MASK,
+                                                                        jdouble SCALE, jobjectArray TX_SEQ){
+    // Scaling
+    jboolean * SPEAKER_CHANNEL =  (env)->GetBooleanArrayElements(SPEAKER_CHANNEL_MASK, nullptr);
 
+    vector<vector<double>> TX_SEQ_IN(N_ZC_UP,vector<double>(2,0));
+    bool SPEAKER_CHANNEL_[2];
+    SPEAKER_CHANNEL_[0] = SPEAKER_CHANNEL[0];
+    SPEAKER_CHANNEL_[1] = SPEAKER_CHANNEL[1];
+    Engine::genZC(N_ZC, N_ZC_UP, U, FC, SAMPLE_RATE, SPEAKER_CHANNEL_, USE_WINDOW,SCALE ,TX_SEQ_IN);
+    for (int i = 0; i < N_ZC_UP; i++) {
+        jdoubleArray TX_SEQ_ = (jdoubleArray)env->GetObjectArrayElement(TX_SEQ, i);
+        jboolean jb = JNI_FALSE;
+        jdouble * TX_SEQ_i =  (env)->GetDoubleArrayElements(TX_SEQ_,&jb);
+        TX_SEQ_i[0] = TX_SEQ_IN[i][0];
+        TX_SEQ_i[1] = TX_SEQ_IN[i][1];
+        env->ReleaseDoubleArrayElements(TX_SEQ_, TX_SEQ_i, 0);
+    }
+}
 

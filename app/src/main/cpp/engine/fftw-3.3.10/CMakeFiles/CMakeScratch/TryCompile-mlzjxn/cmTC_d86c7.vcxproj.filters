@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-mlzjxn\SIZEOF_INT.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{EC3AAD6B-2962-39C6-8F4B-18B529022FBA}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

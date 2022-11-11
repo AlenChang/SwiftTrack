@@ -1,0 +1,661 @@
+Determining if the include file alloca.h exists failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-fyd473
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_c0399.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckIncludeFile.c
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_c0399.dir\Debug\\" /Fd"cmTC_c0399.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-fyd473\CheckIncludeFile.c"
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-fyd473\CheckIncludeFile.c(1,10): fatal  error C1083: ????????: "alloca.h": No such file or directory [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-fyd473\cmTC_c0399.vcxproj]
+
+
+
+Determining if the include file altivec.h exists failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-aa18zz
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_7fb9f.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckIncludeFile.c
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_7fb9f.dir\Debug\\" /Fd"cmTC_7fb9f.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-aa18zz\CheckIncludeFile.c"
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-aa18zz\CheckIncludeFile.c(1,10): fatal  error C1083: ????????: "altivec.h": No such file or directory [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-aa18zz\cmTC_7fb9f.vcxproj]
+
+
+
+Determining if the include file c_asm.h exists failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-1zoo82
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_0a8cd.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckIncludeFile.c
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_0a8cd.dir\Debug\\" /Fd"cmTC_0a8cd.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-1zoo82\CheckIncludeFile.c"
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-1zoo82\CheckIncludeFile.c(1,10): fatal  error C1083: ????????: "c_asm.h": No such file or directory [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-1zoo82\cmTC_0a8cd.vcxproj]
+
+
+
+Determining if the include file dlfcn.h exists failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-5pq4z1
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_cc511.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckIncludeFile.c
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_cc511.dir\Debug\\" /Fd"cmTC_cc511.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-5pq4z1\CheckIncludeFile.c"
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-5pq4z1\CheckIncludeFile.c(1,10): fatal  error C1083: ????????: "dlfcn.h": No such file or directory [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-5pq4z1\cmTC_cc511.vcxproj]
+
+
+
+Determining if the include file intrinsics.h exists failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-sm18ay
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_b052e.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckIncludeFile.c
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_b052e.dir\Debug\\" /Fd"cmTC_b052e.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-sm18ay\CheckIncludeFile.c"
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-sm18ay\CheckIncludeFile.c(1,10): fatal  error C1083: ????????: "intrinsics.h": No such file or directory [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-sm18ay\cmTC_b052e.vcxproj]
+
+
+
+Determining if the include file libintl.h exists failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-j8m0lh
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_adb92.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckIncludeFile.c
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_adb92.dir\Debug\\" /Fd"cmTC_adb92.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-j8m0lh\CheckIncludeFile.c"
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-j8m0lh\CheckIncludeFile.c(1,10): fatal  error C1083: ????????: "libintl.h": No such file or directory [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-j8m0lh\cmTC_adb92.vcxproj]
+
+
+
+Determining if the include file mach/mach_time.h exists failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-bygz2n
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_6a6f3.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckIncludeFile.c
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-bygz2n\CheckIncludeFile.c(1,10): fatal  error C1083: ????????: "mach/mach_time.h": No such file or directory [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-bygz2n\cmTC_6a6f3.vcxproj]
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_6a6f3.dir\Debug\\" /Fd"cmTC_6a6f3.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-bygz2n\CheckIncludeFile.c"
+
+
+
+Determining if the include file strings.h exists failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-281mi4
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_60b8d.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckIncludeFile.c
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_60b8d.dir\Debug\\" /Fd"cmTC_60b8d.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-281mi4\CheckIncludeFile.c"
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-281mi4\CheckIncludeFile.c(1,10): fatal  error C1083: ????????: "strings.h": No such file or directory [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-281mi4\cmTC_60b8d.vcxproj]
+
+
+
+Determining if the include file sys/time.h exists failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-raro51
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_a52bb.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckIncludeFile.c
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-raro51\CheckIncludeFile.c(1,10): fatal  error C1083: ????????: "sys/time.h": No such file or directory [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-raro51\cmTC_a52bb.vcxproj]
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_a52bb.dir\Debug\\" /Fd"cmTC_a52bb.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-raro51\CheckIncludeFile.c"
+
+
+
+Determining if the include file sys/sysctl.h exists failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-nfip0j
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_d7885.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckIncludeFile.c
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-nfip0j\CheckIncludeFile.c(1,10): fatal  error C1083: ????????: "sys/sysctl.h": No such file or directory [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-nfip0j\cmTC_d7885.vcxproj]
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_d7885.dir\Debug\\" /Fd"cmTC_d7885.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-nfip0j\CheckIncludeFile.c"
+
+
+
+Determining if the include file uintptr.h exists failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-g5cfg3
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_0ff3e.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckIncludeFile.c
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_0ff3e.dir\Debug\\" /Fd"cmTC_0ff3e.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-g5cfg3\CheckIncludeFile.c"
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-g5cfg3\CheckIncludeFile.c(1,10): fatal  error C1083: ????????: "uintptr.h": No such file or directory [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-g5cfg3\cmTC_0ff3e.vcxproj]
+
+
+
+Determining if the include file unistd.h exists failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-wyip40
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_5b396.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckIncludeFile.c
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_5b396.dir\Debug\\" /Fd"cmTC_5b396.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-wyip40\CheckIncludeFile.c"
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-wyip40\CheckIncludeFile.c(1,10): fatal  error C1083: ????????: "unistd.h": No such file or directory [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-wyip40\cmTC_5b396.vcxproj]
+
+
+
+Determining if the prototype drand48 exists for HAVE_DECL_DRAND48 failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-3yctu3
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_5e058.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckPrototypeDefinition.c
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_5e058.dir\Debug\\" /Fd"cmTC_5e058.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-3yctu3\CheckPrototypeDefinition.c"
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-3yctu3\CheckPrototypeDefinition.c(10,33): error C2065: "drand48": ??????? [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-3yctu3\cmTC_5e058.vcxproj]
+
+
+
+#include <stdlib.h>
+
+
+static void cmakeRequireSymbol(int dummy, ...) {
+  (void) dummy;
+}
+
+static void checkSymbol(void) {
+#ifndef drand48
+  cmakeRequireSymbol(0, &drand48);
+#endif
+}
+
+double drand48 (void) {
+  return 0;
+}
+
+#ifdef __CLASSIC_C__
+int main() {
+  int ac;
+  char*av[];
+#else
+int main(int ac, char *av[]) {
+#endif
+  checkSymbol();
+  if (ac > 1000) {
+    return *av[0];
+  }
+  return 0;
+}
+
+
+Determining if the prototype srand48 exists for HAVE_DECL_SRAND48 failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-c4nj9r
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_e8d21.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckPrototypeDefinition.c
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-c4nj9r\CheckPrototypeDefinition.c(10,33): error C2065: "srand48": ??????? [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-c4nj9r\cmTC_e8d21.vcxproj]
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_e8d21.dir\Debug\\" /Fd"cmTC_e8d21.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-c4nj9r\CheckPrototypeDefinition.c"
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-c4nj9r\CheckPrototypeDefinition.c(15,11): warning C4098: "srand48":"void"????? [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-c4nj9r\cmTC_e8d21.vcxproj]
+
+
+
+#include <stdlib.h>
+
+
+static void cmakeRequireSymbol(int dummy, ...) {
+  (void) dummy;
+}
+
+static void checkSymbol(void) {
+#ifndef srand48
+  cmakeRequireSymbol(0, &srand48);
+#endif
+}
+
+void srand48(long int seedval) {
+  return 0;
+}
+
+#ifdef __CLASSIC_C__
+int main() {
+  int ac;
+  char*av[];
+#else
+int main(int ac, char *av[]) {
+#endif
+  checkSymbol();
+  if (ac > 1000) {
+    return *av[0];
+  }
+  return 0;
+}
+
+
+Determining if the prototype cosl exists for HAVE_DECL_COSL failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-7qu4qa
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_b78f7.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckPrototypeDefinition.c
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_b78f7.dir\Debug\\" /Fd"cmTC_b78f7.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-7qu4qa\CheckPrototypeDefinition.c"
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-7qu4qa\CheckPrototypeDefinition.c(14,13): error C2084: ??"long double cosl(long double)"???? [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-7qu4qa\cmTC_b78f7.vcxproj]
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.22000.0\ucrt\corecrt_math.h(829,51): message : ??"cosl"?????? [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-7qu4qa\cmTC_b78f7.vcxproj]
+
+
+
+#include <math.h>
+
+
+static void cmakeRequireSymbol(int dummy, ...) {
+  (void) dummy;
+}
+
+static void checkSymbol(void) {
+#ifndef cosl
+  cmakeRequireSymbol(0, &cosl);
+#endif
+}
+
+long double cosl( long double arg ) {
+  return 0;
+}
+
+#ifdef __CLASSIC_C__
+int main() {
+  int ac;
+  char*av[];
+#else
+int main(int ac, char *av[]) {
+#endif
+  checkSymbol();
+  if (ac > 1000) {
+    return *av[0];
+  }
+  return 0;
+}
+
+
+Determining if the prototype sinl exists for HAVE_DECL_SINL failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-6se8m4
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_11cb7.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckPrototypeDefinition.c
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_11cb7.dir\Debug\\" /Fd"cmTC_11cb7.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-6se8m4\CheckPrototypeDefinition.c"
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-6se8m4\CheckPrototypeDefinition.c(14,13): error C2084: ??"long double sinl(long double)"???? [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-6se8m4\cmTC_11cb7.vcxproj]
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.22000.0\ucrt\corecrt_math.h(938,51): message : ??"sinl"?????? [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-6se8m4\cmTC_11cb7.vcxproj]
+
+
+
+#include <math.h>
+
+
+static void cmakeRequireSymbol(int dummy, ...) {
+  (void) dummy;
+}
+
+static void checkSymbol(void) {
+#ifndef sinl
+  cmakeRequireSymbol(0, &sinl);
+#endif
+}
+
+long double sinl( long double arg ) {
+  return 0;
+}
+
+#ifdef __CLASSIC_C__
+int main() {
+  int ac;
+  char*av[];
+#else
+int main(int ac, char *av[]) {
+#endif
+  checkSymbol();
+  if (ac > 1000) {
+    return *av[0];
+  }
+  return 0;
+}
+
+
+Determining if the prototype memalign exists for HAVE_DECL_MEMALIGN failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-zu8u83
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_82dbc.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckPrototypeDefinition.c
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-zu8u83\CheckPrototypeDefinition.c(10,34): error C2065: "memalign": ??????? [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-zu8u83\cmTC_82dbc.vcxproj]
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_82dbc.dir\Debug\\" /Fd"cmTC_82dbc.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-zu8u83\CheckPrototypeDefinition.c"
+
+
+
+#include <malloc.h>
+
+
+static void cmakeRequireSymbol(int dummy, ...) {
+  (void) dummy;
+}
+
+static void checkSymbol(void) {
+#ifndef memalign
+  cmakeRequireSymbol(0, &memalign);
+#endif
+}
+
+void *memalign(size_t alignment, size_t size) {
+  return 0;
+}
+
+#ifdef __CLASSIC_C__
+int main() {
+  int ac;
+  char*av[];
+#else
+int main(int ac, char *av[]) {
+#endif
+  checkSymbol();
+  if (ac > 1000) {
+    return *av[0];
+  }
+  return 0;
+}
+
+
+Determining if the prototype posix_memalign exists for HAVE_DECL_POSIX_MEMALIGN failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-9csvt2
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_f4702.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckPrototypeDefinition.c
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_f4702.dir\Debug\\" /Fd"cmTC_f4702.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-9csvt2\CheckPrototypeDefinition.c"
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-9csvt2\CheckPrototypeDefinition.c(10,40): error C2065: "posix_memalign": ??????? [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-9csvt2\cmTC_f4702.vcxproj]
+
+
+
+#include <stdlib.h>
+
+
+static void cmakeRequireSymbol(int dummy, ...) {
+  (void) dummy;
+}
+
+static void checkSymbol(void) {
+#ifndef posix_memalign
+  cmakeRequireSymbol(0, &posix_memalign);
+#endif
+}
+
+int posix_memalign(void **memptr, size_t alignment, size_t size) {
+  return 0;
+}
+
+#ifdef __CLASSIC_C__
+int main() {
+  int ac;
+  char*av[];
+#else
+int main(int ac, char *av[]) {
+#endif
+  checkSymbol();
+  if (ac > 1000) {
+    return *av[0];
+  }
+  return 0;
+}
+
+
+Determining if the clock_gettime exist failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-19uaem
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_432bf.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckSymbolExists.c
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-19uaem\CheckSymbolExists.c(8,32): error C2065: "clock_gettime": ??????? [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-19uaem\cmTC_432bf.vcxproj]
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_432bf.dir\Debug\\" /Fd"cmTC_432bf.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-19uaem\CheckSymbolExists.c"
+
+
+File CheckSymbolExists.c:
+/* */
+#include <time.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef clock_gettime
+  return ((int*)(&clock_gettime))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the gettimeofday exist failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-pqyk34
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_a69ab.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckSymbolExists.c
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-pqyk34\CheckSymbolExists.c(2,10): fatal  error C1083: ????????: "sys/time.h": No such file or directory [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-pqyk34\cmTC_a69ab.vcxproj]
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_a69ab.dir\Debug\\" /Fd"cmTC_a69ab.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-pqyk34\CheckSymbolExists.c"
+
+
+File CheckSymbolExists.c:
+/* */
+#include <sys/time.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef gettimeofday
+  return ((int*)(&gettimeofday))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the getpagesize exist failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-3a62at
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_47892.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckSymbolExists.c
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_47892.dir\Debug\\" /Fd"cmTC_47892.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-3a62at\CheckSymbolExists.c"
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-3a62at\CheckSymbolExists.c(2,10): fatal  error C1083: ????????: "unistd.h": No such file or directory [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-3a62at\cmTC_47892.vcxproj]
+
+
+File CheckSymbolExists.c:
+/* */
+#include <unistd.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef getpagesize
+  return ((int*)(&getpagesize))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the drand48 exist failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-ee86pd
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_e6855.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckSymbolExists.c
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_e6855.dir\Debug\\" /Fd"cmTC_e6855.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-ee86pd\CheckSymbolExists.c"
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-ee86pd\CheckSymbolExists.c(8,26): error C2065: "drand48": ??????? [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-ee86pd\cmTC_e6855.vcxproj]
+
+
+File CheckSymbolExists.c:
+/* */
+#include <stdlib.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef drand48
+  return ((int*)(&drand48))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the srand48 exist failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-orvnin
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_45108.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckSymbolExists.c
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_45108.dir\Debug\\" /Fd"cmTC_45108.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-orvnin\CheckSymbolExists.c"
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-orvnin\CheckSymbolExists.c(8,26): error C2065: "srand48": ??????? [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-orvnin\cmTC_45108.vcxproj]
+
+
+File CheckSymbolExists.c:
+/* */
+#include <stdlib.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef srand48
+  return ((int*)(&srand48))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the memalign exist failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-xrhag9
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_26229.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckSymbolExists.c
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-xrhag9\CheckSymbolExists.c(8,27): error C2065: "memalign": ??????? [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-xrhag9\cmTC_26229.vcxproj]
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_26229.dir\Debug\\" /Fd"cmTC_26229.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-xrhag9\CheckSymbolExists.c"
+
+
+File CheckSymbolExists.c:
+/* */
+#include <malloc.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef memalign
+  return ((int*)(&memalign))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the posix_memalign exist failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-047uqh
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_d1228.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckSymbolExists.c
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_d1228.dir\Debug\\" /Fd"cmTC_d1228.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-047uqh\CheckSymbolExists.c"
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-047uqh\CheckSymbolExists.c(8,33): error C2065: "posix_memalign": ??????? [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-047uqh\cmTC_d1228.vcxproj]
+
+
+File CheckSymbolExists.c:
+/* */
+#include <stdlib.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef posix_memalign
+  return ((int*)(&posix_memalign))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the mach_absolute_time exist failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-z48rwf
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_b0793.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckSymbolExists.c
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-z48rwf\CheckSymbolExists.c(2,10): fatal  error C1083: ????????: "mach/mach_time.h": No such file or directory [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-z48rwf\cmTC_b0793.vcxproj]
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_b0793.dir\Debug\\" /Fd"cmTC_b0793.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-z48rwf\CheckSymbolExists.c"
+
+
+File CheckSymbolExists.c:
+/* */
+#include <mach/mach_time.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef mach_absolute_time
+  return ((int*)(&mach_absolute_time))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the alloca exist failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-ynbtmu
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_28c6b.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckSymbolExists.c
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_28c6b.dir\Debug\\" /Fd"cmTC_28c6b.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-ynbtmu\CheckSymbolExists.c"
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-ynbtmu\CheckSymbolExists.c(2,10): fatal  error C1083: ????????: "alloca.h": No such file or directory [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-ynbtmu\cmTC_28c6b.vcxproj]
+
+
+File CheckSymbolExists.c:
+/* */
+#include <alloca.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef alloca
+  return ((int*)(&alloca))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the sysctl exist failed with the following output:
+Change Dir: C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.10/CMakeFiles/CMakeScratch/TryCompile-pmagrs
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_dfc03.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.4.0+18d5aef85 for .NET Framework
+  ?? x64 ? Microsoft (R) C/C++ ????? 19.34.31933 ?
+  ????(C) Microsoft Corporation????????
+  CheckSymbolExists.c
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_dfc03.dir\Debug\\" /Fd"cmTC_dfc03.dir\Debug\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-pmagrs\CheckSymbolExists.c"
+C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-pmagrs\CheckSymbolExists.c(2,10): fatal  error C1083: ????????: "unistd.h": No such file or directory [C:\Users\v-yongzhang\Documents\SwiftTrack\app\src\main\cpp\engine\fftw-3.3.10\CMakeFiles\CMakeScratch\TryCompile-pmagrs\cmTC_dfc03.vcxproj]
+
+
+File CheckSymbolExists.c:
+/* */
+#include <unistd.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef sysctl
+  return ((int*)(&sysctl))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}

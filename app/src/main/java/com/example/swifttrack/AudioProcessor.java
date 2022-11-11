@@ -578,4 +578,7 @@ public class AudioProcessor {
     public static native void detrend(double[] data);
 
     public static native void resetResults();
+
+    public static native void genZCSeq(int N_ZC, int U, boolean USE_WINDOW, int N_ZC_UP, int FC, int SAMPLE_RATE,
+                                       boolean[] SPEAKER_CHANNEL_MASK, double SCALE, double[][] TX_SEQ);
 }

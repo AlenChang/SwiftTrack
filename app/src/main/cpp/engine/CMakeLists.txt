@@ -7,6 +7,7 @@ set(TARGET engine)
 
 add_subdirectory(util)
 add_subdirectory(recalibrateHistory)
+add_subdirectory(fftw-3.3.10)
 #add_subdirectory(generated)
 
 add_library(
@@ -16,7 +17,10 @@ add_library(
         denoiser.cpp
         postprocessor.cpp
 )
+#link_directories(C:/Users/v-yongzhang/Documents/SwiftTrack/app/src/main/cpp/engine/fftw-3.3.5-dll64)
 
-target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} include)
+target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} include fftw-3.3.10/api)
 
-target_link_libraries(${TARGET} util recalibrate)
+#target_link_libraries(${TARGET} util recalibrate)
+
+target_link_libraries(${TARGET} util recalibrate fftw3)
