@@ -146,7 +146,7 @@ void Engine::ProcessFrame_02(int id, const double *data, int n, int N, int FC, i
 //    engine->ProcessFrameUpsample(rx_signal);
 }
 
-void Engine::GetHistoryData(int id, double *history, int n, int history_id, int history_type){
+void Engine::GetHistoryData(int id, double *history, bool *is_body_moving_, int n, int history_id, int history_type){
 //    if(ifExpiry) {return;}
     Engine *engine = Engine::GetInstance(id);
     Histories history_profile = engine->postprocessor_->GetHistories(history_id);
@@ -181,12 +181,16 @@ void Engine::GetHistoryData(int id, double *history, int n, int history_id, int 
 //    a[REAL] = 1;
 //    a[IMAG] = 2;
     double hist_in[2048];
+    boolean_T is_body_moving[2048];
     for(int i=0;i<2048;i++) hist_in[i] = history[i];
     double * pks_data = (double *) malloc(sizeof(double) * 2048);
     double * locs_data = (double *) malloc(sizeof(double) * 2048);
     int *pks_size = (int *) malloc(sizeof(int));
     int *locs_size = (int *) malloc(sizeof(int));
-    recalibrateHistory(hist_in,history,pks_data,pks_size,locs_data,locs_size);
+    recalibrateHistory(hist_in,1,history,is_body_moving,pks_data,pks_size,locs_data,locs_size);
+    for(int ti = 0; ti < 2048; ti++){
+        *(is_body_moving_ + ti) = is_body_moving[ti];
+    }
 }
 
 void Engine::GetCIR(int id, double *cir_abs, int n){

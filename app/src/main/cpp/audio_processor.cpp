@@ -40,15 +40,23 @@ Java_com_example_swifttrack_AudioProcessor_getTime(
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_swifttrack_AudioProcessor_getHistoryData(
-        JNIEnv *env, jobject thiz, jint id, jdoubleArray history, jint n, jint history_id, jint history_type
+        JNIEnv *env, jobject thiz, jint id, jdoubleArray history, jbooleanArray is_body_moving, jint n, jint history_id, jint history_type
 ) {
     jdouble *history_ = (env)->GetDoubleArrayElements(history, nullptr);
+    jboolean *is_body_moving_ = (env)->GetBooleanArrayElements(is_body_moving, nullptr);
+    bool moving_flag[2048];
+
 
     if (Engine::GetInstance(id) != nullptr) {
-        Engine::GetHistoryData(id, history_, n, history_id, history_type);
+        Engine::GetHistoryData(id, history_, moving_flag, n, history_id, history_type);
+    }
+
+    for(int ti = 0; ti < n; ti ++){
+        is_body_moving_[ti] = moving_flag[ti];
     }
 
     env->ReleaseDoubleArrayElements(history, history_, 0);
+    env->ReleaseBooleanArrayElements(is_body_moving, is_body_moving_, 0);
 }
 
 extern "C"

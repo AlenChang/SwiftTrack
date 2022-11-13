@@ -84,7 +84,7 @@ public class AudioProcessor {
 
     private static class Engine extends Thread {
         private static final int INTERVAL = 50;
-        private static final int WINDOW_SIZE = 2048;
+        private static final int WINDOW_SIZE = 2048; // do not modify this
 
         private final Lock lock = new ReentrantLock();
         private final double[] frame1 = new double[FRAME_SIZE];
@@ -104,37 +104,38 @@ public class AudioProcessor {
         public Engine() { fragID = ActivityID.homeFragment;}
         public Engine(int inFragID) {fragID = inFragID;}
 
-        private void prepareDataForHomeFragment(double[] xLeft, double[] vLeft, double[] xRight, double[] vRight, int winLen){
-            if (CHANNEL_MASK[inputChannel.LEFT]) {
-                getHistoryData(inputChannel.LEFT, xLeft, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-//                getDistHistory(inputChannel.LEFT, xLeft, winLen);
-                getHistoryData(inputChannel.LEFT, vLeft, winLen, deployMethods.swifttrack, HistoryType.velocity_);
-//                getVelocityHistory(inputChannel.LEFT, vLeft, winLen);
-                HomeViewModel.setLineData(xLeft, HomeViewModel.OutTypes.LEFT_DIST);
-                HomeViewModel.setLineData(vLeft, HomeViewModel.OutTypes.LEFT_V);
-            }
-            if (CHANNEL_MASK[inputChannel.RIGHT]) {
-                getHistoryData(inputChannel.RIGHT, xRight, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-//                getDistHistory(inputChannel.RIGHT, xRight, winLen);
-                getHistoryData(inputChannel.RIGHT, vRight, winLen, deployMethods.swifttrack, HistoryType.velocity_);
-//                getVelocityHistory(inputChannel.RIGHT, vRight, winLen);
-                HomeViewModel.setLineData(xRight, HomeViewModel.OutTypes.RIGHT_DIST);
-                HomeViewModel.setLineData(vRight, HomeViewModel.OutTypes.RIGHT_V);
-            }
-        }
+//        private void prepareDataForHomeFragment(double[] xLeft, double[] vLeft, double[] xRight, double[] vRight, int winLen){
+//            if (CHANNEL_MASK[inputChannel.LEFT]) {
+//                getHistoryData(inputChannel.LEFT, xLeft, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+////                getDistHistory(inputChannel.LEFT, xLeft, winLen);
+//                getHistoryData(inputChannel.LEFT, vLeft, winLen, deployMethods.swifttrack, HistoryType.velocity_);
+////                getVelocityHistory(inputChannel.LEFT, vLeft, winLen);
+//                HomeViewModel.setLineData(xLeft, HomeViewModel.OutTypes.LEFT_DIST);
+//                HomeViewModel.setLineData(vLeft, HomeViewModel.OutTypes.LEFT_V);
+//            }
+//            if (CHANNEL_MASK[inputChannel.RIGHT]) {
+//                getHistoryData(inputChannel.RIGHT, xRight, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+////                getDistHistory(inputChannel.RIGHT, xRight, winLen);
+//                getHistoryData(inputChannel.RIGHT, vRight, winLen, deployMethods.swifttrack, HistoryType.velocity_);
+////                getVelocityHistory(inputChannel.RIGHT, vRight, winLen);
+//                HomeViewModel.setLineData(xRight, HomeViewModel.OutTypes.RIGHT_DIST);
+//                HomeViewModel.setLineData(vRight, HomeViewModel.OutTypes.RIGHT_V);
+//            }
+//        }
 
         private void prepareDataForGalleryFragment(int winLen){
             double[] xWindow1 = new double[winLen];
             double[] xWindow2 = new double[winLen];
+            boolean[] is_body_moving = new boolean[winLen];
             if (CHANNEL_MASK[inputChannel.RIGHT]) {
 
-                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+                getHistoryData(inputChannel.RIGHT, xWindow2,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.dist_v);
                 GalleryViewModel.setLineData(xWindow2, GalleryViewModel.OutTypes.SWIFT_TRACK);
 
-                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.tof, HistoryType.dist_v);
+                getHistoryData(inputChannel.RIGHT, xWindow2,is_body_moving, winLen, deployMethods.tof, HistoryType.dist_v);
                 GalleryViewModel.setLineData(xWindow2, GalleryViewModel.OutTypes.TOF);
 
-                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.strata, HistoryType.dist_v);
+                getHistoryData(inputChannel.RIGHT, xWindow2,is_body_moving, winLen, deployMethods.strata, HistoryType.dist_v);
                 GalleryViewModel.setLineData(xWindow2, GalleryViewModel.OutTypes.STRATA);
 
                 double[] cir_abs = new double[FRAME_SIZE];
@@ -142,13 +143,13 @@ public class AudioProcessor {
                 GalleryViewModel.setLineData(cir_abs, GalleryViewModel.OutTypes.CIR);
 
             } else {
-                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+                getHistoryData(inputChannel.LEFT, xWindow1,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.dist_v);
                 GalleryViewModel.setLineData(xWindow1, GalleryViewModel.OutTypes.SWIFT_TRACK);
 
-                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.tof, HistoryType.dist_v);
+                getHistoryData(inputChannel.LEFT, xWindow1,is_body_moving, winLen, deployMethods.tof, HistoryType.dist_v);
                 GalleryViewModel.setLineData(xWindow1, GalleryViewModel.OutTypes.TOF);
 
-                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.strata, HistoryType.dist_v);
+                getHistoryData(inputChannel.LEFT, xWindow1,is_body_moving, winLen, deployMethods.strata, HistoryType.dist_v);
                 GalleryViewModel.setLineData(xWindow1, GalleryViewModel.OutTypes.STRATA);
 
                 double[] cir_abs = new double[FRAME_SIZE];
@@ -164,6 +165,7 @@ public class AudioProcessor {
             double[] xWindow2 = new double[winLen];
             double[] xWindow3 = new double[winLen];
             double[] xWindow4 = new double[winLen];
+            boolean[] is_body_moving = new boolean[winLen];
 
 
             int targetChannel;
@@ -172,19 +174,19 @@ public class AudioProcessor {
             } else {
                 targetChannel = inputChannel.LEFT;
             }
-            getHistoryData(targetChannel, xWindow0, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+            getHistoryData(targetChannel, xWindow0,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.dist_v);
             AccViewModel.setLineData(xWindow0, AccViewModel.OutTypes.velocity2dist);
 
-            getHistoryData(targetChannel, xWindow1, winLen, deployMethods.swifttrack, HistoryType.velocity_);
+            getHistoryData(targetChannel, xWindow1,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.velocity_);
             AccViewModel.setLineData(xWindow1, AccViewModel.OutTypes.velocity);
 
-            getHistoryData(targetChannel, xWindow2, winLen, deployMethods.swifttrack, HistoryType.acceleration_);
+            getHistoryData(targetChannel, xWindow2,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.acceleration_);
             AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.acceleration);
 
-            getHistoryData(targetChannel, xWindow3, winLen, deployMethods.swifttrack, HistoryType.velocity_a);
+            getHistoryData(targetChannel, xWindow3,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.velocity_a);
             AccViewModel.setLineData(xWindow3, AccViewModel.OutTypes.acceleration2velocity);
 
-            getHistoryData(targetChannel, xWindow4, winLen, deployMethods.strata, HistoryType.dist_v);
+            getHistoryData(targetChannel, xWindow4,is_body_moving, winLen, deployMethods.strata, HistoryType.dist_v);
             AccViewModel.setLineData(xWindow4, AccViewModel.OutTypes.acceleration2dist);
 
             if(needSave){
@@ -212,7 +214,8 @@ public class AudioProcessor {
                 targetChannel = inputChannel.LEFT;
             }
             double[] xWindow0 = new double[winLen];
-            getHistoryData(targetChannel, xWindow0, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+            boolean[] is_body_moving = new boolean[winLen];
+            getHistoryData(targetChannel, xWindow0,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.dist_v);
             double[] cir_abs = new double[150];
             getCIR(inputChannel.LEFT, cir_abs, 150);
             double[] thre = new double[1];
@@ -224,105 +227,105 @@ public class AudioProcessor {
 
         }
 
-        private void prepareDataForMLFragment(int winLen){
-            double[] xWindow1 = new double[winLen];
-            double[] xWindow2 = new double[winLen];
-            if (CHANNEL_MASK[inputChannel.RIGHT]) {
-                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-                MLViewModel.setLineData(xWindow2, MLViewModel.OutTypes.SWIFT_TRACK);
+//        private void prepareDataForMLFragment(int winLen){
+//            double[] xWindow1 = new double[winLen];
+//            double[] xWindow2 = new double[winLen];
+//            if (CHANNEL_MASK[inputChannel.RIGHT]) {
+//                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+//                MLViewModel.setLineData(xWindow2, MLViewModel.OutTypes.SWIFT_TRACK);
+//
+//                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.tof, HistoryType.dist_v);
+//                MLViewModel.setLineData(xWindow2, MLViewModel.OutTypes.TOF);
+//
+//                double[] cir_abs = new double[FRAME_SIZE];
+//                getCIR(inputChannel.RIGHT, cir_abs, FRAME_SIZE);
+//                MLViewModel.setLineData(cir_abs, MLViewModel.OutTypes.CIR);
+//
+//                double[] ml_result = Model.getHistoryData(cir_abs, winLen);
+//                MLViewModel.setLineData(ml_result, MLViewModel.OutTypes.ML);
+//            } else {
+//                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+//                MLViewModel.setLineData(xWindow1, MLViewModel.OutTypes.SWIFT_TRACK);
+//
+//                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.tof, HistoryType.dist_v);
+//                MLViewModel.setLineData(xWindow1, MLViewModel.OutTypes.TOF);
+//
+//                double[] cir_abs = new double[FRAME_SIZE];
+//                getCIR(inputChannel.LEFT, cir_abs, FRAME_SIZE);
+//                MLViewModel.setLineData(cir_abs, MLViewModel.OutTypes.CIR);
+//
+//                double[] ml_result = Model.getHistoryData(cir_abs, winLen);
+//                MLViewModel.setLineData(ml_result, MLViewModel.OutTypes.ML);
+//            }
+//        }
 
-                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.tof, HistoryType.dist_v);
-                MLViewModel.setLineData(xWindow2, MLViewModel.OutTypes.TOF);
+//        private void prepareDataForLSTMFragment(int winLen){
+//            double[] xWindow1 = new double[winLen];
+//            double[] xWindow2 = new double[winLen];
+//            if (CHANNEL_MASK[inputChannel.RIGHT]) {
+//                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+//                LSTMViewModel.setLineData(xWindow2, LSTMViewModel.OutTypes.SWIFT_TRACK);
+//
+//                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.tof, HistoryType.dist_v);
+//                LSTMViewModel.setLineData(xWindow2, LSTMViewModel.OutTypes.TOF);
+//
+//                double[] cir_abs = new double[FRAME_SIZE];
+//                getCIR(inputChannel.RIGHT, cir_abs, FRAME_SIZE);
+//                LSTMViewModel.setLineData(cir_abs, LSTMViewModel.OutTypes.CIR);
+//
+//                double[] ml_result = LSTMModel.getHistoryData(cir_abs, winLen);
+//                LSTMViewModel.setLineData(ml_result, LSTMViewModel.OutTypes.LSTM);
+//            } else {
+//                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+//                LSTMViewModel.setLineData(xWindow1, LSTMViewModel.OutTypes.SWIFT_TRACK);
+//
+//                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.tof, HistoryType.dist_v);
+//                LSTMViewModel.setLineData(xWindow1, LSTMViewModel.OutTypes.TOF);
+//
+//                double[] cir_abs = new double[FRAME_SIZE];
+//                getCIR(inputChannel.LEFT, cir_abs, FRAME_SIZE);
+//                LSTMViewModel.setLineData(cir_abs, LSTMViewModel.OutTypes.CIR);
+//
+//                double[] ml_result = LSTMModel.getHistoryData(cir_abs, winLen);
+//                LSTMViewModel.setLineData(ml_result, LSTMViewModel.OutTypes.LSTM);
+//            }
+//        }
 
-                double[] cir_abs = new double[FRAME_SIZE];
-                getCIR(inputChannel.RIGHT, cir_abs, FRAME_SIZE);
-                MLViewModel.setLineData(cir_abs, MLViewModel.OutTypes.CIR);
+//        private void prepareFinalDataForMLFragment(int winLen){
+//            double[] xWindow1 = new double[winLen];
+//            double[] xWindow2 = new double[winLen];
+//            if (CHANNEL_MASK[inputChannel.RIGHT]) {
+//                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.tof, HistoryType.dist_v);
+//                MLViewModel.saveTOF(xWindow2);
+//
+//                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+//                MLViewModel.saveSwift(xWindow2);
+//            } else {
+//                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.tof, HistoryType.dist_v);
+//                MLViewModel.saveTOF(xWindow1);
+//
+//                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+//                MLViewModel.saveSwift(xWindow1);
+//            }
+//        }
 
-                double[] ml_result = Model.getHistoryData(cir_abs, winLen);
-                MLViewModel.setLineData(ml_result, MLViewModel.OutTypes.ML);
-            } else {
-                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-                MLViewModel.setLineData(xWindow1, MLViewModel.OutTypes.SWIFT_TRACK);
-
-                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.tof, HistoryType.dist_v);
-                MLViewModel.setLineData(xWindow1, MLViewModel.OutTypes.TOF);
-
-                double[] cir_abs = new double[FRAME_SIZE];
-                getCIR(inputChannel.LEFT, cir_abs, FRAME_SIZE);
-                MLViewModel.setLineData(cir_abs, MLViewModel.OutTypes.CIR);
-
-                double[] ml_result = Model.getHistoryData(cir_abs, winLen);
-                MLViewModel.setLineData(ml_result, MLViewModel.OutTypes.ML);
-            }
-        }
-
-        private void prepareDataForLSTMFragment(int winLen){
-            double[] xWindow1 = new double[winLen];
-            double[] xWindow2 = new double[winLen];
-            if (CHANNEL_MASK[inputChannel.RIGHT]) {
-                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-                LSTMViewModel.setLineData(xWindow2, LSTMViewModel.OutTypes.SWIFT_TRACK);
-
-                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.tof, HistoryType.dist_v);
-                LSTMViewModel.setLineData(xWindow2, LSTMViewModel.OutTypes.TOF);
-
-                double[] cir_abs = new double[FRAME_SIZE];
-                getCIR(inputChannel.RIGHT, cir_abs, FRAME_SIZE);
-                LSTMViewModel.setLineData(cir_abs, LSTMViewModel.OutTypes.CIR);
-
-                double[] ml_result = LSTMModel.getHistoryData(cir_abs, winLen);
-                LSTMViewModel.setLineData(ml_result, LSTMViewModel.OutTypes.LSTM);
-            } else {
-                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-                LSTMViewModel.setLineData(xWindow1, LSTMViewModel.OutTypes.SWIFT_TRACK);
-
-                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.tof, HistoryType.dist_v);
-                LSTMViewModel.setLineData(xWindow1, LSTMViewModel.OutTypes.TOF);
-
-                double[] cir_abs = new double[FRAME_SIZE];
-                getCIR(inputChannel.LEFT, cir_abs, FRAME_SIZE);
-                LSTMViewModel.setLineData(cir_abs, LSTMViewModel.OutTypes.CIR);
-
-                double[] ml_result = LSTMModel.getHistoryData(cir_abs, winLen);
-                LSTMViewModel.setLineData(ml_result, LSTMViewModel.OutTypes.LSTM);
-            }
-        }
-
-        private void prepareFinalDataForMLFragment(int winLen){
-            double[] xWindow1 = new double[winLen];
-            double[] xWindow2 = new double[winLen];
-            if (CHANNEL_MASK[inputChannel.RIGHT]) {
-                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.tof, HistoryType.dist_v);
-                MLViewModel.saveTOF(xWindow2);
-
-                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-                MLViewModel.saveSwift(xWindow2);
-            } else {
-                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.tof, HistoryType.dist_v);
-                MLViewModel.saveTOF(xWindow1);
-
-                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-                MLViewModel.saveSwift(xWindow1);
-            }
-        }
-
-        private void prepareFinalDataForLSTMFragment(int winLen){
-            double[] xWindow1 = new double[winLen];
-            double[] xWindow2 = new double[winLen];
-            if (CHANNEL_MASK[inputChannel.RIGHT]) {
-                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.tof, HistoryType.dist_v);
-                LSTMViewModel.saveTOF(xWindow2);
-
-                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-                LSTMViewModel.saveSwift(xWindow2);
-            } else {
-                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.tof, HistoryType.dist_v);
-                LSTMViewModel.saveTOF(xWindow1);
-
-                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-                LSTMViewModel.saveSwift(xWindow1);
-            }
-        }
+//        private void prepareFinalDataForLSTMFragment(int winLen){
+//            double[] xWindow1 = new double[winLen];
+//            double[] xWindow2 = new double[winLen];
+//            if (CHANNEL_MASK[inputChannel.RIGHT]) {
+//                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.tof, HistoryType.dist_v);
+//                LSTMViewModel.saveTOF(xWindow2);
+//
+//                getHistoryData(inputChannel.RIGHT, xWindow2, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+//                LSTMViewModel.saveSwift(xWindow2);
+//            } else {
+//                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.tof, HistoryType.dist_v);
+//                LSTMViewModel.saveTOF(xWindow1);
+//
+//                getHistoryData(inputChannel.LEFT, xWindow1, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+//                LSTMViewModel.saveSwift(xWindow1);
+//            }
+//        }
 
         @Override
         public void run() {
@@ -343,7 +346,7 @@ public class AudioProcessor {
 
                     Log.d("Timer", "Warm up finished.");
                 }
-            }, 5*1000);
+            }, 1000);
 
 
             while (running) {
@@ -387,7 +390,7 @@ public class AudioProcessor {
                                     double[] xWindow2 = new double[WINDOW_SIZE];
                                     double[] vWindow1 = new double[WINDOW_SIZE];
                                     double[] vWindow2 = new double[WINDOW_SIZE];
-                                    prepareDataForHomeFragment(xWindow1, vWindow1, xWindow2, vWindow2, WINDOW_SIZE);
+//                                    prepareDataForHomeFragment(xWindow1, vWindow1, xWindow2, vWindow2, WINDOW_SIZE);
                                     break;
                                 case ActivityID.galleryFragment:
                                     prepareDataForGalleryFragment(WINDOW_SIZE);
@@ -400,10 +403,10 @@ public class AudioProcessor {
                                     prepareDataForSlideFragment(WINDOW_SIZE);
                                     break;
                                 case ActivityID.mlFragment:
-                                    prepareDataForMLFragment(WINDOW_SIZE);
+//                                    prepareDataForMLFragment(WINDOW_SIZE);
                                     break;
                                 case ActivityID.lstmFragment:
-                                    prepareDataForLSTMFragment(WINDOW_SIZE);
+//                                    prepareDataForLSTMFragment(WINDOW_SIZE);
                                     break;
                                 default:
                                     break;
@@ -438,7 +441,7 @@ public class AudioProcessor {
 //
             switch (fragID){
                 case ActivityID.homeFragment:
-                    prepareDataForHomeFragment(xHistory1, vHistory1, xHistory2, vHistory2, frameCount);
+//                    prepareDataForHomeFragment(xHistory1, vHistory1, xHistory2, vHistory2, frameCount);
                     for (int i = 0; i < frameCount; i++) {
                         result[i][0] = xHistory1[i];
                         result[i][1] = xHistory2[i];
@@ -458,10 +461,10 @@ public class AudioProcessor {
                     prepareDataForSlideFragment(frameCount);
                     break;
                 case ActivityID.mlFragment:
-                    prepareFinalDataForMLFragment(frameCount);
+//                    prepareFinalDataForMLFragment(frameCount);
                     break;
                 case ActivityID.lstmFragment:
-                    prepareFinalDataForLSTMFragment(frameCount);
+//                    prepareFinalDataForLSTMFragment(frameCount);
                     break;
                 default:
                     break;
@@ -569,7 +572,7 @@ public class AudioProcessor {
 
     private static native void reset(int id, int N_ZC_UP, int FC, int BW);
 
-    private static native void getHistoryData(int id, double[] history, int n, int history_id, int history_type);
+    private static native void getHistoryData(int id, double[] history, boolean[] is_body_moving, int n, int history_id, int history_type);
 
     private static native void getTime(int id, double[] time_count);
 

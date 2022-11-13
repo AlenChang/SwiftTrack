@@ -13,7 +13,6 @@
 #define FINDPEAKS_H
 
 /* Include files */
-#include "recalibrateHistory_types.h"
 #include "rtwtypes.h"
 #include <stddef.h>
 #include <stdlib.h>
@@ -23,15 +22,8 @@ extern "C" {
 #endif
 
 /* Function Declarations */
-void c_findPeaksSeparatedByMoreThanM(const double y[2048], const int iPk_data[],
-                                     int iPk_size, int idx_data[],
-                                     int *idx_size);
-
-void findExtents(const double y[2048], int iPk_data[], int *iPk_size,
-                 const int iFin_data[], int iFin_size, const int iInf_data[],
-                 int iInf_size, const int iInflect_data[], int iInflect_size,
-                 double bPk_data[], int *bPk_size, emxArray_real_T *bxPk,
-                 emxArray_real_T *byPk, emxArray_real_T *wxPk);
+void findpeaks(const double Yin[2048], double Ypk_data[], int *Ypk_size,
+               double Xpk_data[], int *Xpk_size);
 
 #ifdef __cplusplus
 }

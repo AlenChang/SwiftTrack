@@ -144,7 +144,7 @@ public class AccFragment extends Fragment {
                         //Do something after 100ms
                         Toast.makeText(getActivity(),"Start Monitoring!",Toast.LENGTH_SHORT).show();
                     }
-                }, 15000);
+                }, 5000);
 
 
             }

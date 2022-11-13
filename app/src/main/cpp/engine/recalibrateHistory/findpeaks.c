@@ -22,6 +22,13 @@
 #include <string.h>
 
 /* Function Declarations */
+static void findExtents(const double y[2048], int iPk_data[], int *iPk_size,
+                        const int iFin_data[], int iFin_size,
+                        const int iInf_data[], int iInf_size,
+                        const int iInflect_data[], int iInflect_size,
+                        double bPk_data[], int *bPk_size, emxArray_real_T *bxPk,
+                        emxArray_real_T *byPk, emxArray_real_T *wxPk);
+
 static void getLeftBase(const double yTemp[2048], const int iPeak_data[],
                         int iPeak_size, const int iFinite_data[],
                         int iFinite_size, const int iInflect_data[],
@@ -29,231 +36,20 @@ static void getLeftBase(const double yTemp[2048], const int iPeak_data[],
                         int *iSaddle_size);
 
 /* Function Definitions */
-static void getLeftBase(const double yTemp[2048], const int iPeak_data[],
-                        int iPeak_size, const int iFinite_data[],
-                        int iFinite_size, const int iInflect_data[],
-                        int iBase_data[], int *iBase_size, int iSaddle_data[],
-                        int *iSaddle_size)
-{
-  double peak_data[2048];
-  double valley_data[2048];
-  double p;
-  double v;
-  int iValley_data[2048];
-  int i;
-  int isv;
-  int iv;
-  int j;
-  int k;
-  int n;
-  n = (short)iPeak_size;
-  *iBase_size = (short)iPeak_size;
-  if (0 <= n - 1) {
-    memset(&iBase_data[0], 0, n * sizeof(int));
-  }
-  *iSaddle_size = (short)iPeak_size;
-  if (0 <= n - 1) {
-    memset(&iSaddle_data[0], 0, n * sizeof(int));
-  }
-  n = (short)iFinite_size;
-  if (0 <= n - 1) {
-    memset(&peak_data[0], 0, n * sizeof(double));
-  }
-  if (0 <= n - 1) {
-    memset(&valley_data[0], 0, n * sizeof(double));
-  }
-  if (0 <= n - 1) {
-    memset(&iValley_data[0], 0, n * sizeof(int));
-  }
-  n = -1;
-  i = 0;
-  j = 0;
-  k = 0;
-  v = rtNaN;
-  iv = 1;
-  while (k + 1 <= iPeak_size) {
-    while (iInflect_data[i] != iFinite_data[j]) {
-      v = yTemp[iInflect_data[i] - 1];
-      iv = iInflect_data[i];
-      if (rtIsNaN(yTemp[iInflect_data[i] - 1])) {
-        n = -1;
-      } else {
-        while ((n + 1 > 0) && (valley_data[n] > v)) {
-          n--;
-        }
-      }
-      i++;
-    }
-    p = yTemp[iInflect_data[i] - 1];
-    while ((n + 1 > 0) && (peak_data[n] < p)) {
-      if (valley_data[n] < v) {
-        v = valley_data[n];
-        iv = iValley_data[n];
-      }
-      n--;
-    }
-    isv = iv;
-    while ((n + 1 > 0) && (peak_data[n] <= p)) {
-      if (valley_data[n] < v) {
-        v = valley_data[n];
-        iv = iValley_data[n];
-      }
-      n--;
-    }
-    n++;
-    peak_data[n] = yTemp[iInflect_data[i] - 1];
-    valley_data[n] = v;
-    iValley_data[n] = iv;
-    if (iInflect_data[i] == iPeak_data[k]) {
-      iBase_data[k] = iv;
-      iSaddle_data[k] = isv;
-      k++;
-    }
-    i++;
-    j++;
-  }
-}
-
-void c_findPeaksSeparatedByMoreThanM(const double y[2048], const int iPk_data[],
-                                     int iPk_size, int idx_data[],
-                                     int *idx_size)
-{
-  double d;
-  int iwork_data[4096];
-  int sortIdx_data[4096];
-  int b_i;
-  int i;
-  int i2;
-  int j;
-  int k;
-  int kEnd;
-  int p;
-  int pEnd;
-  int q;
-  int qEnd;
-  int sortIdx_size_tmp;
-  short b_tmp_data[4096];
-  short locs_temp_data[4096];
-  short i1;
-  boolean_T idelete_data[4096];
-  boolean_T tmp_data[4096];
-  if (iPk_size == 0) {
-    *idx_size = 0;
-  } else {
-    sortIdx_size_tmp = (short)iPk_size;
-    if (0 <= sortIdx_size_tmp - 1) {
-      memset(&sortIdx_data[0], 0, sortIdx_size_tmp * sizeof(int));
-    }
-    i = iPk_size - 1;
-    for (k = 1; k <= i; k += 2) {
-      d = y[iPk_data[k - 1] - 1];
-      if ((d >= y[iPk_data[k] - 1]) || rtIsNaN(d)) {
-        sortIdx_data[k - 1] = k;
-        sortIdx_data[k] = k + 1;
-      } else {
-        sortIdx_data[k - 1] = k + 1;
-        sortIdx_data[k] = k;
-      }
-    }
-    if ((iPk_size & 1) != 0) {
-      sortIdx_data[iPk_size - 1] = iPk_size;
-    }
-    b_i = 2;
-    while (b_i < iPk_size) {
-      i2 = b_i << 1;
-      j = 1;
-      for (pEnd = b_i + 1; pEnd < iPk_size + 1; pEnd = qEnd + b_i) {
-        p = j - 1;
-        q = pEnd;
-        qEnd = j + i2;
-        if (qEnd > iPk_size + 1) {
-          qEnd = iPk_size + 1;
-        }
-        k = 0;
-        kEnd = qEnd - j;
-        while (k + 1 <= kEnd) {
-          d = y[iPk_data[sortIdx_data[p] - 1] - 1];
-          i = sortIdx_data[q - 1];
-          if ((d >= y[iPk_data[i - 1] - 1]) || rtIsNaN(d)) {
-            iwork_data[k] = sortIdx_data[p];
-            p++;
-            if (p + 1 == pEnd) {
-              while (q < qEnd) {
-                k++;
-                iwork_data[k] = sortIdx_data[q - 1];
-                q++;
-              }
-            }
-          } else {
-            iwork_data[k] = i;
-            q++;
-            if (q == qEnd) {
-              while (p + 1 < pEnd) {
-                k++;
-                iwork_data[k] = sortIdx_data[p];
-                p++;
-              }
-            }
-          }
-          k++;
-        }
-        for (k = 0; k < kEnd; k++) {
-          sortIdx_data[(j + k) - 1] = iwork_data[k];
-        }
-        j = qEnd;
-      }
-      b_i = i2;
-    }
-    for (i = 0; i < sortIdx_size_tmp; i++) {
-      locs_temp_data[i] =
-          (short)((short)(iPk_data[sortIdx_data[i] - 1] - 1) + 1);
-    }
-    if (0 <= sortIdx_size_tmp - 1) {
-      memset(&idelete_data[0], 0, sortIdx_size_tmp * sizeof(boolean_T));
-    }
-    for (b_i = 0; b_i < sortIdx_size_tmp; b_i++) {
-      if (!idelete_data[b_i]) {
-        i = sortIdx_data[b_i];
-        for (j = 0; j < sortIdx_size_tmp; j++) {
-          i2 = (short)((short)(iPk_data[i - 1] - 1) + 1);
-          i1 = locs_temp_data[j];
-          tmp_data[j] = ((i1 >= i2 - 100) && (i1 <= i2 + 100));
-        }
-        for (i = 0; i < sortIdx_size_tmp; i++) {
-          idelete_data[i] = (idelete_data[i] || tmp_data[i]);
-        }
-        idelete_data[b_i] = false;
-      }
-    }
-    i2 = (short)iPk_size - 1;
-    *idx_size = 0;
-    j = 0;
-    for (b_i = 0; b_i <= i2; b_i++) {
-      if (!idelete_data[b_i]) {
-        (*idx_size)++;
-        b_tmp_data[j] = (short)(b_i + 1);
-        j++;
-      }
-    }
-    for (i = 0; i < *idx_size; i++) {
-      idx_data[i] = sortIdx_data[b_tmp_data[i] - 1];
-    }
-    sort(idx_data, idx_size);
-  }
-}
-
-void findExtents(const double y[2048], int iPk_data[], int *iPk_size,
-                 const int iFin_data[], int iFin_size, const int iInf_data[],
-                 int iInf_size, const int iInflect_data[], int iInflect_size,
-                 double bPk_data[], int *bPk_size, emxArray_real_T *bxPk,
-                 emxArray_real_T *byPk, emxArray_real_T *wxPk)
+static void findExtents(const double y[2048], int iPk_data[], int *iPk_size,
+                        const int iFin_data[], int iFin_size,
+                        const int iInf_data[], int iInf_size,
+                        const int iInflect_data[], int iInflect_size,
+                        double bPk_data[], int *bPk_size, emxArray_real_T *bxPk,
+                        emxArray_real_T *byPk, emxArray_real_T *wxPk)
 {
   static double c_bPk_data[4096];
   static double w_data[4096];
+  static double b_bPk_data[2048];
   static double base_data[2048];
   static double yFinite[2048];
+  static int tmp_data[4096];
   emxArray_real_T *b_bxPk;
-  double b_bPk_data[2048];
   double refHeight;
   double xc_tmp;
   double *b_bxPk_data;
@@ -261,7 +57,6 @@ void findExtents(const double y[2048], int iPk_data[], int *iPk_size,
   double *byPk_data;
   double *wxPk_data;
   int c_iPk_data[4096];
-  int tmp_data[4096];
   int b_iPk_data[2048];
   int iInfL_data[2048];
   int iInfR_data[2048];
@@ -662,6 +457,339 @@ void findExtents(const double y[2048], int iPk_data[], int *iPk_size,
       wxPk_data[i] = b_bxPk_data[i];
     }
     emxFree_real_T(&b_bxPk);
+  }
+}
+
+static void getLeftBase(const double yTemp[2048], const int iPeak_data[],
+                        int iPeak_size, const int iFinite_data[],
+                        int iFinite_size, const int iInflect_data[],
+                        int iBase_data[], int *iBase_size, int iSaddle_data[],
+                        int *iSaddle_size)
+{
+  double peak_data[2048];
+  double valley_data[2048];
+  double p;
+  double v;
+  int iValley_data[2048];
+  int i;
+  int isv;
+  int iv;
+  int j;
+  int k;
+  int n;
+  n = (short)iPeak_size;
+  *iBase_size = (short)iPeak_size;
+  if (0 <= n - 1) {
+    memset(&iBase_data[0], 0, n * sizeof(int));
+  }
+  *iSaddle_size = (short)iPeak_size;
+  if (0 <= n - 1) {
+    memset(&iSaddle_data[0], 0, n * sizeof(int));
+  }
+  n = (short)iFinite_size;
+  if (0 <= n - 1) {
+    memset(&peak_data[0], 0, n * sizeof(double));
+  }
+  if (0 <= n - 1) {
+    memset(&valley_data[0], 0, n * sizeof(double));
+  }
+  if (0 <= n - 1) {
+    memset(&iValley_data[0], 0, n * sizeof(int));
+  }
+  n = -1;
+  i = 0;
+  j = 0;
+  k = 0;
+  v = rtNaN;
+  iv = 1;
+  while (k + 1 <= iPeak_size) {
+    while (iInflect_data[i] != iFinite_data[j]) {
+      v = yTemp[iInflect_data[i] - 1];
+      iv = iInflect_data[i];
+      if (rtIsNaN(yTemp[iInflect_data[i] - 1])) {
+        n = -1;
+      } else {
+        while ((n + 1 > 0) && (valley_data[n] > v)) {
+          n--;
+        }
+      }
+      i++;
+    }
+    p = yTemp[iInflect_data[i] - 1];
+    while ((n + 1 > 0) && (peak_data[n] < p)) {
+      if (valley_data[n] < v) {
+        v = valley_data[n];
+        iv = iValley_data[n];
+      }
+      n--;
+    }
+    isv = iv;
+    while ((n + 1 > 0) && (peak_data[n] <= p)) {
+      if (valley_data[n] < v) {
+        v = valley_data[n];
+        iv = iValley_data[n];
+      }
+      n--;
+    }
+    n++;
+    peak_data[n] = yTemp[iInflect_data[i] - 1];
+    valley_data[n] = v;
+    iValley_data[n] = iv;
+    if (iInflect_data[i] == iPeak_data[k]) {
+      iBase_data[k] = iv;
+      iSaddle_data[k] = isv;
+      k++;
+    }
+    i++;
+    j++;
+  }
+}
+
+void findpeaks(const double Yin[2048], double Ypk_data[], int *Ypk_size,
+               double Xpk_data[], int *Xpk_size)
+{
+  static double bPk_data[4096];
+  static int b_iPk_data[4096];
+  static int idx_data[4096];
+  static int iwork_data[4096];
+  static int sortIdx_data[4096];
+  emxArray_real_T *bxPk;
+  emxArray_real_T *byPk;
+  emxArray_real_T *wxPk;
+  double yk;
+  double ykfirst;
+  int iFinite_data[2048];
+  int iInfinite_data[2048];
+  int iInflect_data[2048];
+  int b_i;
+  int i;
+  int k;
+  int kEnd;
+  int kfirst;
+  int loop_ub;
+  int nInf;
+  int nInflect;
+  int nPk;
+  int pEnd;
+  int qEnd;
+  int sortIdx_size_tmp;
+  short b_tmp_data[4096];
+  short locs_temp_data[4096];
+  short iPk_data[2048];
+  short i1;
+  char dir;
+  char previousdir;
+  boolean_T idelete_data[4096];
+  boolean_T tmp_data[4096];
+  boolean_T isinfyk;
+  boolean_T isinfykfirst;
+  nPk = -1;
+  nInf = -1;
+  nInflect = -1;
+  dir = 'n';
+  kfirst = 0;
+  ykfirst = rtInf;
+  isinfykfirst = true;
+  for (k = 0; k < 2048; k++) {
+    yk = Yin[k];
+    if (rtIsNaN(yk)) {
+      yk = rtInf;
+      isinfyk = true;
+    } else if (rtIsInf(yk) && (yk > 0.0)) {
+      isinfyk = true;
+      nInf++;
+      iInfinite_data[nInf] = k + 1;
+    } else {
+      isinfyk = false;
+    }
+    if (yk != ykfirst) {
+      previousdir = dir;
+      if (isinfyk || isinfykfirst) {
+        dir = 'n';
+        if (kfirst >= 1) {
+          nInflect++;
+          iInflect_data[nInflect] = kfirst;
+        }
+      } else if (yk < ykfirst) {
+        dir = 'd';
+        if ('d' != previousdir) {
+          nInflect++;
+          iInflect_data[nInflect] = kfirst;
+          if (previousdir == 'i') {
+            nPk++;
+            iFinite_data[nPk] = kfirst;
+          }
+        }
+      } else {
+        dir = 'i';
+        if ('i' != previousdir) {
+          nInflect++;
+          iInflect_data[nInflect] = kfirst;
+        }
+      }
+      ykfirst = yk;
+      kfirst = k + 1;
+      isinfykfirst = isinfyk;
+    }
+  }
+  if ((!isinfykfirst) &&
+      ((nInflect + 1 == 0) || (iInflect_data[nInflect] < 2048))) {
+    nInflect++;
+    iInflect_data[nInflect] = 2048;
+  }
+  if (1 > nPk + 1) {
+    pEnd = -1;
+  } else {
+    pEnd = nPk;
+  }
+  nPk = 0;
+  kfirst = pEnd + 1;
+  for (k = 0; k < kfirst; k++) {
+    i = iFinite_data[k];
+    ykfirst = Yin[i - 1];
+    if ((ykfirst > rtMinusInf) && (ykfirst - fmax(Yin[i - 2], Yin[i]) >= 0.0)) {
+      nPk++;
+      iPk_data[nPk - 1] = (short)i;
+    }
+  }
+  if (1 > nPk) {
+    loop_ub = 0;
+  } else {
+    loop_ub = nPk;
+  }
+  for (i = 0; i < loop_ub; i++) {
+    b_iPk_data[i] = iPk_data[i];
+  }
+  emxInit_real_T(&bxPk);
+  emxInit_real_T(&byPk);
+  emxInit_real_T(&wxPk);
+  if (1 > nInf + 1) {
+    nInf = -1;
+  }
+  if (1 > nInflect + 1) {
+    nInflect = -1;
+  }
+  findExtents(Yin, b_iPk_data, &loop_ub, iFinite_data, pEnd + 1, iInfinite_data,
+              nInf + 1, iInflect_data, nInflect + 1, bPk_data, &nPk, bxPk, byPk,
+              wxPk);
+  emxFree_real_T(&wxPk);
+  emxFree_real_T(&byPk);
+  emxFree_real_T(&bxPk);
+  if (loop_ub == 0) {
+    *Ypk_size = 0;
+  } else {
+    sortIdx_size_tmp = (short)loop_ub;
+    if (0 <= sortIdx_size_tmp - 1) {
+      memset(&sortIdx_data[0], 0, sortIdx_size_tmp * sizeof(int));
+    }
+    i = loop_ub - 1;
+    for (k = 1; k <= i; k += 2) {
+      ykfirst = Yin[b_iPk_data[k - 1] - 1];
+      if ((ykfirst >= Yin[b_iPk_data[k] - 1]) || rtIsNaN(ykfirst)) {
+        sortIdx_data[k - 1] = k;
+        sortIdx_data[k] = k + 1;
+      } else {
+        sortIdx_data[k - 1] = k + 1;
+        sortIdx_data[k] = k;
+      }
+    }
+    if ((loop_ub & 1) != 0) {
+      sortIdx_data[loop_ub - 1] = loop_ub;
+    }
+    b_i = 2;
+    while (b_i < loop_ub) {
+      kfirst = b_i << 1;
+      nPk = 1;
+      for (pEnd = b_i + 1; pEnd < loop_ub + 1; pEnd = qEnd + b_i) {
+        nInf = nPk - 1;
+        nInflect = pEnd;
+        qEnd = nPk + kfirst;
+        if (qEnd > loop_ub + 1) {
+          qEnd = loop_ub + 1;
+        }
+        k = 0;
+        kEnd = qEnd - nPk;
+        while (k + 1 <= kEnd) {
+          ykfirst = Yin[b_iPk_data[sortIdx_data[nInf] - 1] - 1];
+          i = sortIdx_data[nInflect - 1];
+          if ((ykfirst >= Yin[b_iPk_data[i - 1] - 1]) || rtIsNaN(ykfirst)) {
+            iwork_data[k] = sortIdx_data[nInf];
+            nInf++;
+            if (nInf + 1 == pEnd) {
+              while (nInflect < qEnd) {
+                k++;
+                iwork_data[k] = sortIdx_data[nInflect - 1];
+                nInflect++;
+              }
+            }
+          } else {
+            iwork_data[k] = i;
+            nInflect++;
+            if (nInflect == qEnd) {
+              while (nInf + 1 < pEnd) {
+                k++;
+                iwork_data[k] = sortIdx_data[nInf];
+                nInf++;
+              }
+            }
+          }
+          k++;
+        }
+        for (k = 0; k < kEnd; k++) {
+          sortIdx_data[(nPk + k) - 1] = iwork_data[k];
+        }
+        nPk = qEnd;
+      }
+      b_i = kfirst;
+    }
+    for (i = 0; i < sortIdx_size_tmp; i++) {
+      locs_temp_data[i] =
+          (short)((short)(b_iPk_data[sortIdx_data[i] - 1] - 1) + 1);
+    }
+    if (0 <= sortIdx_size_tmp - 1) {
+      memset(&idelete_data[0], 0, sortIdx_size_tmp * sizeof(boolean_T));
+    }
+    for (b_i = 0; b_i < sortIdx_size_tmp; b_i++) {
+      if (!idelete_data[b_i]) {
+        i = sortIdx_data[b_i];
+        for (nPk = 0; nPk < sortIdx_size_tmp; nPk++) {
+          kfirst = (short)((short)(b_iPk_data[i - 1] - 1) + 1);
+          i1 = locs_temp_data[nPk];
+          tmp_data[nPk] = ((i1 >= kfirst - 100) && (i1 <= kfirst + 100));
+        }
+        for (i = 0; i < sortIdx_size_tmp; i++) {
+          idelete_data[i] = (idelete_data[i] || tmp_data[i]);
+        }
+        idelete_data[b_i] = false;
+      }
+    }
+    kfirst = (short)loop_ub - 1;
+    *Ypk_size = 0;
+    nPk = 0;
+    for (b_i = 0; b_i <= kfirst; b_i++) {
+      if (!idelete_data[b_i]) {
+        (*Ypk_size)++;
+        b_tmp_data[nPk] = (short)(b_i + 1);
+        nPk++;
+      }
+    }
+    for (i = 0; i < *Ypk_size; i++) {
+      idx_data[i] = sortIdx_data[b_tmp_data[i] - 1];
+    }
+    sort(idx_data, Ypk_size);
+  }
+  if (*Ypk_size > 2048) {
+    *Ypk_size = 2048;
+  }
+  for (i = 0; i < *Ypk_size; i++) {
+    iwork_data[i] = b_iPk_data[idx_data[i] - 1];
+  }
+  for (i = 0; i < *Ypk_size; i++) {
+    Ypk_data[i] = Yin[iwork_data[i] - 1];
+  }
+  *Xpk_size = *Ypk_size;
+  for (i = 0; i < *Ypk_size; i++) {
+    Xpk_data[i] = (short)((short)(iwork_data[i] - 1) + 1);
   }
 }
 

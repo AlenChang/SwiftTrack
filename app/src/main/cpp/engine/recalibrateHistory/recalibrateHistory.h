@@ -22,7 +22,9 @@ extern "C" {
 #endif
 
 /* Function Declarations */
-extern void recalibrateHistory(double hist[2048], double hist_out[2048],
+extern void recalibrateHistory(double hist[2048], double moving_thre,
+                               double hist_out[2048],
+                               boolean_T is_body_moving[2048],
                                double pks_data[], int pks_size[1],
                                double locs_data[], int locs_size[1]);
 

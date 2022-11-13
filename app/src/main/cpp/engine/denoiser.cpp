@@ -91,7 +91,7 @@ void Denoiser::compute_thre(){
 
     // find maximum taps in each frame
     MatrixX<complex<double>> signa_diff = signal_ - prev_signal_;
-    compute_thre_taps[compute_thre_iter] = 0;
+//    compute_thre_taps[compute_thre_iter] = 0;
     calibration_1_singal_history_.push_back(signal_);
 //    compute_thre_taps[compute_thre_iter] = abs(signa_diff(selected_tap_for_thresholding));
     compute_thre_taps[compute_thre_iter] = MaxDiff(signal_, prev_signal_);
@@ -106,12 +106,12 @@ void Denoiser::compute_thre(){
         }
         mean_compute_thre = sum_value / compute_thre_iter;
 
-        // compute standard deviation
-        double sum_square_diff = 0;
-        for(int ti = 0; ti < CALI_1_FRAMES; ti++){
-            sum_square_diff += pow(compute_thre_taps[ti] - mean_compute_thre, 2);
-        }
-        double std_value = sqrt(sum_square_diff / (compute_thre_iter - 1));
+//        // compute standard deviation
+//        double sum_square_diff = 0;
+//        for(int ti = 0; ti < CALI_1_FRAMES; ti++){
+//            sum_square_diff += pow(compute_thre_taps[ti] - mean_compute_thre, 2);
+//        }
+//        double std_value = sqrt(sum_square_diff / (compute_thre_iter - 1));
 
         OfflineCalcStaticSignal();
         OfflineRemoveStaticSignal();
