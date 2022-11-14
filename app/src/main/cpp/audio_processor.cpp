@@ -46,7 +46,6 @@ Java_com_example_swifttrack_AudioProcessor_getHistoryData(
     jboolean *is_body_moving_ = (env)->GetBooleanArrayElements(is_body_moving, nullptr);
     bool moving_flag[2048];
 
-
     if (Engine::GetInstance(id) != nullptr) {
         Engine::GetHistoryData(id, history_, moving_flag, n, history_id, history_type);
     }

@@ -189,7 +189,7 @@ void Engine::GetHistoryData(int id, double *history, bool *is_body_moving_, int 
     int *locs_size = (int *) malloc(sizeof(int));
     recalibrateHistory(hist_in,1,history,is_body_moving,pks_data,pks_size,locs_data,locs_size);
     for(int ti = 0; ti < 2048; ti++){
-        *(is_body_moving_ + ti) = is_body_moving[ti];
+        is_body_moving_[ti] = is_body_moving[ti];
     }
 }
 

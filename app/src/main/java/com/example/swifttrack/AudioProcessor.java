@@ -175,6 +175,11 @@ public class AudioProcessor {
                 targetChannel = inputChannel.LEFT;
             }
             getHistoryData(targetChannel, xWindow0,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+            for(int ti = 0; ti < winLen; ti++){
+                if(is_body_moving[ti]){
+                    xWindow0[ti] = 0;
+                }
+            }
             AccViewModel.setLineData(xWindow0, AccViewModel.OutTypes.velocity2dist);
 
             getHistoryData(targetChannel, xWindow1,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.velocity_);
