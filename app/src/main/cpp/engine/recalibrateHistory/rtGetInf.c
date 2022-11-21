@@ -2,11 +2,10 @@
  * Academic License - for use in teaching, academic research, and meeting
  * course requirements at degree granting institutions only.  Not for
  * government, commercial, or other organizational use.
+ * File: rtGetInf.c
  *
- * rtGetInf.c
- *
- * Code generation for function 'recalibrateHistory'
- *
+ * MATLAB Coder version            : 5.5
+ * C/C++ source code generated on  : 18-Nov-2022 21:41:51
  */
 
 /*
@@ -14,7 +13,7 @@
  *       MATLAB for code generation function to initialize non-finite, Inf and
  * MinusInf
  */
-/* Include files */
+/* Include Files */
 #include "rtGetInf.h"
 #include "rt_nonfinite.h"
 
@@ -25,7 +24,38 @@
  */
 real_T rtGetInf(void)
 {
-  return rtInf;
+  real_T inf = 0.0;
+  uint16_T one = 1U;
+  enum
+  {
+    LittleEndian,
+    BigEndian
+  } machByteOrder = (*((uint8_T *)&one) == 1U) ? LittleEndian : BigEndian;
+  switch (machByteOrder) {
+  case LittleEndian: {
+    union {
+      LittleEndianIEEEDouble bitVal;
+      real_T fltVal;
+    } tmpVal;
+
+    tmpVal.bitVal.words.wordH = 0x7FF00000U;
+    tmpVal.bitVal.words.wordL = 0x00000000U;
+    inf = tmpVal.fltVal;
+    break;
+  }
+  case BigEndian: {
+    union {
+      BigEndianIEEEDouble bitVal;
+      real_T fltVal;
+    } tmpVal;
+
+    tmpVal.bitVal.words.wordH = 0x7FF00000U;
+    tmpVal.bitVal.words.wordL = 0x00000000U;
+    inf = tmpVal.fltVal;
+    break;
+  }
+  }
+  return inf;
 }
 
 /*
@@ -35,7 +65,9 @@ real_T rtGetInf(void)
  */
 real32_T rtGetInfF(void)
 {
-  return rtInfF;
+  IEEESingle infF;
+  infF.wordL.wordLuint = 0x7F800000U;
+  return infF.wordL.wordLreal;
 }
 
 /*
@@ -45,7 +77,38 @@ real32_T rtGetInfF(void)
  */
 real_T rtGetMinusInf(void)
 {
-  return rtMinusInf;
+  real_T minf = 0.0;
+  uint16_T one = 1U;
+  enum
+  {
+    LittleEndian,
+    BigEndian
+  } machByteOrder = (*((uint8_T *)&one) == 1U) ? LittleEndian : BigEndian;
+  switch (machByteOrder) {
+  case LittleEndian: {
+    union {
+      LittleEndianIEEEDouble bitVal;
+      real_T fltVal;
+    } tmpVal;
+
+    tmpVal.bitVal.words.wordH = 0xFFF00000U;
+    tmpVal.bitVal.words.wordL = 0x00000000U;
+    minf = tmpVal.fltVal;
+    break;
+  }
+  case BigEndian: {
+    union {
+      BigEndianIEEEDouble bitVal;
+      real_T fltVal;
+    } tmpVal;
+
+    tmpVal.bitVal.words.wordH = 0xFFF00000U;
+    tmpVal.bitVal.words.wordL = 0x00000000U;
+    minf = tmpVal.fltVal;
+    break;
+  }
+  }
+  return minf;
 }
 
 /*
@@ -55,7 +118,13 @@ real_T rtGetMinusInf(void)
  */
 real32_T rtGetMinusInfF(void)
 {
-  return rtMinusInfF;
+  IEEESingle minfF;
+  minfF.wordL.wordLuint = 0xFF800000U;
+  return minfF.wordL.wordLreal;
 }
 
-/* End of code generation (rtGetInf.c) */
+/*
+ * File trailer for rtGetInf.c
+ *
+ * [EOF]
+ */

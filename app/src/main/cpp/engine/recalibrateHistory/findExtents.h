@@ -2,14 +2,14 @@
  * Academic License - for use in teaching, academic research, and meeting
  * course requirements at degree granting institutions only.  Not for
  * government, commercial, or other organizational use.
- * File: recalibrateHistory_emxutil.h
+ * File: findExtents.h
  *
  * MATLAB Coder version            : 5.5
  * C/C++ source code generated on  : 18-Nov-2022 21:41:51
  */
 
-#ifndef RECALIBRATEHISTORY_EMXUTIL_H
-#define RECALIBRATEHISTORY_EMXUTIL_H
+#ifndef FINDEXTENTS_H
+#define FINDEXTENTS_H
 
 /* Include Files */
 #include "recalibrateHistory_types.h"
@@ -22,11 +22,11 @@ extern "C" {
 #endif
 
 /* Function Declarations */
-extern void emxEnsureCapacity_real_T(emxArray_real_T *emxArray, int oldNumel);
-
-extern void emxFree_real_T(emxArray_real_T **pEmxArray);
-
-extern void emxInit_real_T(emxArray_real_T **pEmxArray);
+void findExtents(const double y[2048], int iPk_data[], int *iPk_size,
+                 const int iFin_data[], int iFin_size, const int iInf_data[],
+                 int iInf_size, const int iInflect_data[], int iInflect_size,
+                 double bPk_data[], int *bPk_size, emxArray_real_T *bxPk,
+                 emxArray_real_T *byPk, emxArray_real_T *wxPk);
 
 #ifdef __cplusplus
 }
@@ -34,7 +34,7 @@ extern void emxInit_real_T(emxArray_real_T **pEmxArray);
 
 #endif
 /*
- * File trailer for recalibrateHistory_emxutil.h
+ * File trailer for findExtents.h
  *
  * [EOF]
  */

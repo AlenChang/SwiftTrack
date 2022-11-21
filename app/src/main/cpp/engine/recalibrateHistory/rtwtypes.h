@@ -2,11 +2,10 @@
  * Academic License - for use in teaching, academic research, and meeting
  * course requirements at degree granting institutions only.  Not for
  * government, commercial, or other organizational use.
+ * File: rtwtypes.h
  *
- * rtwtypes.h
- *
- * Code generation for function 'recalibrateHistory'
- *
+ * MATLAB Coder version            : 5.5
+ * C/C++ source code generated on  : 18-Nov-2022 21:41:51
  */
 
 #ifndef RTWTYPES_H
@@ -38,8 +37,12 @@
 #endif
 #endif
 
-/* Include files */
+/* Include Files */
 #include "tmwtypes.h"
 
 #endif
-/* End of code generation (rtwtypes.h) */
+/*
+ * File trailer for rtwtypes.h
+ *
+ * [EOF]
+ */

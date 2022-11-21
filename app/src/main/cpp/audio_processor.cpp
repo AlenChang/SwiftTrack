@@ -36,25 +36,32 @@ Java_com_example_swifttrack_AudioProcessor_getTime(
 
 
 
-
+// GetHistoryData(int id, double *history, double *next_waveform, double *resp_wave, bool *is_body_moving_, bool *is_new_waveform, int n, int history_id, int history_type);
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_swifttrack_AudioProcessor_getHistoryData(
-        JNIEnv *env, jobject thiz, jint id, jdoubleArray history, jbooleanArray is_body_moving, jint n, jint history_id, jint history_type
+        JNIEnv *env, jobject thiz, jint id, jdoubleArray history, jdoubleArray next_waveform, jdoubleArray resp_wave, jboolean is_new_waveform, jbooleanArray is_body_moving, jint n, jint history_id, jint history_type
 ) {
     jdouble *history_ = (env)->GetDoubleArrayElements(history, nullptr);
+    jdouble *next_waveform_ = (env)->GetDoubleArrayElements(next_waveform, nullptr);
+    jdouble *resp_wave_ = (env)->GetDoubleArrayElements(resp_wave, nullptr);
     jboolean *is_body_moving_ = (env)->GetBooleanArrayElements(is_body_moving, nullptr);
+
     bool moving_flag[2048];
+    bool is_new_waveform_ = false;
 
     if (Engine::GetInstance(id) != nullptr) {
-        Engine::GetHistoryData(id, history_, moving_flag, n, history_id, history_type);
+        Engine::GetHistoryData(id, history_,next_waveform_,resp_wave_, moving_flag, &is_new_waveform_, n, history_id, history_type);
     }
 
     for(int ti = 0; ti < n; ti ++){
         is_body_moving_[ti] = moving_flag[ti];
     }
+    is_new_waveform = is_new_waveform_;
 
     env->ReleaseDoubleArrayElements(history, history_, 0);
+    env->ReleaseDoubleArrayElements(next_waveform, next_waveform_, 0);
+    env->ReleaseDoubleArrayElements(resp_wave, resp_wave_, 0);
     env->ReleaseBooleanArrayElements(is_body_moving, is_body_moving_, 0);
 }
 

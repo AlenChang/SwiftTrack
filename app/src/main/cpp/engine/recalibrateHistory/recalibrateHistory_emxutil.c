@@ -2,14 +2,13 @@
  * Academic License - for use in teaching, academic research, and meeting
  * course requirements at degree granting institutions only.  Not for
  * government, commercial, or other organizational use.
+ * File: recalibrateHistory_emxutil.c
  *
- * recalibrateHistory_emxutil.c
- *
- * Code generation for function 'recalibrateHistory_emxutil'
- *
+ * MATLAB Coder version            : 5.5
+ * C/C++ source code generated on  : 18-Nov-2022 21:41:51
  */
 
-/* Include files */
+/* Include Files */
 #include "recalibrateHistory_emxutil.h"
 #include "recalibrateHistory_types.h"
 #include "rt_nonfinite.h"
@@ -17,6 +16,11 @@
 #include <string.h>
 
 /* Function Definitions */
+/*
+ * Arguments    : emxArray_real_T *emxArray
+ *                int oldNumel
+ * Return Type  : void
+ */
 void emxEnsureCapacity_real_T(emxArray_real_T *emxArray, int oldNumel)
 {
   int i;
@@ -43,7 +47,7 @@ void emxEnsureCapacity_real_T(emxArray_real_T *emxArray, int oldNumel)
     }
     newData = calloc((unsigned int)i, sizeof(double));
     if (emxArray->data != NULL) {
-      memcpy(newData, emxArray->data, sizeof(double) * oldNumel);
+      memcpy(newData, emxArray->data, sizeof(double) * (unsigned int)oldNumel);
       if (emxArray->canFreeData) {
         free(emxArray->data);
       }
@@ -54,6 +58,10 @@ void emxEnsureCapacity_real_T(emxArray_real_T *emxArray, int oldNumel)
   }
 }
 
+/*
+ * Arguments    : emxArray_real_T **pEmxArray
+ * Return Type  : void
+ */
 void emxFree_real_T(emxArray_real_T **pEmxArray)
 {
   if (*pEmxArray != (emxArray_real_T *)NULL) {
@@ -66,6 +74,10 @@ void emxFree_real_T(emxArray_real_T **pEmxArray)
   }
 }
 
+/*
+ * Arguments    : emxArray_real_T **pEmxArray
+ * Return Type  : void
+ */
 void emxInit_real_T(emxArray_real_T **pEmxArray)
 {
   emxArray_real_T *emxArray;
@@ -82,4 +94,8 @@ void emxInit_real_T(emxArray_real_T **pEmxArray)
   }
 }
 
-/* End of code generation (recalibrateHistory_emxutil.c) */
+/*
+ * File trailer for recalibrateHistory_emxutil.c
+ *
+ * [EOF]
+ */

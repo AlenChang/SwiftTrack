@@ -90,6 +90,7 @@ public class AccFragment extends Fragment {
         binding.acc.getAxisLeft().setDrawLabels(false);
         binding.acc.getAxisRight().setDrawLabels(false);
         binding.acc.getDescription().setEnabled(false);
+//        binding.acc.label
 
         binding.acc2v.setData(new LineData());
         binding.acc2v.setBorderWidth(20.0f);
@@ -98,19 +99,19 @@ public class AccFragment extends Fragment {
         binding.acc2v.getAxisRight().setDrawLabels(false);
         binding.acc2v.getDescription().setEnabled(false);
 
-        binding.v2d.setData(new LineData());
-        binding.v2d.setBorderWidth(20.0f);
-        binding.v2d.getXAxis().setDrawLabels(false);
-        binding.v2d.getAxisLeft().setDrawLabels(false);
-        binding.v2d.getAxisRight().setDrawLabels(false);
-        binding.v2d.getDescription().setEnabled(false);
-
-        binding.acc2d.setData(new LineData());
-        binding.acc2d.setBorderWidth(20.0f);
-        binding.acc2d.getXAxis().setDrawLabels(false);
-        binding.acc2d.getAxisLeft().setDrawLabels(false);
-        binding.acc2d.getAxisRight().setDrawLabels(false);
-        binding.acc2d.getDescription().setEnabled(false);
+//        binding.v2d.setData(new LineData());
+//        binding.v2d.setBorderWidth(20.0f);
+//        binding.v2d.getXAxis().setDrawLabels(false);
+//        binding.v2d.getAxisLeft().setDrawLabels(false);
+//        binding.v2d.getAxisRight().setDrawLabels(false);
+//        binding.v2d.getDescription().setEnabled(false);
+//
+//        binding.acc2d.setData(new LineData());
+//        binding.acc2d.setBorderWidth(20.0f);
+//        binding.acc2d.getXAxis().setDrawLabels(false);
+//        binding.acc2d.getAxisLeft().setDrawLabels(false);
+//        binding.acc2d.getAxisRight().setDrawLabels(false);
+//        binding.acc2d.getDescription().setEnabled(false);
 
         //=====================
         // set button onclick listener
@@ -177,7 +178,7 @@ public class AccFragment extends Fragment {
             }
         });
 
-        AccViewModel.getLiveLineData(AccViewModel.OutTypes.velocity).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
+        AccViewModel.getLiveLineData(3).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
             @Override
             public void onChanged(@NonNull LineDataSet lineDataSet) {
                 setChart(binding.v, lineDataSet);
@@ -186,7 +187,7 @@ public class AccFragment extends Fragment {
             }
         });
 //
-        AccViewModel.getLiveLineData(AccViewModel.OutTypes.acceleration).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
+        AccViewModel.getLiveLineData(2).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
             @Override
             public void onChanged(@NonNull LineDataSet lineDataSet) {
                 setChart(binding.acc, lineDataSet);
@@ -194,30 +195,30 @@ public class AccFragment extends Fragment {
             }
         });
 
-        AccViewModel.getLiveLineData(AccViewModel.OutTypes.velocity2dist).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
+        AccViewModel.getLiveLineData(1).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
             @Override
             public void onChanged(@NonNull LineDataSet lineDataSet) {
-                setChart(binding.v2d, lineDataSet);
+                setChart(binding.acc2v, lineDataSet);
 //                AccViewModel.v2d.postValue(null);
             }
         });
 
-        AccViewModel.getLiveLineData(AccViewModel.OutTypes.acceleration2velocity).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
-            @Override
-            public void onChanged(@NonNull LineDataSet lineDataSet) {
-                setChart(binding.acc2v, lineDataSet);
-//                AccViewModel.a2v.postValue(null);
-            }
-        });
-
-        AccViewModel.getLiveLineData(AccViewModel.OutTypes.acceleration2dist).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
-            @Override
-            public void onChanged(@NonNull LineDataSet lineDataSet) {
-                setChart(binding.acc2d, lineDataSet);
-//                AccViewModel.a2d.
-//                AccViewModel.a2d.postValue(null);
-            }
-        });
+//        AccViewModel.getLiveLineData(AccViewModel.OutTypes.acceleration2velocity).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
+//            @Override
+//            public void onChanged(@NonNull LineDataSet lineDataSet) {
+//                setChart(binding.acc2v, lineDataSet);
+////                AccViewModel.a2v.postValue(null);
+//            }
+//        });
+//
+//        AccViewModel.getLiveLineData(AccViewModel.OutTypes.acceleration2dist).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
+//            @Override
+//            public void onChanged(@NonNull LineDataSet lineDataSet) {
+//                setChart(binding.acc2d, lineDataSet);
+////                AccViewModel.a2d.
+////                AccViewModel.a2d.postValue(null);
+//            }
+//        });
 
 
 
@@ -257,16 +258,19 @@ public class AccFragment extends Fragment {
         }
     }
 
+
+//    public void setChart2(LineChart chart, LineDataSet lineDataSet){
+//        LineData lineData = chart.getLineData();
+//        lineDataSet.setLabel("");
+//        lineData.addDataSet(lineDataSet);
+////        lineData.getDataSetLabels()
+//        lineData.notifyDataChanged();
+//        chart.notifyDataSetChanged();
+//        chart.invalidate();
+//    }
     // update chart
     public void setChart(LineChart chart, LineDataSet lineDataSet){
         if(lineDataSet != null){
-            // check dataset
-//            double ymean = 0.0;
-//            double[] y = new double[lineDataSet.getEntryCount()];
-//            for(int ti = 0; ti < lineDataSet.getEntryCount(); ti++){
-//                y[ti] = lineDataSet.getEntryForIndex(ti).getY();
-//            }
-
             if(Objects.equals(lineDataSet.getLabel(), "Distance (SwiftTrack)")){
                 double ymin = lineDataSet.getYMin();
                 double ymax = lineDataSet.getYMax();
@@ -292,19 +296,9 @@ public class AccFragment extends Fragment {
                         toast_flag = abnormal_flag;
                     }
                     AudioProcessor.detrend(y);
-//                    setLineData(y, lineDataSet);
                     for(int ti = 0; ti < lineDataSet.getEntryCount(); ti++){
                         lineDataSet.getEntryForIndex(ti).setY((float) y[ti]);
                     }
-//                    double a = 0.0;
-//                    double b = 0.0;
-//                    double ybar = 0.0;
-//                    double xbar = y.length / 2;
-//                    for(int ti = 0; ti < y.length; ti++){
-//
-//                    }
-
-//                    ymean = ymean / lineDataSet.getEntryCount();
                 }
 
 

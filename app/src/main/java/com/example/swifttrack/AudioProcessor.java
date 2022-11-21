@@ -123,41 +123,41 @@ public class AudioProcessor {
 //            }
 //        }
 
-        private void prepareDataForGalleryFragment(int winLen){
-            double[] xWindow1 = new double[winLen];
-            double[] xWindow2 = new double[winLen];
-            boolean[] is_body_moving = new boolean[winLen];
-            if (CHANNEL_MASK[inputChannel.RIGHT]) {
-
-                getHistoryData(inputChannel.RIGHT, xWindow2,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-                GalleryViewModel.setLineData(xWindow2, GalleryViewModel.OutTypes.SWIFT_TRACK);
-
-                getHistoryData(inputChannel.RIGHT, xWindow2,is_body_moving, winLen, deployMethods.tof, HistoryType.dist_v);
-                GalleryViewModel.setLineData(xWindow2, GalleryViewModel.OutTypes.TOF);
-
-                getHistoryData(inputChannel.RIGHT, xWindow2,is_body_moving, winLen, deployMethods.strata, HistoryType.dist_v);
-                GalleryViewModel.setLineData(xWindow2, GalleryViewModel.OutTypes.STRATA);
-
-                double[] cir_abs = new double[FRAME_SIZE];
-                getCIR(inputChannel.RIGHT, cir_abs, FRAME_SIZE);
-                GalleryViewModel.setLineData(cir_abs, GalleryViewModel.OutTypes.CIR);
-
-            } else {
-                getHistoryData(inputChannel.LEFT, xWindow1,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-                GalleryViewModel.setLineData(xWindow1, GalleryViewModel.OutTypes.SWIFT_TRACK);
-
-                getHistoryData(inputChannel.LEFT, xWindow1,is_body_moving, winLen, deployMethods.tof, HistoryType.dist_v);
-                GalleryViewModel.setLineData(xWindow1, GalleryViewModel.OutTypes.TOF);
-
-                getHistoryData(inputChannel.LEFT, xWindow1,is_body_moving, winLen, deployMethods.strata, HistoryType.dist_v);
-                GalleryViewModel.setLineData(xWindow1, GalleryViewModel.OutTypes.STRATA);
-
-                double[] cir_abs = new double[FRAME_SIZE];
-                getCIR(inputChannel.LEFT, cir_abs, FRAME_SIZE);
-                GalleryViewModel.setLineData(cir_abs, GalleryViewModel.OutTypes.CIR);
-
-            }
-        }
+//        private void prepareDataForGalleryFragment(int winLen){
+//            double[] xWindow1 = new double[winLen];
+//            double[] xWindow2 = new double[winLen];
+//            boolean[] is_body_moving = new boolean[winLen];
+//            if (CHANNEL_MASK[inputChannel.RIGHT]) {
+//
+//                getHistoryData(inputChannel.RIGHT, xWindow2,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+//                GalleryViewModel.setLineData(xWindow2, GalleryViewModel.OutTypes.SWIFT_TRACK);
+//
+//                getHistoryData(inputChannel.RIGHT, xWindow2,is_body_moving, winLen, deployMethods.tof, HistoryType.dist_v);
+//                GalleryViewModel.setLineData(xWindow2, GalleryViewModel.OutTypes.TOF);
+//
+//                getHistoryData(inputChannel.RIGHT, xWindow2,is_body_moving, winLen, deployMethods.strata, HistoryType.dist_v);
+//                GalleryViewModel.setLineData(xWindow2, GalleryViewModel.OutTypes.STRATA);
+//
+//                double[] cir_abs = new double[FRAME_SIZE];
+//                getCIR(inputChannel.RIGHT, cir_abs, FRAME_SIZE);
+//                GalleryViewModel.setLineData(cir_abs, GalleryViewModel.OutTypes.CIR);
+//
+//            } else {
+//                getHistoryData(inputChannel.LEFT, xWindow1,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+//                GalleryViewModel.setLineData(xWindow1, GalleryViewModel.OutTypes.SWIFT_TRACK);
+//
+//                getHistoryData(inputChannel.LEFT, xWindow1,is_body_moving, winLen, deployMethods.tof, HistoryType.dist_v);
+//                GalleryViewModel.setLineData(xWindow1, GalleryViewModel.OutTypes.TOF);
+//
+//                getHistoryData(inputChannel.LEFT, xWindow1,is_body_moving, winLen, deployMethods.strata, HistoryType.dist_v);
+//                GalleryViewModel.setLineData(xWindow1, GalleryViewModel.OutTypes.STRATA);
+//
+//                double[] cir_abs = new double[FRAME_SIZE];
+//                getCIR(inputChannel.LEFT, cir_abs, FRAME_SIZE);
+//                GalleryViewModel.setLineData(cir_abs, GalleryViewModel.OutTypes.CIR);
+//
+//            }
+//        }
 
         private void prepareDataForAccFragment(int winLen, boolean needSave){
             double[] xWindow0 = new double[winLen];
@@ -167,6 +167,10 @@ public class AudioProcessor {
             double[] xWindow4 = new double[winLen];
             boolean[] is_body_moving = new boolean[winLen];
 
+            double[] next_waveform = new double[100];
+            double[] resp_waveform = new double[100];
+            boolean is_new_waveform =false;
+
 
             int targetChannel;
             if (CHANNEL_MASK[inputChannel.RIGHT]) {
@@ -174,25 +178,25 @@ public class AudioProcessor {
             } else {
                 targetChannel = inputChannel.LEFT;
             }
-            getHistoryData(targetChannel, xWindow0,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+            getHistoryData(targetChannel, xWindow0, next_waveform, resp_waveform, is_new_waveform, is_body_moving, winLen, deployMethods.swifttrack, HistoryType.dist_v);
             for(int ti = 0; ti < winLen; ti++){
                 if(is_body_moving[ti]){
                     xWindow0[ti] = 0;
                 }
             }
-            AccViewModel.setLineData(xWindow0, AccViewModel.OutTypes.velocity2dist);
+            AccViewModel.setLineData(xWindow0, next_waveform, resp_waveform, is_new_waveform, AccViewModel.OutTypes.velocity2dist);
 
-            getHistoryData(targetChannel, xWindow1,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.velocity_);
-            AccViewModel.setLineData(xWindow1, AccViewModel.OutTypes.velocity);
-
-            getHistoryData(targetChannel, xWindow2,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.acceleration_);
-            AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.acceleration);
-
-            getHistoryData(targetChannel, xWindow3,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.velocity_a);
-            AccViewModel.setLineData(xWindow3, AccViewModel.OutTypes.acceleration2velocity);
-
-            getHistoryData(targetChannel, xWindow4,is_body_moving, winLen, deployMethods.strata, HistoryType.dist_v);
-            AccViewModel.setLineData(xWindow4, AccViewModel.OutTypes.acceleration2dist);
+//            getHistoryData(targetChannel, xWindow1, next_waveform, resp_waveform, is_new_waveform,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.velocity_);
+//            AccViewModel.setLineData(xWindow1, AccViewModel.OutTypes.velocity);
+//
+//            getHistoryData(targetChannel, xWindow2, next_waveform, resp_waveform, is_new_waveform,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.acceleration_);
+//            AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.acceleration);
+//
+//            getHistoryData(targetChannel, xWindow3, next_waveform, resp_waveform, is_new_waveform,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.velocity_a);
+//            AccViewModel.setLineData(xWindow3, AccViewModel.OutTypes.acceleration2velocity);
+//
+//            getHistoryData(targetChannel, xWindow4, next_waveform, resp_waveform, is_new_waveform,is_body_moving, winLen, deployMethods.strata, HistoryType.dist_v);
+//            AccViewModel.setLineData(xWindow4, AccViewModel.OutTypes.acceleration2dist);
 
             if(needSave){
                 double[][] result = new double[winLen][5];
@@ -211,26 +215,26 @@ public class AudioProcessor {
             Log.d("C_TIME_COUNT", ""+time_count[0]);
         }
 
-        private void prepareDataForSlideFragment(int winLen){
-            int targetChannel;
-            if(CHANNEL_MASK[inputChannel.RIGHT]){
-                targetChannel = inputChannel.RIGHT;
-            }else{
-                targetChannel = inputChannel.LEFT;
-            }
-            double[] xWindow0 = new double[winLen];
-            boolean[] is_body_moving = new boolean[winLen];
-            getHistoryData(targetChannel, xWindow0,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-            double[] cir_abs = new double[150];
-            getCIR(inputChannel.LEFT, cir_abs, 150);
-            double[] thre = new double[1];
-            SlideshowViewModel.draw(cir_abs, thre);
-            getThre(inputChannel.LEFT, thre);
-
-            SlideshowViewModel.setLineData(xWindow0, thre);
-
-
-        }
+//        private void prepareDataForSlideFragment(int winLen){
+//            int targetChannel;
+//            if(CHANNEL_MASK[inputChannel.RIGHT]){
+//                targetChannel = inputChannel.RIGHT;
+//            }else{
+//                targetChannel = inputChannel.LEFT;
+//            }
+//            double[] xWindow0 = new double[winLen];
+//            boolean[] is_body_moving = new boolean[winLen];
+//            getHistoryData(targetChannel, xWindow0,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+//            double[] cir_abs = new double[150];
+//            getCIR(inputChannel.LEFT, cir_abs, 150);
+//            double[] thre = new double[1];
+//            SlideshowViewModel.draw(cir_abs, thre);
+//            getThre(inputChannel.LEFT, thre);
+//
+//            SlideshowViewModel.setLineData(xWindow0, thre);
+//
+//
+//        }
 
 //        private void prepareDataForMLFragment(int winLen){
 //            double[] xWindow1 = new double[winLen];
@@ -398,14 +402,14 @@ public class AudioProcessor {
 //                                    prepareDataForHomeFragment(xWindow1, vWindow1, xWindow2, vWindow2, WINDOW_SIZE);
                                     break;
                                 case ActivityID.galleryFragment:
-                                    prepareDataForGalleryFragment(WINDOW_SIZE);
+//                                    prepareDataForGalleryFragment(WINDOW_SIZE);
 
                                     break;
                                 case ActivityID.accFragment:
                                     prepareDataForAccFragment(WINDOW_SIZE, false);
                                     break;
                                 case ActivityID.slideFragment:
-                                    prepareDataForSlideFragment(WINDOW_SIZE);
+//                                    prepareDataForSlideFragment(WINDOW_SIZE);
                                     break;
                                 case ActivityID.mlFragment:
 //                                    prepareDataForMLFragment(WINDOW_SIZE);
@@ -456,14 +460,14 @@ public class AudioProcessor {
                     FileUtil.streamWriteResult(bufferedWriter, result);
                     break;
                 case ActivityID.galleryFragment:
-                    prepareDataForGalleryFragment(frameCount);
+//                    prepareDataForGalleryFragment(frameCount);
 
                     break;
                 case ActivityID.accFragment:
                     prepareDataForAccFragment(2048, true);
                     break;
                 case ActivityID.slideFragment:
-                    prepareDataForSlideFragment(frameCount);
+//                    prepareDataForSlideFragment(frameCount);
                     break;
                 case ActivityID.mlFragment:
 //                    prepareFinalDataForMLFragment(frameCount);
@@ -577,7 +581,7 @@ public class AudioProcessor {
 
     private static native void reset(int id, int N_ZC_UP, int FC, int BW);
 
-    private static native void getHistoryData(int id, double[] history, boolean[] is_body_moving, int n, int history_id, int history_type);
+    private static native void getHistoryData(int id, double[] history,double[] next_waveform, double[] resp_wave, boolean is_new_waveform, boolean[] is_body_moving, int n, int history_id, int history_type);
 
     private static native void getTime(int id, double[] time_count);
 

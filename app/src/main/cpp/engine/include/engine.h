@@ -39,7 +39,7 @@ public:
 
     static void Reset(int id, int N, int FC, int BW);
 
-    static void GetHistoryData(int id, double *history, bool *is_body_moving_, int n, int history_id, int history_type);
+    static void GetHistoryData(int id, double *history, double *next_waveform, double *resp_wave, bool *is_body_moving_, bool *is_new_waveform, int n, int history_id, int history_type);
 
     void setup(int N, int FC, int BW);
 
@@ -52,6 +52,8 @@ public:
     static void genZC(int N_ZC, int N_ZC_UP, int U, int FC, int SAMPLE_RATE, const bool* SPEAKER_CHANNEL, bool USE_WINDOW,double SCALE, vector<vector<double>> & TX_SEQ);
 
     double time_count;
+    double last_waveform[100];
+    double resp_waveform[100];
 
 private:
     Engine();
@@ -61,6 +63,9 @@ private:
     int N_ZC_UP_;
     int BW_;
     int FC_;
+
+
+//    double moving_thre = 1.0;
 
     // -------------------
     // expiry

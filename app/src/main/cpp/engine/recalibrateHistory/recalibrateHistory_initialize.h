@@ -2,17 +2,16 @@
  * Academic License - for use in teaching, academic research, and meeting
  * course requirements at degree granting institutions only.  Not for
  * government, commercial, or other organizational use.
+ * File: recalibrateHistory_initialize.h
  *
- * recalibrateHistory_initialize.h
- *
- * Code generation for function 'recalibrateHistory_initialize'
- *
+ * MATLAB Coder version            : 5.5
+ * C/C++ source code generated on  : 18-Nov-2022 21:41:51
  */
 
 #ifndef RECALIBRATEHISTORY_INITIALIZE_H
 #define RECALIBRATEHISTORY_INITIALIZE_H
 
-/* Include files */
+/* Include Files */
 #include "rtwtypes.h"
 #include <stddef.h>
 #include <stdlib.h>
@@ -29,4 +28,8 @@ extern void recalibrateHistory_initialize(void);
 #endif
 
 #endif
-/* End of code generation (recalibrateHistory_initialize.h) */
+/*
+ * File trailer for recalibrateHistory_initialize.h
+ *
+ * [EOF]
+ */

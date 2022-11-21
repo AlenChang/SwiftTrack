@@ -5,7 +5,7 @@ project(acoustic)
 set(CMAKE_CXX_STANDARD 14)
 set(TARGET recalibrate)
 
-file(GLOB_RECURSE generated_srcs *.c)
+file(GLOB_RECURSE generated_srcs *.c *.h)
 
 add_library(
     ${TARGET}

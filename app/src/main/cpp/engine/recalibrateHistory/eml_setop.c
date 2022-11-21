@@ -2,18 +2,30 @@
  * Academic License - for use in teaching, academic research, and meeting
  * course requirements at degree granting institutions only.  Not for
  * government, commercial, or other organizational use.
+ * File: eml_setop.c
  *
- * eml_setop.c
- *
- * Code generation for function 'eml_setop'
- *
+ * MATLAB Coder version            : 5.5
+ * C/C++ source code generated on  : 18-Nov-2022 21:41:51
  */
 
-/* Include files */
+/* Include Files */
 #include "eml_setop.h"
 #include "rt_nonfinite.h"
 
 /* Function Definitions */
+/*
+ * Arguments    : const int a_data[]
+ *                int a_size
+ *                const int b_data[]
+ *                int b_size
+ *                int c_data[]
+ *                int *c_size
+ *                int ia_data[]
+ *                int *ia_size
+ *                int ib_data[]
+ *                int *ib_size
+ * Return Type  : void
+ */
 void b_do_vectors(const int a_data[], int a_size, const int b_data[],
                   int b_size, int c_data[], int *c_size, int ia_data[],
                   int *ia_size, int ib_data[], int *ib_size)
@@ -32,8 +44,8 @@ void b_do_vectors(const int a_data[], int a_size, const int b_data[],
   } else {
     *c_size = b_size;
   }
-  *ia_size = (short)*c_size;
-  *ib_size = (short)*c_size;
+  *ia_size = *c_size;
+  *ib_size = *c_size;
   nc = 0;
   iafirst = 0;
   ialast = 1;
@@ -70,7 +82,7 @@ void b_do_vectors(const int a_data[], int a_size, const int b_data[],
     }
   }
   if (*c_size > 0) {
-    if (1 > nc) {
+    if (nc < 1) {
       *ia_size = 0;
       *ib_size = 0;
       *c_size = 0;
@@ -82,6 +94,19 @@ void b_do_vectors(const int a_data[], int a_size, const int b_data[],
   }
 }
 
+/*
+ * Arguments    : const int a_data[]
+ *                int a_size
+ *                const int b_data[]
+ *                int b_size
+ *                int c_data[]
+ *                int *c_size
+ *                int ia_data[]
+ *                int *ia_size
+ *                int ib_data[]
+ *                int *ib_size
+ * Return Type  : void
+ */
 void do_vectors(const int a_data[], int a_size, const int b_data[], int b_size,
                 int c_data[], int *c_size, int ia_data[], int *ia_size,
                 int ib_data[], int *ib_size)
@@ -170,21 +195,21 @@ void do_vectors(const int a_data[], int a_size, const int b_data[], int b_size,
     ibfirst = b_iblast;
   }
   if (a_size > 0) {
-    if (1 > nia + 1) {
+    if (nia + 1 < 1) {
       *ia_size = 0;
     } else {
       *ia_size = nia + 1;
     }
   }
   if (b_size > 0) {
-    if (1 > nib) {
+    if (nib < 1) {
       *ib_size = 0;
     } else {
       *ib_size = nib;
     }
   }
   if (*c_size > 0) {
-    if (1 > nc + 1) {
+    if (nc + 1 < 1) {
       *c_size = 0;
     } else {
       *c_size = nc + 1;
@@ -192,4 +217,8 @@ void do_vectors(const int a_data[], int a_size, const int b_data[], int b_size,
   }
 }
 
-/* End of code generation (eml_setop.c) */
+/*
+ * File trailer for eml_setop.c
+ *
+ * [EOF]
+ */

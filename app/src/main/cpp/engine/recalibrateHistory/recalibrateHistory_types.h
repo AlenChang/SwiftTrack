@@ -2,17 +2,16 @@
  * Academic License - for use in teaching, academic research, and meeting
  * course requirements at degree granting institutions only.  Not for
  * government, commercial, or other organizational use.
+ * File: recalibrateHistory_types.h
  *
- * recalibrateHistory_types.h
- *
- * Code generation for function 'recalibrateHistory'
- *
+ * MATLAB Coder version            : 5.5
+ * C/C++ source code generated on  : 18-Nov-2022 21:41:51
  */
 
 #ifndef RECALIBRATEHISTORY_TYPES_H
 #define RECALIBRATEHISTORY_TYPES_H
 
-/* Include files */
+/* Include Files */
 #include "rtwtypes.h"
 
 /* Type Definitions */
@@ -32,4 +31,8 @@ typedef struct emxArray_real_T emxArray_real_T;
 #endif /* typedef_emxArray_real_T */
 
 #endif
-/* End of code generation (recalibrateHistory_types.h) */
+/*
+ * File trailer for recalibrateHistory_types.h
+ *
+ * [EOF]
+ */

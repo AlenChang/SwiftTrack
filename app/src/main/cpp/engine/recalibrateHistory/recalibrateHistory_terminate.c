@@ -2,21 +2,29 @@
  * Academic License - for use in teaching, academic research, and meeting
  * course requirements at degree granting institutions only.  Not for
  * government, commercial, or other organizational use.
+ * File: recalibrateHistory_terminate.c
  *
- * recalibrateHistory_terminate.c
- *
- * Code generation for function 'recalibrateHistory_terminate'
- *
+ * MATLAB Coder version            : 5.5
+ * C/C++ source code generated on  : 18-Nov-2022 21:41:51
  */
 
-/* Include files */
+/* Include Files */
 #include "recalibrateHistory_terminate.h"
+#include "recalibrateHistory_data.h"
 #include "rt_nonfinite.h"
 
 /* Function Definitions */
+/*
+ * Arguments    : void
+ * Return Type  : void
+ */
 void recalibrateHistory_terminate(void)
 {
-  /* (no terminate code required) */
+  isInitialized_recalibrateHistory = false;
 }
 
-/* End of code generation (recalibrateHistory_terminate.c) */
+/*
+ * File trailer for recalibrateHistory_terminate.c
+ *
+ * [EOF]
+ */

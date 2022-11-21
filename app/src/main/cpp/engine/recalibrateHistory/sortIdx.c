@@ -2,14 +2,13 @@
  * Academic License - for use in teaching, academic research, and meeting
  * course requirements at degree granting institutions only.  Not for
  * government, commercial, or other organizational use.
+ * File: sortIdx.c
  *
- * sortIdx.c
- *
- * Code generation for function 'sortIdx'
- *
+ * MATLAB Coder version            : 5.5
+ * C/C++ source code generated on  : 18-Nov-2022 21:41:51
  */
 
-/* Include files */
+/* Include Files */
 #include "sortIdx.h"
 #include "rt_nonfinite.h"
 
@@ -18,6 +17,16 @@ static void merge(int idx_data[], int x_data[], int offset, int np, int nq,
                   int iwork_data[], int xwork_data[]);
 
 /* Function Definitions */
+/*
+ * Arguments    : int idx_data[]
+ *                int x_data[]
+ *                int offset
+ *                int np
+ *                int nq
+ *                int iwork_data[]
+ *                int xwork_data[]
+ * Return Type  : void
+ */
 static void merge(int idx_data[], int x_data[], int offset, int np, int nq,
                   int iwork_data[], int xwork_data[])
 {
@@ -67,10 +76,21 @@ static void merge(int idx_data[], int x_data[], int offset, int np, int nq,
   }
 }
 
+/*
+ * Arguments    : int idx_data[]
+ *                int x_data[]
+ *                int offset
+ *                int n
+ *                int preSortLevel
+ *                int iwork_data[]
+ *                int xwork_data[]
+ * Return Type  : void
+ */
 void merge_block(int idx_data[], int x_data[], int offset, int n,
                  int preSortLevel, int iwork_data[], int xwork_data[])
 {
   int bLen;
+  int k;
   int nPairs;
   int nTail;
   int tailOffset;
@@ -88,9 +108,10 @@ void merge_block(int idx_data[], int x_data[], int offset, int n,
     }
     tailOffset = bLen << 1;
     nPairs >>= 1;
-    for (nTail = 0; nTail < nPairs; nTail++) {
-      merge(idx_data, x_data, offset + nTail * tailOffset, bLen, bLen,
-            iwork_data, xwork_data);
+    nTail = (unsigned short)nPairs;
+    for (k = 0; k < nTail; k++) {
+      merge(idx_data, x_data, offset + k * tailOffset, bLen, bLen, iwork_data,
+            xwork_data);
     }
     bLen = tailOffset;
   }
@@ -99,4 +120,8 @@ void merge_block(int idx_data[], int x_data[], int offset, int n,
   }
 }
 
-/* End of code generation (sortIdx.c) */
+/*
+ * File trailer for sortIdx.c
+ *
+ * [EOF]
+ */

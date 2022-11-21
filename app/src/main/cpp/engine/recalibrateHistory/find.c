@@ -2,18 +2,62 @@
  * Academic License - for use in teaching, academic research, and meeting
  * course requirements at degree granting institutions only.  Not for
  * government, commercial, or other organizational use.
+ * File: find.c
  *
- * find.c
- *
- * Code generation for function 'find'
- *
+ * MATLAB Coder version            : 5.5
+ * C/C++ source code generated on  : 18-Nov-2022 21:41:51
  */
 
-/* Include files */
+/* Include Files */
 #include "find.h"
 #include "rt_nonfinite.h"
 
 /* Function Definitions */
+/*
+ * Arguments    : int in1_data[]
+ *                int *in1_size
+ *                const double in2[2048]
+ *                const int in3_data[]
+ *                const int *in3_size
+ *                const double in4_data[]
+ *                const int *in4_size
+ * Return Type  : void
+ */
+void c_binary_expand_op(int in1_data[], int *in1_size, const double in2[2048],
+                        const int in3_data[], const int *in3_size,
+                        const double in4_data[], const int *in4_size)
+{
+  int i;
+  int loop_ub;
+  int stride_0_0;
+  int stride_1_0;
+  boolean_T in2_data[2048];
+  stride_0_0 = (*in3_size != 1);
+  stride_1_0 = (*in4_size != 1);
+  if (*in4_size == 1) {
+    loop_ub = *in3_size;
+  } else {
+    loop_ub = *in4_size;
+  }
+  for (i = 0; i < loop_ub; i++) {
+    in2_data[i] =
+        (in2[in3_data[i * stride_0_0] - 1] - in4_data[i * stride_1_0] >= 0.0);
+  }
+  if (*in4_size == 1) {
+    i = *in3_size;
+  } else {
+    i = *in4_size;
+  }
+  eml_find(in2_data, i, in1_data, in1_size);
+}
+
+/*
+ * Arguments    : const boolean_T x_data[]
+ *                int x_size
+ *                int i_data[]
+ *                int *i_size
+ * Return Type  : void
+ */
 void eml_find(const boolean_T x_data[], int x_size, int i_data[], int *i_size)
 {
   int idx;
@@ -40,11 +84,15 @@ void eml_find(const boolean_T x_data[], int x_size, int i_data[], int *i_size)
     if (idx == 0) {
       *i_size = 0;
     }
-  } else if (1 > idx) {
+  } else if (idx < 1) {
     *i_size = 0;
   } else {
     *i_size = idx;
   }
 }
 
-/* End of code generation (find.c) */
+/*
+ * File trailer for find.c
+ *
+ * [EOF]
+ */

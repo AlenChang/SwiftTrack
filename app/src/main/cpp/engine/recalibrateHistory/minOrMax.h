@@ -2,26 +2,36 @@
  * Academic License - for use in teaching, academic research, and meeting
  * course requirements at degree granting institutions only.  Not for
  * government, commercial, or other organizational use.
- * File: recalibrateHistory_data.h
+ * File: minOrMax.h
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 18-Nov-2022 21:41:51
+ * C/C++ source code generated on  : 18-Nov-2022 20:27:15
  */
 
-#ifndef RECALIBRATEHISTORY_DATA_H
-#define RECALIBRATEHISTORY_DATA_H
+#ifndef MINORMAX_H
+#define MINORMAX_H
 
 /* Include Files */
 #include "rtwtypes.h"
 #include <stddef.h>
 #include <stdlib.h>
 
-/* Variable Declarations */
-extern boolean_T isInitialized_recalibrateHistory;
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* Function Declarations */
+double maximum(const double x[100]);
+
+double minimum(const double x[100]);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 /*
- * File trailer for recalibrateHistory_data.h
+ * File trailer for minOrMax.h
  *
  * [EOF]
  */

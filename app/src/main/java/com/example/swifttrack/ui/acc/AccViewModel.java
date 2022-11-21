@@ -24,11 +24,11 @@ public class AccViewModel extends ViewModel {
         velocity, acceleration, velocity2dist, acceleration2velocity, acceleration2dist
     }
 
-    private static MutableLiveData<LineDataSet> v = new MutableLiveData<>();
-    private static MutableLiveData<LineDataSet> a = new MutableLiveData<>();
+//    private static MutableLiveData<LineDataSet> v = new MutableLiveData<>();
+//    private static MutableLiveData<LineDataSet> a = new MutableLiveData<>();
     private static MutableLiveData<LineDataSet> v2d = new MutableLiveData<>();
-    private static MutableLiveData<LineDataSet> a2v = new MutableLiveData<>();
-    private static MutableLiveData<LineDataSet> a2d = new MutableLiveData<>();
+    private static MutableLiveData<LineDataSet> waveform_chart = new MutableLiveData<>();
+    private static MutableLiveData<LineDataSet> resp_chart = new MutableLiveData<>();
 
     public static int counter = 0;
 
@@ -42,25 +42,21 @@ public class AccViewModel extends ViewModel {
 //        a2d = new MutableLiveData<>();
     }
 
-    public static MutableLiveData<LineDataSet> getLiveLineData(OutTypes type) {
+    public static MutableLiveData<LineDataSet> getLiveLineData(int type) {
         switch (type){
-            case velocity:
-                return v;
-            case acceleration:
-                return a;
-            case velocity2dist:
+            case 1:
+                return resp_chart;
+            case 2:
+                return waveform_chart;
+            case 3:
                 return v2d;
-            case acceleration2velocity:
-                return a2v;
-            case acceleration2dist:
-                return a2d;
             default:
                 return null;
         }
 
     }
 
-    public static void setLineData(double[] values, AccViewModel.OutTypes type) {
+    public static void setLineData(double[] values, double[] next_waveform, double[] resp_waveform, boolean is_new_waveform, AccViewModel.OutTypes type) {
 
         String label = " ";
         switch (type){
@@ -70,7 +66,6 @@ public class AccViewModel extends ViewModel {
             case acceleration:
 //                a.postValue(PlotUtil.getLineDataSet(values, "Acceleration", Color.BLUE));
                 label = "Acceleration";
-
                 break;
             case velocity2dist:
 //                v2d.postValue(PlotUtil.getLineDataSet(values, "Distance (SwiftTrack)", Color.CYAN));
@@ -88,7 +83,17 @@ public class AccViewModel extends ViewModel {
                 break;
         }
 
-        getLiveLineData(type).postValue(PlotUtil.getLineDataSet(values, label, Color.RED));
+        getLiveLineData(3).postValue(PlotUtil.getLineDataSet(values, "Distance change of chest caused by respiration", Color.RED));
+//        if(is_new_waveform){
+        getLiveLineData(2).postValue(PlotUtil.getLineDataSet(next_waveform, "The Last Waveform", Color.RED));
+        getLiveLineData(1).postValue(PlotUtil.getLineDataSet(resp_waveform, "Averaged Respiration Waveform", Color.RED));
+//        }
+
+
+
+
+
+
 
 
 

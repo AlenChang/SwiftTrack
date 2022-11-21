@@ -2,17 +2,16 @@
  * Academic License - for use in teaching, academic research, and meeting
  * course requirements at degree granting institutions only.  Not for
  * government, commercial, or other organizational use.
+ * File: sort.h
  *
- * sort.h
- *
- * Code generation for function 'sort'
- *
+ * MATLAB Coder version            : 5.5
+ * C/C++ source code generated on  : 18-Nov-2022 21:41:51
  */
 
 #ifndef SORT_H
 #define SORT_H
 
-/* Include files */
+/* Include Files */
 #include "rtwtypes.h"
 #include <stddef.h>
 #include <stdlib.h>
@@ -29,4 +28,8 @@ void sort(int x_data[], const int *x_size);
 #endif
 
 #endif
-/* End of code generation (sort.h) */
+/*
+ * File trailer for sort.h
+ *
+ * [EOF]
+ */

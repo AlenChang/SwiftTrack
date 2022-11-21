@@ -2,17 +2,16 @@
  * Academic License - for use in teaching, academic research, and meeting
  * course requirements at degree granting institutions only.  Not for
  * government, commercial, or other organizational use.
+ * File: eml_setop.h
  *
- * eml_setop.h
- *
- * Code generation for function 'eml_setop'
- *
+ * MATLAB Coder version            : 5.5
+ * C/C++ source code generated on  : 18-Nov-2022 21:41:51
  */
 
 #ifndef EML_SETOP_H
 #define EML_SETOP_H
 
-/* Include files */
+/* Include Files */
 #include "rtwtypes.h"
 #include <stddef.h>
 #include <stdlib.h>
@@ -35,4 +34,8 @@ void do_vectors(const int a_data[], int a_size, const int b_data[], int b_size,
 #endif
 
 #endif
-/* End of code generation (eml_setop.h) */
+/*
+ * File trailer for eml_setop.h
+ *
+ * [EOF]
+ */

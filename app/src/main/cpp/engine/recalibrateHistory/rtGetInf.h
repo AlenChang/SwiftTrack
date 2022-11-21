@@ -2,17 +2,16 @@
  * Academic License - for use in teaching, academic research, and meeting
  * course requirements at degree granting institutions only.  Not for
  * government, commercial, or other organizational use.
+ * File: rtGetInf.h
  *
- * rtGetInf.h
- *
- * Code generation for function 'recalibrateHistory'
- *
+ * MATLAB Coder version            : 5.5
+ * C/C++ source code generated on  : 18-Nov-2022 21:41:51
  */
 
 #ifndef RTGETINF_H
 #define RTGETINF_H
 
-/* Include files */
+/* Include Files */
 #include "rtwtypes.h"
 
 #ifdef __cplusplus
@@ -28,4 +27,8 @@ extern real32_T rtGetMinusInfF(void);
 }
 #endif
 #endif
-/* End of code generation (rtGetInf.h) */
+/*
+ * File trailer for rtGetInf.h
+ *
+ * [EOF]
+ */
