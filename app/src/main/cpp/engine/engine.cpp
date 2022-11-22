@@ -319,17 +319,18 @@ void Engine::genZC(int N_ZC, int N_ZC_UP, int U, int FC, int SAMPLE_RATE, const 
     // Generate raw zc seq
     fftw_complex * rawZC;
     rawZC = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N_ZC);
-    for(int i = 0; i < N_ZC; i++){
-        double theta = - M_PI * U * i * (i + 1) / N_ZC;
-        rawZC[i][REAL] = cos(theta);
-        rawZC[i][IMAG] = sin(theta);
-    }
+
     // Transfer raw zc to freq domain
     fftw_complex* output_fft;
     output_fft = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N_ZC);
 
     int b_sign = FFTW_FORWARD;
     fftw_plan plan = fftw_plan_dft_1d(N_ZC,rawZC , output_fft, b_sign,FFTW_MEASURE);
+    for(int i = 0; i < N_ZC; i++){
+        double theta = - M_PI * U * i * (i + 1) / N_ZC;
+        rawZC[i][REAL] = cos(theta);
+        rawZC[i][IMAG] = sin(theta);
+    }
     fftw_execute(plan);
     fftw_destroy_plan(plan);
     // Apply hann window based on the reference url: https://ww2.mathworks.cn/help/signal/ref/hann.html
@@ -342,6 +343,13 @@ void Engine::genZC(int N_ZC, int N_ZC_UP, int U, int FC, int SAMPLE_RATE, const 
     // Padding zeros in freq domain
     fftw_complex * freqPadZC;
     freqPadZC = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N_ZC_UP);
+
+    // Back to time domain
+
+    fftw_complex* output_ifft;
+    output_ifft = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N_ZC_UP);
+    b_sign = FFTW_BACKWARD;
+    plan = fftw_plan_dft_1d(N_ZC_UP,freqPadZC , output_ifft, b_sign,FFTW_MEASURE);
 
     int len = N_ZC_UP - N_ZC;
     for (int i = 0; i < N_ZC_UP;i++){
@@ -357,12 +365,7 @@ void Engine::genZC(int N_ZC, int N_ZC_UP, int U, int FC, int SAMPLE_RATE, const 
             freqPadZC[i + len][IMAG]  = output_fft[i][IMAG];
         }
     }
-    // Back to time domain
 
-    fftw_complex* output_ifft;
-    output_ifft = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N_ZC_UP);
-    b_sign = FFTW_BACKWARD;
-    plan = fftw_plan_dft_1d(N_ZC_UP,freqPadZC , output_ifft, b_sign,FFTW_MEASURE);
     fftw_execute(plan);
     fftw_destroy_plan(plan);
 
