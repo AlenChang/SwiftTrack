@@ -5,7 +5,7 @@
  * File: findpeaks.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 25-Nov-2022 12:55:07
+ * C/C++ source code generated on  : 25-Nov-2022 15:36:47
  */
 
 /* Include Files */
@@ -62,7 +62,7 @@ static void binary_expand_op(boolean_T in1_data[], int *in1_size,
     int in1_tmp;
     in1_tmp = in2_data[i1 * stride_1_0];
     b_in1_data[i1] = (in1_data[i1 * stride_0_0] ||
-                      ((in1_tmp >= i - 100) && (in1_tmp <= i + 100)));
+                      ((in1_tmp >= i - 80) && (in1_tmp <= i + 80)));
   }
   *in1_size = b_in1_size;
   if (b_in1_size - 1 >= 0) {
@@ -285,7 +285,7 @@ void findpeaks(const double Yin[2048], double Ypk_data[], int *Ypk_size,
             nPk = (short)((short)(b_iPk_data[i - 1] - 1) + 1);
             i1 = locs_temp_data[q];
             idelete_data[q] =
-                (idelete_data[q] || ((i1 >= nPk - 100) && (i1 <= nPk + 100)));
+                (idelete_data[q] || ((i1 >= nPk - 80) && (i1 <= nPk + 80)));
           }
         } else {
           binary_expand_op(idelete_data, &kfirst, locs_temp_data, &loop_ub,

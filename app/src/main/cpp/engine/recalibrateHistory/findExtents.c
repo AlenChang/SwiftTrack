@@ -5,7 +5,7 @@
  * File: findExtents.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 25-Nov-2022 12:55:07
+ * C/C++ source code generated on  : 25-Nov-2022 15:36:47
  */
 
 /* Include Files */
@@ -252,7 +252,7 @@ void findExtents(const double y[2048], int iPk_data[], int *iPk_size,
   }
   if (*iPk_size == *bPk_size) {
     for (i = 0; i < *iPk_size; i++) {
-      yFinite_data[i] = (yFinite[iPk_data[i] - 1] - b_bPk_data[i] >= 0.05);
+      yFinite_data[i] = (yFinite[iPk_data[i] - 1] - b_bPk_data[i] >= 0.0);
     }
     eml_find(yFinite_data, *iPk_size, tmp_data, &iPk_tmp);
   } else {
@@ -265,7 +265,7 @@ void findExtents(const double y[2048], int iPk_data[], int *iPk_size,
   }
   if (*iPk_size == *bPk_size) {
     for (i = 0; i < *iPk_size; i++) {
-      yFinite_data[i] = (yFinite[iPk_data[i] - 1] - b_bPk_data[i] >= 0.05);
+      yFinite_data[i] = (yFinite[iPk_data[i] - 1] - b_bPk_data[i] >= 0.0);
     }
     eml_find(yFinite_data, *iPk_size, tmp_data, &iPk_tmp);
   } else {
@@ -297,7 +297,7 @@ void findExtents(const double y[2048], int iPk_data[], int *iPk_size,
   }
   if (*iPk_size == *bPk_size) {
     for (i = 0; i < *iPk_size; i++) {
-      yFinite_data[i] = (yFinite[iPk_data[i] - 1] - b_bPk_data[i] >= 0.05);
+      yFinite_data[i] = (yFinite[iPk_data[i] - 1] - b_bPk_data[i] >= 0.0);
     }
     eml_find(yFinite_data, *iPk_size, tmp_data, &iPk_tmp);
   } else {
@@ -502,7 +502,7 @@ void findExtents(const double y[2048], int iPk_data[], int *iPk_size,
     }
     for (i = 0; i < w_size; i++) {
       d = w_data[i];
-      b_w_data[i] = ((d >= 50.0) && (d <= rtInf));
+      b_w_data[i] = ((d >= 30.0) && (d <= rtInf));
     }
     eml_find(b_w_data, w_size, tmp_data, &iPk_tmp);
     for (i = 0; i < iPk_tmp; i++) {

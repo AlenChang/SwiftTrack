@@ -5,7 +5,7 @@
  * File: recalibrateHistory.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 25-Nov-2022 12:55:07
+ * C/C++ source code generated on  : 25-Nov-2022 15:36:47
  */
 
 /* Include Files */
@@ -77,8 +77,6 @@ void recalibrateHistory(double hist[2048], double moving_thre,
                         double tmp[100], boolean_T *new_waveform,
                         double *resp_freq)
 {
-  static double a__1_data[2048];
-  static double locs2_data[2048];
   static double locs_data[2048];
   static double pks_data[2048];
   static double t2_data[2048];
@@ -88,13 +86,13 @@ void recalibrateHistory(double hist[2048], double moving_thre,
   double delta1;
   double delta2;
   double n;
+  double time_duration;
   int t2_size[2];
   int b_i;
   int drift_size_idx_1;
   int i;
   int i1;
   int k;
-  int locs2_size;
   int locs_size;
   int pks_size;
   int ti;
@@ -103,11 +101,11 @@ void recalibrateHistory(double hist[2048], double moving_thre,
     recalibrateHistory_initialize();
   }
   findpeaks(hist, pks_data, &pks_size, locs_data, &locs_size);
-  for (i = 0; i < 2048; i++) {
-    t2_data[i] = -hist[i];
-  }
-  findpeaks(t2_data, a__1_data, &b_i, locs2_data, &locs2_size);
-  *resp_freq = (double)(locs2_size + locs_size) / 2.0;
+  /*  [~, locs2] = findpeaks(-hist, ... */
+  /*      'MinPeakDistance',100, 'MinPeakWidth', 50, 'MinPeakProminence', 0.05);
+   */
+  time_duration = 0.0;
+  *resp_freq = 0.0;
   if (pks_size >= 2) {
     for (ti = 0; ti <= pks_size - 2; ti++) {
       double n_tmp;
@@ -117,7 +115,7 @@ void recalibrateHistory(double hist[2048], double moving_thre,
       if (!(n >= 0.0)) {
         drift_size_idx_1 = 0;
       } else {
-        b_i = (int)n;
+        i = (int)n;
         drift_size_idx_1 = (int)n;
         if ((int)n >= 1) {
           delta2 = pks_data[ti + 1];
@@ -127,8 +125,8 @@ void recalibrateHistory(double hist[2048], double moving_thre,
             if ((int)n >= 3) {
               if (d1 == -delta2) {
                 delta2 /= (double)(int)n - 1.0;
-                i = (int)n - 1;
-                for (k = 2; k <= i; k++) {
+                b_i = (int)n - 1;
+                for (k = 2; k <= b_i; k++) {
                   drift_data[k - 1] =
                       ((double)((k << 1) - (int)n) - 1.0) * delta2;
                 }
@@ -140,13 +138,13 @@ void recalibrateHistory(double hist[2048], double moving_thre,
                           (fabs(delta2) > 8.9884656743115785E+307))) {
                 delta1 = d1 / ((double)(int)n - 1.0);
                 delta2 /= (double)(int)n - 1.0;
-                for (k = 0; k <= b_i - 3; k++) {
+                for (k = 0; k <= i - 3; k++) {
                   drift_data[k + 1] = (d1 + delta2 * ((double)k + 1.0)) -
                                       delta1 * ((double)k + 1.0);
                 }
               } else {
                 delta1 = (delta2 - d1) / ((double)(int)n - 1.0);
-                for (k = 0; k <= b_i - 3; k++) {
+                for (k = 0; k <= i - 3; k++) {
                   drift_data[k + 1] = d1 + ((double)k + 1.0) * delta1;
                 }
               }
@@ -155,136 +153,136 @@ void recalibrateHistory(double hist[2048], double moving_thre,
         }
       }
       delta2 = drift_data[0];
-      for (i = 0; i < drift_size_idx_1; i++) {
-        b_drift_data[i] = drift_data[i] - delta2;
+      for (b_i = 0; b_i < drift_size_idx_1; b_i++) {
+        b_drift_data[b_i] = drift_data[b_i] - delta2;
       }
       delta1 = locs_data[ti];
       if (delta1 + 1.0 > n_tmp) {
-        i = 0;
+        b_i = 0;
         i1 = 0;
         k = 0;
-        b_i = 0;
+        i = 0;
       } else {
-        i = (int)(delta1 + 1.0) - 1;
+        b_i = (int)(delta1 + 1.0) - 1;
         i1 = (int)n_tmp;
         k = (int)(delta1 + 1.0) - 1;
-        b_i = (int)locs_data[ti + 1];
+        i = (int)locs_data[ti + 1];
       }
-      if (i1 - i == drift_size_idx_1) {
-        b_i -= k;
-        for (i1 = 0; i1 < b_i; i1++) {
-          t2_data[i1] = hist[i + i1] - b_drift_data[i1];
+      if (i1 - b_i == drift_size_idx_1) {
+        i -= k;
+        for (i1 = 0; i1 < i; i1++) {
+          t2_data[i1] = hist[b_i + i1] - b_drift_data[i1];
         }
-        for (i = 0; i < b_i; i++) {
-          hist[k + i] = t2_data[i];
+        for (b_i = 0; b_i < i; b_i++) {
+          hist[k + b_i] = t2_data[b_i];
         }
       } else {
-        b_binary_expand_op(hist, k, b_i, i, i1 - 1, b_drift_data,
+        b_binary_expand_op(hist, k, i, b_i, i1 - 1, b_drift_data,
                            &drift_size_idx_1);
       }
       if (n_tmp + 1.0 > 2048.0) {
-        i = 1;
+        b_i = 1;
         i1 = -1;
         k = -1;
       } else {
-        i = (int)(n_tmp + 1.0);
+        b_i = (int)(n_tmp + 1.0);
         i1 = (int)(n_tmp + 1.0) - 2;
         k = 2047;
       }
-      b_i = k - i1;
-      for (k = 0; k < b_i; k++) {
-        t2_data[k] = hist[(i + k) - 1] - b_drift_data[drift_size_idx_1 - 1];
+      i = k - i1;
+      for (k = 0; k < i; k++) {
+        t2_data[k] = hist[(b_i + k) - 1] - b_drift_data[drift_size_idx_1 - 1];
       }
-      for (i = 0; i < b_i; i++) {
-        hist[(i1 + i) + 1] = t2_data[i];
+      for (b_i = 0; b_i < i; b_i++) {
+        hist[(i1 + b_i) + 1] = t2_data[b_i];
       }
     }
   }
   /*  hist_out = wdenoise(hist); */
-  for (b_i = 0; b_i < 2048; b_i++) {
-    hist_out[b_i] = hist[b_i];
-    is_body_moving[b_i] = false;
+  for (i = 0; i < 2048; i++) {
+    hist_out[i] = hist[i];
+    is_body_moving[i] = false;
   }
   if (pks_size >= 2) {
     for (ti = 0; ti <= pks_size - 2; ti++) {
       delta1 = locs_data[ti + 1];
       delta2 = locs_data[ti];
       if (delta2 + 1.0 > delta1) {
-        i = 0;
+        b_i = 0;
         i1 = 0;
       } else {
-        i = (int)(delta2 + 1.0) - 1;
+        b_i = (int)(delta2 + 1.0) - 1;
         i1 = (int)delta1;
       }
-      drift_size_idx_1 = i1 - i;
+      drift_size_idx_1 = i1 - b_i;
       if (drift_size_idx_1 <= 2) {
         if (drift_size_idx_1 == 1) {
-          d1 = hist[i];
-          n = hist[i];
+          d1 = hist[b_i];
+          n = hist[b_i];
         } else {
           n = hist[i1 - 1];
-          if ((hist[i] < n) || (rtIsNaN(hist[i]) && (!rtIsNaN(n)))) {
+          if ((hist[b_i] < n) || (rtIsNaN(hist[b_i]) && (!rtIsNaN(n)))) {
             d1 = n;
           } else {
-            d1 = hist[i];
+            d1 = hist[b_i];
           }
-          if ((!(hist[i] > n)) &&
-              ((!rtIsNaN(hist[i])) || rtIsNaN(hist[i1 - 1]))) {
-            n = hist[i];
+          if ((!(hist[b_i] > n)) &&
+              ((!rtIsNaN(hist[b_i])) || rtIsNaN(hist[i1 - 1]))) {
+            n = hist[b_i];
           }
         }
       } else {
         boolean_T b;
-        b = rtIsNaN(hist[i]);
+        b = rtIsNaN(hist[b_i]);
         if (!b) {
-          b_i = 1;
+          i = 1;
         } else {
-          b_i = 0;
+          i = 0;
           k = 2;
           exitg1 = false;
           while ((!exitg1) && (k <= drift_size_idx_1)) {
-            if (!rtIsNaN(hist[(i + k) - 1])) {
-              b_i = k;
+            if (!rtIsNaN(hist[(b_i + k) - 1])) {
+              i = k;
               exitg1 = true;
             } else {
               k++;
             }
           }
         }
-        if (b_i == 0) {
-          d1 = hist[i];
+        if (i == 0) {
+          d1 = hist[b_i];
         } else {
-          d1 = hist[(i + b_i) - 1];
-          i1 = b_i + 1;
+          d1 = hist[(b_i + i) - 1];
+          i1 = i + 1;
           for (k = i1; k <= drift_size_idx_1; k++) {
-            delta2 = hist[(i + k) - 1];
+            delta2 = hist[(b_i + k) - 1];
             if (d1 < delta2) {
               d1 = delta2;
             }
           }
         }
         if (!b) {
-          b_i = 1;
+          i = 1;
         } else {
-          b_i = 0;
+          i = 0;
           k = 2;
           exitg1 = false;
           while ((!exitg1) && (k <= drift_size_idx_1)) {
-            if (!rtIsNaN(hist[(i + k) - 1])) {
-              b_i = k;
+            if (!rtIsNaN(hist[(b_i + k) - 1])) {
+              i = k;
               exitg1 = true;
             } else {
               k++;
             }
           }
         }
-        if (b_i == 0) {
-          n = hist[i];
+        if (i == 0) {
+          n = hist[b_i];
         } else {
-          n = hist[(i + b_i) - 1];
-          i1 = b_i + 1;
+          n = hist[(b_i + i) - 1];
+          i1 = i + 1;
           for (k = i1; k <= drift_size_idx_1; k++) {
-            delta2 = hist[(i + k) - 1];
+            delta2 = hist[(b_i + k) - 1];
             if (n > delta2) {
               n = delta2;
             }
@@ -294,126 +292,120 @@ void recalibrateHistory(double hist[2048], double moving_thre,
       if (d1 - n > moving_thre) {
         delta2 = locs_data[ti];
         if (delta2 + 1.0 > delta1) {
-          i = 0;
+          b_i = 0;
           i1 = 0;
         } else {
-          i = (int)(delta2 + 1.0) - 1;
+          b_i = (int)(delta2 + 1.0) - 1;
           i1 = (int)locs_data[ti + 1];
         }
-        b_i = i1 - i;
-        for (i1 = 0; i1 < b_i; i1++) {
-          is_body_moving[i + i1] = true;
+        i = i1 - b_i;
+        for (i1 = 0; i1 < i; i1++) {
+          is_body_moving[b_i + i1] = true;
         }
-        (*resp_freq)--;
+      } else {
+        time_duration = (time_duration + delta1) - locs_data[ti];
+        (*resp_freq)++;
       }
     }
   }
-  b_i = is_body_moving[0];
-  for (k = 0; k < 2047; k++) {
-    b_i += is_body_moving[k + 1];
-  }
-  if (locs_data[locs_size - 1] > locs2_data[locs2_size - 1]) {
-    d1 = locs_data[locs_size - 1];
-  } else {
-    d1 = locs2_data[locs2_size - 1];
-  }
-  *resp_freq = *resp_freq / ((d1 - (double)b_i) * 960.0 / 48000.0) * 60.0;
+  time_duration = time_duration * 960.0 / 48000.0;
+  *resp_freq = *resp_freq / time_duration * 60.0;
   *new_waveform = false;
   if (locs_size > 2) {
     delta1 = locs_data[locs_size - 2];
     delta2 = locs_data[locs_size - 1];
     if (delta1 > delta2) {
-      i = 0;
+      b_i = 0;
       i1 = 0;
     } else {
-      i = (int)delta1 - 1;
+      b_i = (int)delta1 - 1;
       i1 = (int)delta2;
     }
     t2_size[0] = 1;
-    b_i = i1 - i;
-    t2_size[1] = b_i;
-    if (b_i >= 1) {
-      t2_data[b_i - 1] = 1.0;
-      if (b_i >= 2) {
+    i = i1 - b_i;
+    t2_size[1] = i;
+    if (i >= 1) {
+      t2_data[i - 1] = 1.0;
+      if (i >= 2) {
         t2_data[0] = 0.0;
-        if (b_i >= 3) {
-          delta1 = 1.0 / ((double)b_i - 1.0);
-          for (k = 0; k <= b_i - 3; k++) {
+        if (i >= 3) {
+          delta1 = 1.0 / ((double)i - 1.0);
+          for (k = 0; k <= i - 3; k++) {
             t2_data[k + 1] = ((double)k + 1.0) * delta1;
           }
         }
       }
     }
-    for (i1 = 0; i1 < b_i; i1++) {
-      pks_data[i1] = hist[i + i1];
+    for (i1 = 0; i1 < i; i1++) {
+      pks_data[i1] = hist[b_i + i1];
     }
-    interp1(t2_data, t2_size, pks_data, b_i, tmp);
+    interp1(t2_data, t2_size, pks_data, i, tmp);
     if (!rtIsNaN(tmp[0])) {
-      b_i = 1;
+      i = 1;
     } else {
-      b_i = 0;
+      i = 0;
       k = 2;
       exitg1 = false;
       while ((!exitg1) && (k < 101)) {
         if (!rtIsNaN(tmp[k - 1])) {
-          b_i = k;
+          i = k;
           exitg1 = true;
         } else {
           k++;
         }
       }
     }
-    if (b_i == 0) {
+    if (i == 0) {
       d1 = tmp[0];
     } else {
-      d1 = tmp[b_i - 1];
-      i = b_i + 1;
-      for (k = i; k < 101; k++) {
+      d1 = tmp[i - 1];
+      b_i = i + 1;
+      for (k = b_i; k < 101; k++) {
         delta1 = tmp[k - 1];
         if (d1 > delta1) {
           d1 = delta1;
         }
       }
     }
-    for (i = 0; i < 100; i++) {
-      tmp[i] -= d1;
+    for (b_i = 0; b_i < 100; b_i++) {
+      tmp[b_i] -= d1;
     }
     if (!rtIsNaN(tmp[0])) {
-      b_i = 1;
+      i = 1;
     } else {
-      b_i = 0;
+      i = 0;
       k = 2;
       exitg1 = false;
       while ((!exitg1) && (k < 101)) {
         if (!rtIsNaN(tmp[k - 1])) {
-          b_i = k;
+          i = k;
           exitg1 = true;
         } else {
           k++;
         }
       }
     }
-    if (b_i == 0) {
+    if (i == 0) {
       d1 = tmp[0];
     } else {
-      d1 = tmp[b_i - 1];
-      i = b_i + 1;
-      for (k = i; k < 101; k++) {
+      d1 = tmp[i - 1];
+      b_i = i + 1;
+      for (k = b_i; k < 101; k++) {
         delta1 = tmp[k - 1];
         if (d1 < delta1) {
           d1 = delta1;
         }
       }
     }
-    for (i = 0; i < 100; i++) {
-      tmp[i] /= d1;
+    for (b_i = 0; b_i < 100; b_i++) {
+      tmp[b_i] /= d1;
     }
     if (dtw(last_tmp, tmp) > 0.1) {
-      for (i = 0; i < 100; i++) {
-        delta1 = tmp[i];
-        last_tmp[i] = delta1;
-        resp_waveform[i] =
-            (delta1 + resp_waveform[i] * counter) / (counter + 1.0);
+      for (b_i = 0; b_i < 100; b_i++) {
+        delta1 = tmp[b_i];
+        last_tmp[b_i] = delta1;
+        resp_waveform[b_i] =
+            (delta1 + resp_waveform[b_i] * counter) / (counter + 1.0);
       }
       counter++;
       /*          resp_waveform = normalize_waveform(resp_waveform); */

@@ -170,7 +170,7 @@ public class AudioProcessor {
             double[] next_waveform = new double[100];
             double[] resp_waveform = new double[100];
             boolean[] is_new_waveform = {false};
-            double[] resp_freq = new double[1];
+            double[] resp_freq = {0.0};
 
 
             int targetChannel;
