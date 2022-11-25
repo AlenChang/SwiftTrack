@@ -5,7 +5,7 @@
  * File: rt_nonfinite.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 18-Nov-2022 21:41:51
+ * C/C++ source code generated on  : 25-Nov-2022 12:55:07
  */
 
 /*
@@ -15,31 +15,23 @@
  */
 /* Include Files */
 #include "rt_nonfinite.h"
-#include "rtGetInf.h"
-#include "rtGetNaN.h"
+#include <math.h>
 
-real_T rtInf;
-real_T rtMinusInf;
-real_T rtNaN;
-real32_T rtInfF;
-real32_T rtMinusInfF;
-real32_T rtNaNF;
+#if defined(__ICL) && __ICL == 1700
+#pragma warning(disable : 264)
+#endif
 
-/*
- * Function: rt_InitInfAndNaN ==================================================
- *  Abstract:
- *  Initialize the rtInf, rtMinusInf, and rtNaN needed by the
- * generated code. NaN is initialized as non-signaling. Assumes IEEE.
- */
-void rt_InitInfAndNaN(void)
-{
-  rtNaN = rtGetNaN();
-  rtNaNF = rtGetNaNF();
-  rtInf = rtGetInf();
-  rtInfF = rtGetInfF();
-  rtMinusInf = rtGetMinusInf();
-  rtMinusInfF = rtGetMinusInfF();
-}
+real_T rtNaN = (real_T)NAN;
+real_T rtInf = (real_T)INFINITY;
+real_T rtMinusInf = -(real_T)INFINITY;
+real32_T rtNaNF = (real32_T)NAN;
+real32_T rtInfF = (real32_T)INFINITY;
+real32_T rtMinusInfF = -(real32_T)INFINITY;
+
+#if defined(__ICL) && __ICL == 1700
+#pragma warning(default : 264)
+#endif
+
 /*
  * Function: rtIsInf ==================================================
  *  Abstract:
@@ -47,7 +39,7 @@ void rt_InitInfAndNaN(void)
  */
 boolean_T rtIsInf(real_T value)
 {
-  return ((value == rtInf || value == rtMinusInf) ? true : false);
+  return (isinf(value) != 0U);
 }
 
 /*
@@ -57,7 +49,7 @@ boolean_T rtIsInf(real_T value)
  */
 boolean_T rtIsInfF(real32_T value)
 {
-  return ((value == rtInfF || value == rtMinusInfF) ? true : false);
+  return (isinf((real_T)value) != 0U);
 }
 
 /*
@@ -67,7 +59,7 @@ boolean_T rtIsInfF(real32_T value)
  */
 boolean_T rtIsNaN(real_T value)
 {
-  return ((value != value) ? true : false);
+  return (isnan(value) != 0U);
 }
 
 /*
@@ -77,7 +69,7 @@ boolean_T rtIsNaN(real_T value)
  */
 boolean_T rtIsNaNF(real32_T value)
 {
-  return ((value != value) ? true : false);
+  return (isnan((real_T)value) != 0U);
 }
 
 /*

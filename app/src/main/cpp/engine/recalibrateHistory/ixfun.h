@@ -5,7 +5,7 @@
  * File: ixfun.h
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 18-Nov-2022 21:41:51
+ * C/C++ source code generated on  : 25-Nov-2022 12:55:07
  */
 
 #ifndef IXFUN_H

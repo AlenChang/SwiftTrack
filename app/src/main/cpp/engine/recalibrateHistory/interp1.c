@@ -5,7 +5,7 @@
  * File: interp1.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 18-Nov-2022 21:41:51
+ * C/C++ source code generated on  : 25-Nov-2022 12:55:07
  */
 
 /* Include Files */
@@ -129,11 +129,8 @@ void interp1(const double varargin_1_data[], const int varargin_1_size[2],
                                  1.0};
   double x_data[2048];
   double y_data[2048];
-  double xtmp;
-  int exitg1;
   int high_i;
   int k;
-  int low_ip1;
   int mid_i;
   int nx;
   int x_size_idx_1;
@@ -149,6 +146,7 @@ void interp1(const double varargin_1_data[], const int varargin_1_size[2],
   }
   nx = varargin_1_size[1] - 1;
   k = 0;
+  int exitg1;
   do {
     exitg1 = 0;
     if (k <= nx) {
@@ -158,6 +156,8 @@ void interp1(const double varargin_1_data[], const int varargin_1_size[2],
         k++;
       }
     } else {
+      double xtmp;
+      int low_ip1;
       if (varargin_1_data[1] < varargin_1_data[0]) {
         low_ip1 = (nx + 1) >> 1;
         for (mid_i = 0; mid_i < low_ip1; mid_i++) {

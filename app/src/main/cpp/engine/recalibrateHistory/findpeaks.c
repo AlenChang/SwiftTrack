@@ -5,7 +5,7 @@
  * File: findpeaks.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 18-Nov-2022 21:41:51
+ * C/C++ source code generated on  : 25-Nov-2022 12:55:07
  */
 
 /* Include Files */
@@ -16,6 +16,7 @@
 #include "rt_nonfinite.h"
 #include "sort.h"
 #include "rt_nonfinite.h"
+#include <math.h>
 #include <string.h>
 
 /* Function Declarations */
@@ -43,7 +44,6 @@ static void binary_expand_op(boolean_T in1_data[], int *in1_size,
   int b_in1_size;
   int i;
   int i1;
-  int in1_tmp;
   int stride_0_0;
   int stride_1_0;
   boolean_T b_in1_data[4096];
@@ -59,6 +59,7 @@ static void binary_expand_op(boolean_T in1_data[], int *in1_size,
     *in1_size = *in2_size;
   }
   for (i1 = 0; i1 < *in1_size; i1++) {
+    int in1_tmp;
     in1_tmp = in2_data[i1 * stride_1_0];
     b_in1_data[i1] = (in1_data[i1 * stride_0_0] ||
                       ((in1_tmp >= i - 100) && (in1_tmp <= i + 100)));
@@ -89,7 +90,6 @@ void findpeaks(const double Yin[2048], double Ypk_data[], int *Ypk_size,
   emxArray_real_T *bxPk;
   emxArray_real_T *byPk;
   emxArray_real_T *wxPk;
-  double yk;
   double ykfirst;
   int iFinite_data[2048];
   int iInfinite_data[2048];
@@ -97,7 +97,6 @@ void findpeaks(const double Yin[2048], double Ypk_data[], int *Ypk_size,
   int b_i;
   int i;
   int k;
-  int kEnd;
   int kfirst;
   int loop_ub;
   int nInf;
@@ -105,14 +104,10 @@ void findpeaks(const double Yin[2048], double Ypk_data[], int *Ypk_size,
   int nPk;
   int q;
   int qEnd;
-  short locs_temp_data[4096];
   short tmp_data[4096];
   short iPk_data[2048];
-  short i1;
   char dir;
-  char previousdir;
   boolean_T idelete_data[4096];
-  boolean_T isinfyk;
   boolean_T isinfykfirst;
   nPk = -1;
   nInf = -1;
@@ -122,6 +117,8 @@ void findpeaks(const double Yin[2048], double Ypk_data[], int *Ypk_size,
   ykfirst = rtInf;
   isinfykfirst = true;
   for (k = 0; k < 2048; k++) {
+    double yk;
+    boolean_T isinfyk;
     yk = Yin[k];
     if (rtIsNaN(yk)) {
       yk = rtInf;
@@ -134,6 +131,7 @@ void findpeaks(const double Yin[2048], double Ypk_data[], int *Ypk_size,
       isinfyk = false;
     }
     if (yk != ykfirst) {
+      char previousdir;
       previousdir = dir;
       if (isinfyk || isinfykfirst) {
         dir = 'n';
@@ -178,16 +176,9 @@ void findpeaks(const double Yin[2048], double Ypk_data[], int *Ypk_size,
   for (k = 0; k < i; k++) {
     q = iFinite_data[k];
     ykfirst = Yin[q - 1];
-    if (ykfirst > rtMinusInf) {
-      if ((Yin[q - 2] >= Yin[q]) || rtIsNaN(Yin[q])) {
-        yk = Yin[q - 2];
-      } else {
-        yk = Yin[q];
-      }
-      if (ykfirst - yk >= 0.0) {
-        nPk++;
-        iPk_data[nPk - 1] = (short)q;
-      }
+    if ((ykfirst > rtMinusInf) && (ykfirst - fmax(Yin[q - 2], Yin[q]) >= 0.0)) {
+      nPk++;
+      iPk_data[nPk - 1] = (short)q;
     }
   }
   if (nPk < 1) {
@@ -216,6 +207,7 @@ void findpeaks(const double Yin[2048], double Ypk_data[], int *Ypk_size,
   if (loop_ub == 0) {
     *Ypk_size = 0;
   } else {
+    short locs_temp_data[4096];
     memset(&sortIdx_data[0], 0, (unsigned int)loop_ub * sizeof(int));
     i = loop_ub - 1;
     for (k = 1; k <= i; k += 2) {
@@ -236,6 +228,7 @@ void findpeaks(const double Yin[2048], double Ypk_data[], int *Ypk_size,
       kfirst = b_i << 1;
       nPk = 1;
       for (nInf = b_i + 1; nInf < loop_ub + 1; nInf = qEnd + b_i) {
+        int kEnd;
         nInflect = nPk - 1;
         q = nInf;
         qEnd = nPk + kfirst;
@@ -288,6 +281,7 @@ void findpeaks(const double Yin[2048], double Ypk_data[], int *Ypk_size,
         if (kfirst == loop_ub) {
           i = sortIdx_data[b_i];
           for (q = 0; q < kfirst; q++) {
+            short i1;
             nPk = (short)((short)(b_iPk_data[i - 1] - 1) + 1);
             i1 = locs_temp_data[q];
             idelete_data[q] =

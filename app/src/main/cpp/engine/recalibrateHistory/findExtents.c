@@ -5,7 +5,7 @@
  * File: findExtents.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 18-Nov-2022 21:41:51
+ * C/C++ source code generated on  : 25-Nov-2022 12:55:07
  */
 
 /* Include Files */
@@ -17,6 +17,7 @@
 #include "recalibrateHistory_types.h"
 #include "rt_nonfinite.h"
 #include "rt_nonfinite.h"
+#include <math.h>
 #include <string.h>
 
 /* Function Declarations */
@@ -48,11 +49,9 @@ static void getLeftBase(const double yTemp[2048], const int iPeak_data[],
 {
   double peak_data[2048];
   double valley_data[2048];
-  double p;
   double v;
   int iValley_data[2048];
   int i;
-  int isv;
   int iv;
   int j;
   int k;
@@ -81,6 +80,8 @@ static void getLeftBase(const double yTemp[2048], const int iPeak_data[],
   v = rtNaN;
   iv = 1;
   while (k + 1 <= iPeak_size) {
+    double p;
+    int isv;
     while (iInflect_data[i] != iFinite_data[j]) {
       v = yTemp[iInflect_data[i] - 1];
       iv = iInflect_data[i];
@@ -156,8 +157,6 @@ void findExtents(const double y[2048], int iPk_data[], int *iPk_size,
   emxArray_real_T *b_bxPk;
   double c_bPk_data[2048];
   double d;
-  double refHeight;
-  double varargin_1;
   double *b_bxPk_data;
   double *bxPk_data;
   double *byPk_data;
@@ -179,7 +178,6 @@ void findExtents(const double y[2048], int iPk_data[], int *iPk_size,
   int w_size;
   int xtmp;
   short idx_size_idx_0;
-  boolean_T b_w_data[4096];
   boolean_T yFinite_data[2048];
   memcpy(&yFinite[0], &y[0], 2048U * sizeof(double));
   for (i = 0; i < iInf_size; i++) {
@@ -246,13 +244,7 @@ void findExtents(const double y[2048], int iPk_data[], int *iPk_size,
   if (iInfL_size == iPk_tmp) {
     *bPk_size = iInfL_size;
     for (i = 0; i < iInfL_size; i++) {
-      varargin_1 = base_data[i];
-      refHeight = varargin_2_data[i];
-      if ((varargin_1 >= refHeight) || rtIsNaN(refHeight)) {
-        b_bPk_data[i] = varargin_1;
-      } else {
-        b_bPk_data[i] = refHeight;
-      }
+      b_bPk_data[i] = fmax(base_data[i], varargin_2_data[i]);
     }
   } else {
     expand_max(base_data, iInfL_size, varargin_2_data, iPk_tmp, b_bPk_data,
@@ -260,7 +252,7 @@ void findExtents(const double y[2048], int iPk_data[], int *iPk_size,
   }
   if (*iPk_size == *bPk_size) {
     for (i = 0; i < *iPk_size; i++) {
-      yFinite_data[i] = (yFinite[iPk_data[i] - 1] - b_bPk_data[i] >= 0.0);
+      yFinite_data[i] = (yFinite[iPk_data[i] - 1] - b_bPk_data[i] >= 0.05);
     }
     eml_find(yFinite_data, *iPk_size, tmp_data, &iPk_tmp);
   } else {
@@ -273,7 +265,7 @@ void findExtents(const double y[2048], int iPk_data[], int *iPk_size,
   }
   if (*iPk_size == *bPk_size) {
     for (i = 0; i < *iPk_size; i++) {
-      yFinite_data[i] = (yFinite[iPk_data[i] - 1] - b_bPk_data[i] >= 0.0);
+      yFinite_data[i] = (yFinite[iPk_data[i] - 1] - b_bPk_data[i] >= 0.05);
     }
     eml_find(yFinite_data, *iPk_size, tmp_data, &iPk_tmp);
   } else {
@@ -305,7 +297,7 @@ void findExtents(const double y[2048], int iPk_data[], int *iPk_size,
   }
   if (*iPk_size == *bPk_size) {
     for (i = 0; i < *iPk_size; i++) {
-      yFinite_data[i] = (yFinite[iPk_data[i] - 1] - b_bPk_data[i] >= 0.0);
+      yFinite_data[i] = (yFinite[iPk_data[i] - 1] - b_bPk_data[i] >= 0.05);
     }
     eml_find(yFinite_data, *iPk_size, tmp_data, &iPk_tmp);
   } else {
@@ -332,6 +324,8 @@ void findExtents(const double y[2048], int iPk_data[], int *iPk_size,
     memset(&w_data[0], 0, (unsigned int)m * sizeof(double));
   }
   for (b_i = 0; b_i < w_size; b_i++) {
+    double refHeight;
+    double xc_tmp;
     refHeight = (yFinite[iPk_data[b_i] - 1] + base_data[b_i]) / 2.0;
     m = iPk_data[b_i];
     while ((m >= iLeftSaddle_data[b_i]) && (yFinite[m - 1] > refHeight)) {
@@ -341,19 +335,19 @@ void findExtents(const double y[2048], int iPk_data[], int *iPk_size,
     if (m < i) {
       w_data[b_i] = ((double)i - 1.0) + 1.0;
     } else {
-      varargin_1 = yFinite[m - 1];
+      xc_tmp = yFinite[m - 1];
       d = base_data[b_i];
-      varargin_1 = (((double)m - 1.0) + 1.0) +
-                   (0.5 * (yFinite[b_iPk_data[b_i] - 1] + d) - varargin_1) /
-                       (yFinite[m] - varargin_1);
-      if (rtIsNaN(varargin_1)) {
+      xc_tmp = (((double)m - 1.0) + 1.0) +
+               (0.5 * (yFinite[b_iPk_data[b_i] - 1] + d) - xc_tmp) /
+                   (yFinite[m] - xc_tmp);
+      if (rtIsNaN(xc_tmp)) {
         if (rtIsInf(d)) {
-          varargin_1 = 0.5 * (double)((m + m) + 1);
+          xc_tmp = 0.5 * (double)((m + m) + 1);
         } else {
-          varargin_1 = (double)m + 1.0;
+          xc_tmp = (double)m + 1.0;
         }
       }
-      w_data[b_i] = varargin_1;
+      w_data[b_i] = xc_tmp;
     }
     m = iPk_data[b_i];
     while ((m <= iRightSaddle_data[b_i]) && (yFinite[m - 1] > refHeight)) {
@@ -363,19 +357,19 @@ void findExtents(const double y[2048], int iPk_data[], int *iPk_size,
     if (m > i) {
       w_data[b_i + w_size] = ((double)i - 1.0) + 1.0;
     } else {
-      varargin_1 = yFinite[m - 1];
+      xc_tmp = yFinite[m - 1];
       d = base_data[b_i];
-      varargin_1 = (((double)m - 1.0) + 1.0) +
-                   -(0.5 * (yFinite[b_iPk_data[b_i] - 1] + d) - varargin_1) /
-                       (yFinite[m - 2] - varargin_1);
-      if (rtIsNaN(varargin_1)) {
+      xc_tmp = (((double)m - 1.0) + 1.0) +
+               -(0.5 * (yFinite[b_iPk_data[b_i] - 1] + d) - xc_tmp) /
+                   (yFinite[m - 2] - xc_tmp);
+      if (rtIsNaN(xc_tmp)) {
         if (rtIsInf(d)) {
-          varargin_1 = 0.5 * (double)((m + m) - 1);
+          xc_tmp = 0.5 * (double)((m + m) - 1);
         } else {
-          varargin_1 = ((double)m - 2.0) + 1.0;
+          xc_tmp = ((double)m - 2.0) + 1.0;
         }
       }
-      w_data[b_i + w_size] = varargin_1;
+      w_data[b_i + w_size] = xc_tmp;
     }
   }
   do_vectors(b_iPk_data, w_size, iInf_data, iInf_size, iPk_data, iPk_size,
@@ -498,6 +492,7 @@ void findExtents(const double y[2048], int iPk_data[], int *iPk_size,
                               2);
   }
   if (*iPk_size != 0) {
+    boolean_T b_w_data[4096];
     w_size = wxPk->size[0];
     if (wxPk->size[0] != 0) {
       m = wxPk->size[0];

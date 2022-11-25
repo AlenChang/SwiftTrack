@@ -169,7 +169,8 @@ public class AudioProcessor {
 
             double[] next_waveform = new double[100];
             double[] resp_waveform = new double[100];
-            boolean is_new_waveform =false;
+            boolean[] is_new_waveform = {false};
+            double[] resp_freq = new double[1];
 
 
             int targetChannel;
@@ -178,13 +179,14 @@ public class AudioProcessor {
             } else {
                 targetChannel = inputChannel.LEFT;
             }
-            getHistoryData(targetChannel, xWindow0, next_waveform, resp_waveform, is_new_waveform, is_body_moving, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+            getHistoryData(targetChannel, xWindow0, next_waveform, resp_waveform, is_new_waveform, is_body_moving, resp_freq, winLen, deployMethods.swifttrack, HistoryType.dist_v);
             for(int ti = 0; ti < winLen; ti++){
                 if(is_body_moving[ti]){
                     xWindow0[ti] = 0;
                 }
             }
-            AccViewModel.setLineData(xWindow0, next_waveform, resp_waveform, is_new_waveform, AccViewModel.OutTypes.velocity2dist);
+            Log.d("respiration freq", resp_freq[0] + "");
+            AccViewModel.setLineData(xWindow0, next_waveform, resp_waveform, is_new_waveform[0], AccViewModel.OutTypes.velocity2dist);
 
 //            getHistoryData(targetChannel, xWindow1, next_waveform, resp_waveform, is_new_waveform,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.velocity_);
 //            AccViewModel.setLineData(xWindow1, AccViewModel.OutTypes.velocity);
@@ -581,7 +583,7 @@ public class AudioProcessor {
 
     private static native void reset(int id, int N_ZC_UP, int FC, int BW);
 
-    private static native void getHistoryData(int id, double[] history,double[] next_waveform, double[] resp_wave, boolean is_new_waveform, boolean[] is_body_moving, int n, int history_id, int history_type);
+    private static native void getHistoryData(int id, double[] history,double[] next_waveform, double[] resp_wave, boolean[] is_new_waveform, boolean[] is_body_moving, double[] resp_freq, int n, int history_id, int history_type);
 
     private static native void getTime(int id, double[] time_count);
 

@@ -5,7 +5,7 @@
  * File: rtGetInf.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 18-Nov-2022 21:41:51
+ * C/C++ source code generated on  : 25-Nov-2022 12:55:07
  */
 
 /*
@@ -24,38 +24,7 @@
  */
 real_T rtGetInf(void)
 {
-  real_T inf = 0.0;
-  uint16_T one = 1U;
-  enum
-  {
-    LittleEndian,
-    BigEndian
-  } machByteOrder = (*((uint8_T *)&one) == 1U) ? LittleEndian : BigEndian;
-  switch (machByteOrder) {
-  case LittleEndian: {
-    union {
-      LittleEndianIEEEDouble bitVal;
-      real_T fltVal;
-    } tmpVal;
-
-    tmpVal.bitVal.words.wordH = 0x7FF00000U;
-    tmpVal.bitVal.words.wordL = 0x00000000U;
-    inf = tmpVal.fltVal;
-    break;
-  }
-  case BigEndian: {
-    union {
-      BigEndianIEEEDouble bitVal;
-      real_T fltVal;
-    } tmpVal;
-
-    tmpVal.bitVal.words.wordH = 0x7FF00000U;
-    tmpVal.bitVal.words.wordL = 0x00000000U;
-    inf = tmpVal.fltVal;
-    break;
-  }
-  }
-  return inf;
+  return rtInf;
 }
 
 /*
@@ -65,9 +34,7 @@ real_T rtGetInf(void)
  */
 real32_T rtGetInfF(void)
 {
-  IEEESingle infF;
-  infF.wordL.wordLuint = 0x7F800000U;
-  return infF.wordL.wordLreal;
+  return rtInfF;
 }
 
 /*
@@ -77,38 +44,7 @@ real32_T rtGetInfF(void)
  */
 real_T rtGetMinusInf(void)
 {
-  real_T minf = 0.0;
-  uint16_T one = 1U;
-  enum
-  {
-    LittleEndian,
-    BigEndian
-  } machByteOrder = (*((uint8_T *)&one) == 1U) ? LittleEndian : BigEndian;
-  switch (machByteOrder) {
-  case LittleEndian: {
-    union {
-      LittleEndianIEEEDouble bitVal;
-      real_T fltVal;
-    } tmpVal;
-
-    tmpVal.bitVal.words.wordH = 0xFFF00000U;
-    tmpVal.bitVal.words.wordL = 0x00000000U;
-    minf = tmpVal.fltVal;
-    break;
-  }
-  case BigEndian: {
-    union {
-      BigEndianIEEEDouble bitVal;
-      real_T fltVal;
-    } tmpVal;
-
-    tmpVal.bitVal.words.wordH = 0xFFF00000U;
-    tmpVal.bitVal.words.wordL = 0x00000000U;
-    minf = tmpVal.fltVal;
-    break;
-  }
-  }
-  return minf;
+  return rtMinusInf;
 }
 
 /*
@@ -118,9 +54,7 @@ real_T rtGetMinusInf(void)
  */
 real32_T rtGetMinusInfF(void)
 {
-  IEEESingle minfF;
-  minfF.wordL.wordLuint = 0xFF800000U;
-  return minfF.wordL.wordLreal;
+  return rtMinusInfF;
 }
 
 /*

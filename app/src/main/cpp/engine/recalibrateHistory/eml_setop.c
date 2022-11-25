@@ -5,7 +5,7 @@
  * File: eml_setop.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 18-Nov-2022 21:41:51
+ * C/C++ source code generated on  : 25-Nov-2022 12:55:07
  */
 
 /* Include Files */
@@ -30,10 +30,6 @@ void b_do_vectors(const int a_data[], int a_size, const int b_data[],
                   int b_size, int c_data[], int *c_size, int ia_data[],
                   int *ia_size, int ib_data[], int *ib_size)
 {
-  int ak;
-  int b_ialast;
-  int b_iblast;
-  int bk;
   int iafirst;
   int ialast;
   int ibfirst;
@@ -52,6 +48,10 @@ void b_do_vectors(const int a_data[], int a_size, const int b_data[],
   ibfirst = 0;
   iblast = 1;
   while ((ialast <= a_size) && (iblast <= b_size)) {
+    int ak;
+    int b_ialast;
+    int b_iblast;
+    int bk;
     b_ialast = ialast;
     ak = a_data[ialast - 1];
     while ((b_ialast < a_size) && (a_data[b_ialast] == ak)) {
@@ -111,10 +111,8 @@ void do_vectors(const int a_data[], int a_size, const int b_data[], int b_size,
                 int c_data[], int *c_size, int ia_data[], int *ia_size,
                 int ib_data[], int *ib_size)
 {
-  int ak;
   int b_ialast;
   int b_iblast;
-  int bk;
   int iafirst;
   int ialast;
   int ibfirst;
@@ -133,6 +131,8 @@ void do_vectors(const int a_data[], int a_size, const int b_data[], int b_size,
   ibfirst = 0;
   iblast = 0;
   while ((ialast + 1 <= a_size) && (iblast + 1 <= b_size)) {
+    int ak;
+    int bk;
     b_ialast = ialast + 1;
     ak = a_data[ialast];
     while ((b_ialast < a_size) && (a_data[b_ialast] == ak)) {

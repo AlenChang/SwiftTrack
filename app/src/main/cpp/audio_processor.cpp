@@ -40,29 +40,35 @@ Java_com_example_swifttrack_AudioProcessor_getTime(
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_swifttrack_AudioProcessor_getHistoryData(
-        JNIEnv *env, jobject thiz, jint id, jdoubleArray history, jdoubleArray next_waveform, jdoubleArray resp_wave, jboolean is_new_waveform, jbooleanArray is_body_moving, jint n, jint history_id, jint history_type
+        JNIEnv *env, jobject thiz, jint id, jdoubleArray history, jdoubleArray next_waveform, jdoubleArray resp_wave, jbooleanArray is_new_waveform, jbooleanArray is_body_moving, jdoubleArray resp_freq, jint n, jint history_id, jint history_type
 ) {
     jdouble *history_ = (env)->GetDoubleArrayElements(history, nullptr);
     jdouble *next_waveform_ = (env)->GetDoubleArrayElements(next_waveform, nullptr);
     jdouble *resp_wave_ = (env)->GetDoubleArrayElements(resp_wave, nullptr);
     jboolean *is_body_moving_ = (env)->GetBooleanArrayElements(is_body_moving, nullptr);
+    jdouble *resp_freq_ = (env)->GetDoubleArrayElements(resp_freq, nullptr);
+    jboolean *is_new_waveform_ = (env)->GetBooleanArrayElements(is_new_waveform, nullptr);
 
     bool moving_flag[2048];
-    bool is_new_waveform_ = false;
+    bool is_new_waveform__ = false;
+//    double resp_freq_ = 0.0;
 
     if (Engine::GetInstance(id) != nullptr) {
-        Engine::GetHistoryData(id, history_,next_waveform_,resp_wave_, moving_flag, &is_new_waveform_, n, history_id, history_type);
+        Engine::GetHistoryData(id, history_,next_waveform_,resp_wave_, moving_flag, &is_new_waveform__, resp_freq_, n, history_id, history_type);
     }
 
     for(int ti = 0; ti < n; ti ++){
         is_body_moving_[ti] = moving_flag[ti];
     }
-    is_new_waveform = is_new_waveform_;
+    *is_new_waveform_ = is_new_waveform__;
+//    resp_freq = 10;
 
     env->ReleaseDoubleArrayElements(history, history_, 0);
     env->ReleaseDoubleArrayElements(next_waveform, next_waveform_, 0);
     env->ReleaseDoubleArrayElements(resp_wave, resp_wave_, 0);
     env->ReleaseBooleanArrayElements(is_body_moving, is_body_moving_, 0);
+    env->ReleaseDoubleArrayElements(resp_freq, resp_freq_, 0);
+    env->ReleaseBooleanArrayElements(is_new_waveform, is_new_waveform_, 0);
 }
 
 extern "C"

@@ -146,7 +146,7 @@ void Engine::ProcessFrame_02(int id, const double *data, int n, int N, int FC, i
 //    engine->ProcessFrameUpsample(rx_signal);
 }
 
-void Engine::GetHistoryData(int id, double *history, double *next_waveform, double *resp_wave, bool *is_body_moving_, bool *is_new_waveform, int n, int history_id, int history_type){
+void Engine::GetHistoryData(int id, double *history, double *next_waveform, double *resp_wave, bool *is_body_moving_, bool *is_new_waveform, double *resp_freq, int n, int history_id, int history_type){
 //    if(ifExpiry) {return;}
     Engine *engine = Engine::GetInstance(id);
     Histories history_profile = engine->postprocessor_->GetHistories(history_id);
@@ -184,23 +184,25 @@ void Engine::GetHistoryData(int id, double *history, double *next_waveform, doub
     boolean_T is_body_moving[2048];
 
     double waveform[100];
+    double resp_freq_ = 0;
     boolean_T new_waveform = false;
 
     for(int i=0;i<2048;i++) hist_in[i] = history[i];
-    double * pks_data = (double *) malloc(sizeof(double) * 2048);
-    double * locs_data = (double *) malloc(sizeof(double) * 2048);
-    int *pks_size = (int *) malloc(sizeof(int));
-    int *locs_size = (int *) malloc(sizeof(int));
+//    double * pks_data = (double *) malloc(sizeof(double) * 2048);
+//    double * locs_data = (double *) malloc(sizeof(double) * 2048);
+//    int *pks_size = (int *) malloc(sizeof(int));
+//    int *locs_size = (int *) malloc(sizeof(int));
 
 //    (double hist[2048], double moving_thre,
 //            double last_tmp[100], double resp_waveform[100],
 //            double hist_out[2048], boolean_T is_body_moving[2048],
 //            double tmp[100], boolean_T *new_waveform)
-    recalibrateHistory(hist_in, 1.0, engine->last_waveform, engine->resp_waveform, history, is_body_moving,waveform,&new_waveform);
+    recalibrateHistory(hist_in, 1.0, engine->last_waveform, engine->resp_waveform, history, is_body_moving,waveform,&new_waveform,&resp_freq_);
     for(int ti = 0; ti < 2048; ti++){
         is_body_moving_[ti] = is_body_moving[ti];
     }
     *is_new_waveform = new_waveform;
+    *resp_freq = resp_freq_;
     for(int ti = 0; ti < 100; ti ++){
         next_waveform[ti] = waveform[ti];
         resp_wave[ti] = engine->resp_waveform[ti];

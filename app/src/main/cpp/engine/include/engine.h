@@ -39,7 +39,7 @@ public:
 
     static void Reset(int id, int N, int FC, int BW);
 
-    static void GetHistoryData(int id, double *history, double *next_waveform, double *resp_wave, bool *is_body_moving_, bool *is_new_waveform, int n, int history_id, int history_type);
+    static void GetHistoryData(int id, double *history, double *next_waveform, double *resp_wave, bool *is_body_moving_, bool *is_new_waveform, double *resp_freq, int n, int history_id, int history_type);
 
     void setup(int N, int FC, int BW);
 

@@ -5,7 +5,7 @@
  * File: sortIdx.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 18-Nov-2022 21:41:51
+ * C/C++ source code generated on  : 25-Nov-2022 12:55:07
  */
 
 /* Include Files */
@@ -30,13 +30,12 @@ static void merge(int idx_data[], int x_data[], int offset, int np, int nq,
 static void merge(int idx_data[], int x_data[], int offset, int np, int nq,
                   int iwork_data[], int xwork_data[])
 {
-  int exitg1;
-  int iout;
   int j;
-  int n_tmp;
-  int p;
-  int q;
   if (nq != 0) {
+    int iout;
+    int n_tmp;
+    int p;
+    int q;
     n_tmp = np + nq;
     for (j = 0; j < n_tmp; j++) {
       iout = offset + j;
@@ -46,6 +45,7 @@ static void merge(int idx_data[], int x_data[], int offset, int np, int nq,
     p = 0;
     q = np;
     iout = offset - 1;
+    int exitg1;
     do {
       exitg1 = 0;
       iout++;
@@ -92,11 +92,11 @@ void merge_block(int idx_data[], int x_data[], int offset, int n,
   int bLen;
   int k;
   int nPairs;
-  int nTail;
-  int tailOffset;
   nPairs = n >> preSortLevel;
   bLen = 1 << preSortLevel;
   while (nPairs > 1) {
+    int nTail;
+    int tailOffset;
     if ((nPairs & 1) != 0) {
       nPairs--;
       tailOffset = bLen * nPairs;

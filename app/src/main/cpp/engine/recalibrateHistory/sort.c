@@ -5,7 +5,7 @@
  * File: sort.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 18-Nov-2022 21:41:51
+ * C/C++ source code generated on  : 25-Nov-2022 12:55:07
  */
 
 /* Include Files */
@@ -27,34 +27,15 @@ void sort(int x_data[], const int *x_size)
   int iwork_data[4096];
   int vwork_data[4096];
   int xwork_data[4096];
-  int xwork[256];
-  int x4[4];
   int b;
-  int bLen;
-  int bLen2;
   int b_b;
-  int b_i;
   int b_j;
   int dim;
-  int exitg1;
-  int i;
-  int i1;
-  int i2;
-  int i4;
   int j;
   int k;
-  int nLeft;
-  int nQuartets;
   int vlen;
   int vstride;
   int vwork_size;
-  short iwork[256];
-  short idx4[4];
-  signed char perm[4];
-  signed char b_i1;
-  signed char b_i2;
-  signed char b_i4;
-  signed char i3;
   dim = 0;
   if (*x_size != 1) {
     dim = -1;
@@ -77,6 +58,15 @@ void sort(int x_data[], const int *x_size)
       memset(&iidx_data[0], 0, (unsigned int)vwork_size * sizeof(int));
     }
     if (vwork_size != 0) {
+      int x4[4];
+      int b_i;
+      int i;
+      int i1;
+      int i2;
+      int i4;
+      int nLeft;
+      int nQuartets;
+      short idx4[4];
       x4[0] = 0;
       idx4[0] = 0;
       x4[1] = 0;
@@ -89,6 +79,10 @@ void sort(int x_data[], const int *x_size)
       memset(&xwork_data[0], 0, (unsigned int)vwork_size * sizeof(int));
       nQuartets = vwork_size >> 2;
       for (b_j = 0; b_j < nQuartets; b_j++) {
+        signed char b_i1;
+        signed char b_i2;
+        signed char b_i4;
+        signed char i3;
         i = b_j << 2;
         idx4[0] = (short)(i + 1);
         idx4[1] = (short)(i + 2);
@@ -169,6 +163,7 @@ void sort(int x_data[], const int *x_size)
       i4 = nQuartets << 2;
       nLeft = vwork_size - i4;
       if (nLeft > 0) {
+        signed char perm[4];
         for (k = 0; k < nLeft; k++) {
           dim = i4 + k;
           idx4[k] = (short)(dim + 1);
@@ -226,8 +221,12 @@ void sort(int x_data[], const int *x_size)
         if (vwork_size >= 256) {
           nQuartets = vwork_size >> 8;
           for (b = 0; b < nQuartets; b++) {
+            int xwork[256];
+            short iwork[256];
             i = (b << 8) - 1;
             for (b_b = 0; b_b < 6; b_b++) {
+              int bLen;
+              int bLen2;
               bLen = 1 << (b_b + 2);
               bLen2 = bLen << 1;
               b_i = 256 >> (b_b + 3);
@@ -241,6 +240,7 @@ void sort(int x_data[], const int *x_size)
                 i2 = 0;
                 nLeft = bLen;
                 dim = i4 - 1;
+                int exitg1;
                 do {
                   exitg1 = 0;
                   dim++;
