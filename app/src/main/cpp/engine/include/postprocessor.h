@@ -11,7 +11,7 @@
 #ifndef M_PI
     #define M_PI		3.14159265358979323846
 #endif
-
+using namespace std::chrono;
 class Postprocessor {
   
 public:
@@ -72,6 +72,9 @@ private:
     bool init_velocity_flag = false;
     double ave_velocity = 0.0;
     bool reset_result_flag = false;
+
+    high_resolution_clock::time_point start_now;
+
 
     const double complementary_factor = 0.995;
 

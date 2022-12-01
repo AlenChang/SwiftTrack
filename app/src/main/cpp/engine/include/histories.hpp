@@ -8,7 +8,8 @@ enum HistoryType{
         acceleration_,
         velocity_a,
         dist_a,
-        phase_acc
+        phase_acc,
+        time_stamp
     };
 
 class mvMedian_data{
@@ -38,6 +39,7 @@ public:
         acc2velocity_history_.push_back(0.0);
         acc2dist_history_.push_back(0.0);
         acc_phase_history_.push_back(0.0);
+        time_stamp.push_back(0.0);
 
     };
     ~Histories(){};
@@ -48,6 +50,7 @@ public:
     list<double> acc2velocity_history_;
     list<double> acc2dist_history_;
     list<double> acc_phase_history_;
+    list<double> time_stamp;
 
     void check_size(){
         int len;
@@ -93,6 +96,12 @@ public:
             acc_phase_history_.pop_front();
             len--;
         }
+
+        len = time_stamp.size();
+        while(len > max_len){
+            time_stamp.pop_front();
+            len--;
+        }
     }
 
     void clearbuff(){
@@ -103,6 +112,7 @@ public:
         acc2dist_history_.clear();
         acc_phase_history_.clear();
         dist_history_.clear();
+        time_stamp.clear();
 
     }
 

@@ -64,6 +64,7 @@ public class AudioProcessor {
         public static final int velocity_a = 4;
         public static final int dist_a = 5;
         public static final int phase_acc = 6;
+        public static final int time_stamp = 7;
     };
 
     public static class inputChannel{
@@ -187,7 +188,7 @@ public class AudioProcessor {
             }
             Log.d("respiration freq", resp_freq[0] + "");
             AccViewModel.setLineData(xWindow0, next_waveform, resp_waveform, is_new_waveform[0], AccViewModel.OutTypes.velocity2dist);
-
+            getHistoryData(targetChannel, xWindow1, next_waveform, resp_waveform, is_new_waveform, is_body_moving, resp_freq, winLen, deployMethods.swifttrack, HistoryType.time_stamp);
 //            getHistoryData(targetChannel, xWindow1, next_waveform, resp_waveform, is_new_waveform,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.velocity_);
 //            AccViewModel.setLineData(xWindow1, AccViewModel.OutTypes.velocity);
 //
@@ -208,12 +209,13 @@ public class AudioProcessor {
                     result[i][2] = xWindow2[i];
                     result[i][3] = xWindow3[i];
                     result[i][4] = xWindow4[i];
+
                 }
                 FileUtil.streamWriteResult(bufferedWriter, result);
             }
 
             double[] time_count = new double[2];
-            getTime(inputChannel.RIGHT, time_count);
+            getTime(targetChannel, time_count);
             Log.d("C_TIME_COUNT", ""+time_count[0]);
         }
 

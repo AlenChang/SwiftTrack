@@ -27,6 +27,8 @@ Postprocessor::Postprocessor(int N_ZC_UP_) {
     irs_signal_diff = MatrixX<complex<double>>::Constant(1, N_IRS, complex<double>(0, 0));
 
     cout << "Postprocessor was initiated." << endl;
+//    time(&start_now);
+    start_now = high_resolution_clock::now();
 }
 
 Postprocessor::~Postprocessor() {
@@ -159,6 +161,14 @@ void Postprocessor::MotionCoeff2(complex<double> beta){
     swifttrack_history_.acc_history_.push_back(acc);
     swifttrack_history_.acc2velocity_history_.push_back(velocity);
     swifttrack_history_.acc2dist_history_.push_back(dist);
+
+//    time_t now;
+//    time(&now);                 // get current time
+    high_resolution_clock::time_point now = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(start_now - now);
+//    double seconds = difftime(start_now, now);
+    double seconds = duration.count();
+    swifttrack_history_.time_stamp.push_back(seconds);
     
 }
 
@@ -368,6 +378,7 @@ void Postprocessor::PaddingZero(Histories &history_type){
     history_type.acc2velocity_history_.push_back(0.0);
     history_type.acc2dist_history_.push_back(0.0);
     history_type.acc_phase_history_.push_back(0.0);
+    history_type.time_stamp.push_back(0.0);
 }
 
 void Postprocessor::get_history(double *history, int n, list<double> & profiles){
@@ -439,6 +450,8 @@ void Postprocessor::GetHistoryData(double *history, int n, Histories &history_ty
         case phase_acc:
             get_history(history, n, history_type.acc_phase_history_);
             break;
+        case time_stamp:
+            get_history(history, n, history_type.time_stamp);
         default:
             break;
     }
