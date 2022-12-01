@@ -47,6 +47,7 @@ public class AudioProcessor {
     private static long timestamp;
     private static boolean needSave;
     private int fragID;
+    private static int moving_counter = 0;
     AccViewModel accViewModel;
 
 
@@ -181,10 +182,24 @@ public class AudioProcessor {
                 targetChannel = inputChannel.LEFT;
             }
             getHistoryData(targetChannel, xWindow0, next_waveform, resp_waveform, is_new_waveform, is_body_moving, resp_freq, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-            for(int ti = 0; ti < winLen; ti++){
-                if(is_body_moving[ti]){
-                    xWindow0[ti] = 0;
+
+            int local_moving_counter = 0;
+            if(containsTrue(is_body_moving)){
+                double max_value = 0.0;
+                for(int ti = 0; ti < is_body_moving.length; ti++){
+                    if(is_body_moving[ti] && !is_body_moving[ti-1]){
+                        max_value = xWindow0[ti];
+                        local_moving_counter += 1;
+                        if(local_moving_counter > moving_counter){
+                            moving_counter = local_moving_counter;
+                        }
+
+                    }
+                    if(is_body_moving[ti]){
+                        xWindow0[ti] = max_value;
+                    }
                 }
+//                MonitorViewModel.setIsMoving(true);
             }
             Log.d("respiration freq", resp_freq[0] + "");
             AccViewModel.setLineData(xWindow0, next_waveform, resp_waveform, is_new_waveform[0], AccViewModel.OutTypes.velocity2dist);
@@ -217,6 +232,10 @@ public class AudioProcessor {
             double[] time_count = new double[2];
             getTime(targetChannel, time_count);
             Log.d("C_TIME_COUNT", ""+time_count[0]);
+
+            double[] thre = {0.0};
+            getThre(targetChannel, thre);
+            Log.d("swifttrack_Thre", ""+thre[0]);
         }
 
 //        private void prepareDataForSlideFragment(int winLen){
@@ -499,6 +518,7 @@ public class AudioProcessor {
     public AudioProcessor(boolean[] mask) {
         CHANNEL_MASK = mask;
         FRAME_SIZE = MainActivity.DOWN_SAMPLE_FACTOR;
+        moving_counter = 0;
     }
 
     public void setTimestamp(long timestamp) {
@@ -576,6 +596,13 @@ public class AudioProcessor {
         }
         AudioRecorder.rxQueue.clear();
         engine = new Engine(fragID);
+    }
+
+    private static boolean containsTrue(boolean[] myBooleanArray){
+        for(boolean value: myBooleanArray){
+            if(value){ return true;}
+        }
+        return false;
     }
 
 
