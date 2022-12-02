@@ -48,6 +48,7 @@ public class AudioProcessor {
     private static boolean needSave;
     private int fragID;
     private static int moving_counter = 0;
+    public static int WIN_LENGTH = 2048;
     AccViewModel accViewModel;
 
 
@@ -86,7 +87,7 @@ public class AudioProcessor {
 
     private static class Engine extends Thread {
         private static final int INTERVAL = 50;
-        private static final int WINDOW_SIZE = 4096; // do not modify this
+        private static final int WINDOW_SIZE = AudioProcessor.WIN_LENGTH;
 
         private final Lock lock = new ReentrantLock();
         private final double[] frame1 = new double[FRAME_SIZE];
@@ -106,60 +107,6 @@ public class AudioProcessor {
         public Engine() { fragID = ActivityID.homeFragment;}
         public Engine(int inFragID) {fragID = inFragID;}
 
-//        private void prepareDataForHomeFragment(double[] xLeft, double[] vLeft, double[] xRight, double[] vRight, int winLen){
-//            if (CHANNEL_MASK[inputChannel.LEFT]) {
-//                getHistoryData(inputChannel.LEFT, xLeft, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-////                getDistHistory(inputChannel.LEFT, xLeft, winLen);
-//                getHistoryData(inputChannel.LEFT, vLeft, winLen, deployMethods.swifttrack, HistoryType.velocity_);
-////                getVelocityHistory(inputChannel.LEFT, vLeft, winLen);
-//                HomeViewModel.setLineData(xLeft, HomeViewModel.OutTypes.LEFT_DIST);
-//                HomeViewModel.setLineData(vLeft, HomeViewModel.OutTypes.LEFT_V);
-//            }
-//            if (CHANNEL_MASK[inputChannel.RIGHT]) {
-//                getHistoryData(inputChannel.RIGHT, xRight, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-////                getDistHistory(inputChannel.RIGHT, xRight, winLen);
-//                getHistoryData(inputChannel.RIGHT, vRight, winLen, deployMethods.swifttrack, HistoryType.velocity_);
-////                getVelocityHistory(inputChannel.RIGHT, vRight, winLen);
-//                HomeViewModel.setLineData(xRight, HomeViewModel.OutTypes.RIGHT_DIST);
-//                HomeViewModel.setLineData(vRight, HomeViewModel.OutTypes.RIGHT_V);
-//            }
-//        }
-
-//        private void prepareDataForGalleryFragment(int winLen){
-//            double[] xWindow1 = new double[winLen];
-//            double[] xWindow2 = new double[winLen];
-//            boolean[] is_body_moving = new boolean[winLen];
-//            if (CHANNEL_MASK[inputChannel.RIGHT]) {
-//
-//                getHistoryData(inputChannel.RIGHT, xWindow2,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-//                GalleryViewModel.setLineData(xWindow2, GalleryViewModel.OutTypes.SWIFT_TRACK);
-//
-//                getHistoryData(inputChannel.RIGHT, xWindow2,is_body_moving, winLen, deployMethods.tof, HistoryType.dist_v);
-//                GalleryViewModel.setLineData(xWindow2, GalleryViewModel.OutTypes.TOF);
-//
-//                getHistoryData(inputChannel.RIGHT, xWindow2,is_body_moving, winLen, deployMethods.strata, HistoryType.dist_v);
-//                GalleryViewModel.setLineData(xWindow2, GalleryViewModel.OutTypes.STRATA);
-//
-//                double[] cir_abs = new double[FRAME_SIZE];
-//                getCIR(inputChannel.RIGHT, cir_abs, FRAME_SIZE);
-//                GalleryViewModel.setLineData(cir_abs, GalleryViewModel.OutTypes.CIR);
-//
-//            } else {
-//                getHistoryData(inputChannel.LEFT, xWindow1,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-//                GalleryViewModel.setLineData(xWindow1, GalleryViewModel.OutTypes.SWIFT_TRACK);
-//
-//                getHistoryData(inputChannel.LEFT, xWindow1,is_body_moving, winLen, deployMethods.tof, HistoryType.dist_v);
-//                GalleryViewModel.setLineData(xWindow1, GalleryViewModel.OutTypes.TOF);
-//
-//                getHistoryData(inputChannel.LEFT, xWindow1,is_body_moving, winLen, deployMethods.strata, HistoryType.dist_v);
-//                GalleryViewModel.setLineData(xWindow1, GalleryViewModel.OutTypes.STRATA);
-//
-//                double[] cir_abs = new double[FRAME_SIZE];
-//                getCIR(inputChannel.LEFT, cir_abs, FRAME_SIZE);
-//                GalleryViewModel.setLineData(cir_abs, GalleryViewModel.OutTypes.CIR);
-//
-//            }
-//        }
 
         private void prepareDataForAccFragment(int winLen, boolean needSave){
             double[] xWindow0 = new double[winLen];
@@ -171,6 +118,10 @@ public class AudioProcessor {
 
             double[] next_waveform = new double[100];
             double[] resp_waveform = new double[100];
+            for(int ti = 0; ti < next_waveform.length; ti++){
+                next_waveform[ti] = 0;
+                resp_waveform[ti] = 0;
+            }
             boolean[] is_new_waveform = {false};
             double[] resp_freq = {0.0};
 
@@ -181,14 +132,25 @@ public class AudioProcessor {
             } else {
                 targetChannel = inputChannel.LEFT;
             }
+            int[] length = {0};
+            getHistoryLength(targetChannel, deployMethods.swifttrack, length);
+            Log.d("profile_length", ""+length[0]);
             getHistoryData(targetChannel, xWindow0, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-            recalibrate(targetChannel, xWindow0, next_waveform, resp_waveform, is_new_waveform, is_body_moving, resp_freq, winLen);
+
+            if(length[0] < winLen){
+                for(int i = length[0]; i < winLen; i++){
+                    xWindow0[i] = xWindow0[length[0]-1];
+                }
+            }
+
+            System.arraycopy(xWindow0, 0, xWindow2, 0, winLen);
+            recalibrate(targetChannel, xWindow2, next_waveform, resp_waveform, is_new_waveform, is_body_moving, resp_freq, winLen);
             int local_moving_counter = 0;
             if(containsTrue(is_body_moving)){
                 double max_value = 0.0;
                 for(int ti = 0; ti < is_body_moving.length; ti++){
                     if(is_body_moving[ti] && !is_body_moving[ti-1]){
-                        max_value = xWindow0[ti];
+                        max_value = xWindow2[ti];
                         local_moving_counter += 1;
                         if(local_moving_counter > moving_counter){
                             moving_counter = local_moving_counter;
@@ -196,20 +158,20 @@ public class AudioProcessor {
 
                     }
                     if(is_body_moving[ti]){
-                        xWindow0[ti] = max_value;
+                        xWindow2[ti] = max_value;
                     }
                 }
             }
             Log.d("respiration freq", resp_freq[0] + "");
-            AccViewModel.setLineData(xWindow0, next_waveform, resp_waveform, is_new_waveform[0], AccViewModel.OutTypes.velocity2dist);
+            AccViewModel.setLineData(xWindow2, length[0], next_waveform, resp_waveform, is_new_waveform[0]);
             getHistoryData(targetChannel, xWindow1, winLen, deployMethods.swifttrack, HistoryType.time_stamp);
 
             if(needSave){
-                double[][] result = new double[winLen][2];
+                double[][] result = new double[winLen][3];
                 for (int i = 0; i < winLen; i++) {
-                    result[i][0] = xWindow0[i];
-                    result[i][1] = xWindow1[i];
-
+                    result[i][0] = xWindow1[i];
+                    result[i][1] = xWindow0[i];
+                    result[i][2] = xWindow2[i];
                 }
                 FileUtil.streamWriteResult(bufferedWriter, result);
             }
@@ -222,9 +184,7 @@ public class AudioProcessor {
             getThre(targetChannel, thre);
             Log.d("swifttrack_Thre", ""+thre[0]);
 
-            int[] length = {0};
-            getHistoryLength(targetChannel, deployMethods.swifttrack, length);
-            Log.d("profile_length", ""+length[0]);
+
         }
 
 
@@ -283,37 +243,7 @@ public class AudioProcessor {
                             }
 
                             frameCount += data.length / 2 / FRAME_SIZE;
-
-                            switch (fragID){
-                                case ActivityID.homeFragment:
-                                    // TODO: memory leak
-                                    double[] xWindow1 = new double[WINDOW_SIZE];
-                                    double[] xWindow2 = new double[WINDOW_SIZE];
-                                    double[] vWindow1 = new double[WINDOW_SIZE];
-                                    double[] vWindow2 = new double[WINDOW_SIZE];
-//                                    prepareDataForHomeFragment(xWindow1, vWindow1, xWindow2, vWindow2, WINDOW_SIZE);
-                                    break;
-                                case ActivityID.galleryFragment:
-//                                    prepareDataForGalleryFragment(WINDOW_SIZE);
-
-                                    break;
-                                case ActivityID.accFragment:
-                                    prepareDataForAccFragment(WINDOW_SIZE, false);
-                                    break;
-                                case ActivityID.slideFragment:
-//                                    prepareDataForSlideFragment(WINDOW_SIZE);
-                                    break;
-                                case ActivityID.mlFragment:
-//                                    prepareDataForMLFragment(WINDOW_SIZE);
-                                    break;
-                                case ActivityID.lstmFragment:
-//                                    prepareDataForLSTMFragment(WINDOW_SIZE);
-                                    break;
-                                default:
-                                    break;
-                            }
-
-
+                            prepareDataForAccFragment(WINDOW_SIZE, false);
                         }
 
                         lock.unlock();
@@ -332,63 +262,32 @@ public class AudioProcessor {
             running = false;
 
             lock.lock();
-
-            double[] xHistory1 = new double[frameCount];
-            double[] vHistory1 = new double[frameCount];
-            double[] xHistory2 = new double[frameCount];
-            double[] vHistory2 = new double[frameCount];
-
-            double[][] result = new double[frameCount][4];
 //
-            switch (fragID){
-                case ActivityID.homeFragment:
-//                    prepareDataForHomeFragment(xHistory1, vHistory1, xHistory2, vHistory2, frameCount);
-                    for (int i = 0; i < frameCount; i++) {
-                        result[i][0] = xHistory1[i];
-                        result[i][1] = xHistory2[i];
-                        result[i][2] = vHistory1[i];
-                        result[i][3] = vHistory2[i];
-                    }
-                    FileUtil.streamWriteResult(bufferedWriter, result);
-                    break;
-                case ActivityID.galleryFragment:
-//                    prepareDataForGalleryFragment(frameCount);
-
-                    break;
-                case ActivityID.accFragment:
-                    int targetChannel;
-                    if (CHANNEL_MASK[inputChannel.RIGHT]) {
-                        targetChannel = inputChannel.RIGHT;
-                    } else {
-                        targetChannel = inputChannel.LEFT;
-                    }
-                    int[] length = {0};
-                    getHistoryLength(targetChannel, deployMethods.swifttrack, length);
-                    prepareDataForAccFragment(length[0], true);
-                    break;
-                case ActivityID.slideFragment:
-//                    prepareDataForSlideFragment(frameCount);
-                    break;
-                case ActivityID.mlFragment:
-//                    prepareFinalDataForMLFragment(frameCount);
-                    break;
-                case ActivityID.lstmFragment:
-//                    prepareFinalDataForLSTMFragment(frameCount);
-                    break;
-                default:
-                    break;
+            int targetChannel;
+            if (CHANNEL_MASK[inputChannel.RIGHT]) {
+                targetChannel = inputChannel.RIGHT;
+            } else {
+                targetChannel = inputChannel.LEFT;
             }
+            int[] length = {0};
+            getHistoryLength(targetChannel, deployMethods.swifttrack, length);
+            int len = Math.max(length[0], WINDOW_SIZE);
+            prepareDataForAccFragment(len, true);
 
 
 
             lock.unlock();
+        }
+
+        public boolean getRunningState(){
+            return running;
         }
     }
 
 
 
 
-    private Engine engine;
+    static public Engine engine;
 
 
     public AudioProcessor() {}
@@ -396,6 +295,10 @@ public class AudioProcessor {
         CHANNEL_MASK = mask;
         FRAME_SIZE = MainActivity.DOWN_SAMPLE_FACTOR;
         moving_counter = 0;
+    }
+
+    static public boolean getRunnningStatus(){
+        return engine.getRunningState();
     }
 
     public void setTimestamp(long timestamp) {

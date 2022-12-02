@@ -10,7 +10,7 @@ import java.util.List;
 
 public class PlotUtil {
 
-    private static final float TAP = 0.01f;
+    private static final float TAP = 1.0f;
 
     private static class Series {
         public List<Entry> entries;
@@ -32,7 +32,8 @@ public class PlotUtil {
 
         LineDataSet lineDataSet = new LineDataSet(series.entries, label);
         lineDataSet.setColor(series.color);
-        lineDataSet.setDrawCircles(true);
+        lineDataSet.setDrawCircles(false);
+        lineDataSet.setLineWidth(2.5f);
 
 //        LineData lineData = chartName.getLineData();
 //        lineData.removeDataSet(lineData.getDataSetCount() - 1);

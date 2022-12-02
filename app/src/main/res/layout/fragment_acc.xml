@@ -15,8 +15,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.049"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/acc2d" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/stop_button"
@@ -27,8 +26,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.356"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/acc2d" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/reset_button"
@@ -39,8 +37,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.662"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/acc2d" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/save_button"
@@ -51,8 +48,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.975"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/acc2d" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/v"
@@ -87,30 +83,6 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/acc"
-        app:layout_constraintWidth_percent="1.0" />
-
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/v2d"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.17"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/acc2v"
-        app:layout_constraintWidth_percent="1.0" />
-
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/acc2d"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.17"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/v2d"
         app:layout_constraintWidth_percent="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

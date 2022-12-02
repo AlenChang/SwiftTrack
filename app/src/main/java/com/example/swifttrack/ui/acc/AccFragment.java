@@ -28,6 +28,7 @@ import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import java.util.ArrayList;
@@ -74,30 +75,9 @@ public class AccFragment extends Fragment {
 
         // initialization of chart data
 
-        binding.v.setData(new LineData());
-        binding.v.setBorderWidth(20.0f);
-        binding.v.getXAxis().setDrawLabels(false);
-        binding.v.getAxisLeft().setDrawLabels(false);
-        binding.v.getAxisRight().setDrawLabels(false);
-        binding.v.getDescription().setEnabled(false);
-//        binding.v.setNoDataText("No Data");
-//        binding.v.
-//        binding.v.setVisible
-
-        binding.acc.setData(new LineData());
-        binding.acc.setBorderWidth(20.0f);
-        binding.acc.getXAxis().setDrawLabels(false);
-        binding.acc.getAxisLeft().setDrawLabels(false);
-        binding.acc.getAxisRight().setDrawLabels(false);
-        binding.acc.getDescription().setEnabled(false);
-//        binding.acc.label
-
-        binding.acc2v.setData(new LineData());
-        binding.acc2v.setBorderWidth(20.0f);
-        binding.acc2v.getXAxis().setDrawLabels(false);
-        binding.acc2v.getAxisLeft().setDrawLabels(false);
-        binding.acc2v.getAxisRight().setDrawLabels(false);
-        binding.acc2v.getDescription().setEnabled(false);
+        resetChart(binding.v);
+        resetChart(binding.acc);
+        resetChart(binding.acc2v);
 
 //        binding.v2d.setData(new LineData());
 //        binding.v2d.setBorderWidth(20.0f);
@@ -117,6 +97,10 @@ public class AccFragment extends Fragment {
         // set button onclick listener
         binding.startButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+
+                resetChart(binding.v);
+                resetChart(binding.acc);
+                resetChart(binding.acc2v);
 
                 switchState(HomeFragment.State.RUNNING);
 
@@ -166,6 +150,7 @@ public class AccFragment extends Fragment {
                 audioPlayer.reset();
                 audioRecorder.reset();
                 audioProcessor.reset();
+
             }
         });
 
@@ -181,25 +166,21 @@ public class AccFragment extends Fragment {
         AccViewModel.getLiveLineData(3).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
             @Override
             public void onChanged(@NonNull LineDataSet lineDataSet) {
-                setChart(binding.v, lineDataSet);
-//                AccViewModel.v.postValue(null);
-//                accViewModel.getLiveLineData(AccViewModel.OutTypes.velocity).postValue(null);
+                setChart(binding.v, lineDataSet, true);
             }
         });
 //
         AccViewModel.getLiveLineData(2).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
             @Override
             public void onChanged(@NonNull LineDataSet lineDataSet) {
-                setChart(binding.acc, lineDataSet);
-//                AccViewModel.a.postValue(null);
+                setChart(binding.acc, lineDataSet, false);
             }
         });
 
         AccViewModel.getLiveLineData(1).observe(getViewLifecycleOwner(), new Observer<LineDataSet>() {
             @Override
             public void onChanged(@NonNull LineDataSet lineDataSet) {
-                setChart(binding.acc2v, lineDataSet);
-//                AccViewModel.v2d.postValue(null);
+                setChart(binding.acc2v, lineDataSet, false);
             }
         });
 
@@ -225,6 +206,18 @@ public class AccFragment extends Fragment {
 
 
         return root;
+    }
+
+    private void resetChart(LineChart chart){
+        chart.setData(new LineData());
+        chart.setBorderWidth(20.0f);
+        chart.getXAxis().setDrawLabels(false);
+        chart.getAxisLeft().setDrawLabels(false);
+        chart.getAxisRight().setDrawLabels(false);
+        chart.getDescription().setEnabled(false);
+        chart.getXAxis().setDrawGridLines(false);
+        chart.getAxisLeft().setDrawGridLines(false);
+        chart.getAxisRight().setDrawGridLines(false);
     }
 
     // change state of buttons
@@ -258,71 +251,50 @@ public class AccFragment extends Fragment {
         }
     }
 
-
-//    public void setChart2(LineChart chart, LineDataSet lineDataSet){
-//        LineData lineData = chart.getLineData();
-//        lineDataSet.setLabel("");
-//        lineData.addDataSet(lineDataSet);
-////        lineData.getDataSetLabels()
-//        lineData.notifyDataChanged();
-//        chart.notifyDataSetChanged();
-//        chart.invalidate();
-//    }
     // update chart
-    public void setChart(LineChart chart, LineDataSet lineDataSet){
+    public void setChart(LineChart chart, LineDataSet lineDataSet, boolean setRange){
         if(lineDataSet != null){
-            if(Objects.equals(lineDataSet.getLabel(), "Distance (SwiftTrack)")){
-                double ymin = lineDataSet.getYMin();
-                double ymax = lineDataSet.getYMax();
-//                lineDataSet.
-                int entry_count = lineDataSet.getEntryCount();
-                double[] y = new double[entry_count];
-                for(int ti = 0; ti < entry_count; ti++){
-                    y[ti] = lineDataSet.getEntryForIndex(ti).getY();
-                }
 
-                // check abnormal flag
-                if(ymax - ymin > 4){// if abnormal, set all values to zero
-                    abnormal_flag = true;
-                    AudioProcessor.resetResults();
-                    if(toast_flag != abnormal_flag){
-                        Toast.makeText(getActivity(),"Body Movement!",Toast.LENGTH_LONG).show();
-                        toast_flag = abnormal_flag;
-                    }
-
-                }else{
-                    abnormal_flag = false;
-                    if(toast_flag != abnormal_flag){
-                        toast_flag = abnormal_flag;
-                    }
-                    for(int ti = 0; ti < lineDataSet.getEntryCount(); ti++){
-                        lineDataSet.getEntryForIndex(ti).setY((float) y[ti]);
-                    }
-                }
-
-
-
-            }else{ // if other datasets
-                if(abnormal_flag){
-                    for(int ti = 0; ti < lineDataSet.getEntryCount(); ti++) {
-                        lineDataSet.getEntryForIndex(ti).setY((float) 0.0);
-                    }
-                }
-            }
-
-
-//            Log.d("ChartLabel", lineDataSet.getLabel());
             LineData lineData = chart.getLineData();
+            Highlight highlight;
+            int source_num;
+            int new_num;
+
+
             if(lineData.getDataSetCount() == 0){
                 lineData.addDataSet(lineDataSet);
+                source_num = lineData.getDataSetByIndex(0).getEntryCount();
+                new_num = lineDataSet.getEntryCount();
             }
             else{
-                for(int ti = 0; ti < lineData.getDataSetByIndex(0).getEntryCount(); ti++){
+                source_num = lineData.getDataSetByIndex(0).getEntryCount();
+                new_num = lineDataSet.getEntryCount();
+                for(int ti = 0; ti < source_num; ti++){
                     lineData.getDataSetByIndex(0).getEntryForIndex(ti).setY(lineDataSet.getEntryForIndex(ti).getY());
                 }
+                if(source_num < new_num){
+                    for(int mi = source_num; mi < new_num; mi++){
+                        lineData.getDataSetByIndex(0).addEntry(new Entry(mi * 1.0f, lineDataSet.getEntryForIndex(mi).getY()));
+                    }
+                }
+
+                if(setRange){
+                    highlight = new Highlight(new_num*1.0f, lineData.getDataSetByIndex(0).getEntryForIndex(new_num-1).getY(), 0);
+                    chart.highlightValue(highlight, false); // highlight this value, don't call listener
+                }
             }
+
+
             lineData.getDataSetByIndex(0).calcMinMax();
             lineData.notifyDataChanged();
+            if(setRange && AudioProcessor.getRunnningStatus()){
+                chart.setVisibleXRange(0, AudioProcessor.WIN_LENGTH);
+            }
+
+            if(setRange && !AudioProcessor.getRunnningStatus()){
+                chart.setVisibleXRange(0, new_num);
+            }
+
             chart.notifyDataSetChanged();
             chart.invalidate();
         }

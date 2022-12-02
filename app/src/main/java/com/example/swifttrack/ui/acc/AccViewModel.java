@@ -1,12 +1,14 @@
 package com.example.swifttrack.ui.acc;
 
 import android.graphics.Color;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.swifttrack.AudioProcessor;
 import com.example.swifttrack.ui.gallery.GalleryViewModel;
 import com.example.swifttrack.utils.PlotUtil;
 import com.github.mikephil.charting.data.Entry;
@@ -56,37 +58,20 @@ public class AccViewModel extends ViewModel {
 
     }
 
-    public static void setLineData(double[] values, double[] next_waveform, double[] resp_waveform, boolean is_new_waveform, AccViewModel.OutTypes type) {
+    public static void setLineData(double[] values, int valid_length, double[] next_waveform, double[] resp_waveform, boolean is_new_waveform) {
 
-        String label = " ";
-        switch (type){
-            case velocity:
-                label = "Velocity";
-                break;
-            case acceleration:
-//                a.postValue(PlotUtil.getLineDataSet(values, "Acceleration", Color.BLUE));
-                label = "Acceleration";
-                break;
-            case velocity2dist:
-//                v2d.postValue(PlotUtil.getLineDataSet(values, "Distance (SwiftTrack)", Color.CYAN));
-                label = "Distance (SwiftTrack)";
-                break;
-            case acceleration2velocity:
-//                a2v.postValue(PlotUtil.getLineDataSet(values, "Acceleration 2 Velocity", Color.RED));
-                label = "Acceleration 2 Velocity";
-                break;
-            case acceleration2dist:
-//                a2d.postValue(PlotUtil.getLineDataSet(values, "Distance (Strata)", Color.RED));
-                label = "Distance (Strata)";
-                break;
-            default:
-                break;
+        if(valid_length > AudioProcessor.WIN_LENGTH && AudioProcessor.getRunnningStatus()){
+            valid_length = AudioProcessor.WIN_LENGTH;
+        }
+        double[] valid_values = new double[valid_length];
+        System.arraycopy(values, 0, valid_values, 0, valid_length);
+        getLiveLineData(3).postValue(PlotUtil.getLineDataSet(valid_values, "Distance change of chest caused by respiration", Color.BLUE));
+//        if(is_new_waveform){
+        if(is_new_waveform){
+            getLiveLineData(2).postValue(PlotUtil.getLineDataSet(next_waveform, "The Last Waveform", Color.BLUE));
+            getLiveLineData(1).postValue(PlotUtil.getLineDataSet(resp_waveform, "Averaged Respiration Waveform", Color.BLUE));
         }
 
-        getLiveLineData(3).postValue(PlotUtil.getLineDataSet(values, "Distance change of chest caused by respiration", Color.RED));
-//        if(is_new_waveform){
-        getLiveLineData(2).postValue(PlotUtil.getLineDataSet(next_waveform, "The Last Waveform", Color.RED));
-        getLiveLineData(1).postValue(PlotUtil.getLineDataSet(resp_waveform, "Averaged Respiration Waveform", Color.RED));
 //        }
 
 
