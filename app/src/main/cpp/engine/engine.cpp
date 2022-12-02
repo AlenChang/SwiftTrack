@@ -4,6 +4,11 @@
 #include "recalibrateHistory.h"
 #include "fftw3.h"
 #include <vector>
+#include "recalibrateHistory.h"
+#include "recalibrateHistory_emxAPI.h"
+#include "recalibrateHistory_terminate.h"
+#include "recalibrateHistory_types.h"
+#include "rt_nonfinite.h"
 using namespace std::chrono;
 
 Engine *Engine::instance1 = nullptr;
@@ -185,30 +190,53 @@ void Engine::GetHistoryData(int id, double *history, double *next_waveform, doub
         default:
             break;
     }
-//    fftw_complex a;
-//    a[REAL] = 1;
-//    a[IMAG] = 2;
-    const int hist_length = 4096;
+
+    const int hist_length = n;
     if(history_type != 7){
-        double hist_in[hist_length];
-        boolean_T is_body_moving[hist_length];
+        emxArray_boolean_T *is_body_moving;
+        emxArray_real_T *hist;
+        emxArray_real_T *hist_out;
+
+        hist = Engine::argInit_Unboundedx1_real_T(hist_length);
+//        hist_out = Engine::argInit_Unboundedx1_real_T(hist_length);
+//        is_body_moving = Engine::argInit_Unboundedx1_real_T(hist_length);
+
+        Engine::PrintString("Engine Debug", "emxArray define success!");
+
+//        emxInitArray_real_T(&hist, 1);
+        emxInitArray_real_T(&hist_out, 1);
+        emxInitArray_boolean_T(&is_body_moving, 1);
+        Engine::PrintString("Engine Debug", "emxArray initialize success!");
+//        double hist_in[hist_length];
+//        boolean_T is_body_moving[hist_length];
 
         double waveform[100];
         double resp_freq_ = 0;
         boolean_T new_waveform = false;
-
-        for(int i=0;i<hist_length;i++) hist_in[i] = history[i];
-
-        recalibrateHistory(hist_in, 1.0, engine->last_waveform, engine->resp_waveform, history, is_body_moving,waveform,&new_waveform,&resp_freq_);
-        for(int ti = 0; ti < hist_length; ti++){
-            is_body_moving_[ti] = is_body_moving[ti];
+//        Engine::PrintDoubleArray(hist->data, 100, "hist value");
+        for(int i=0;i<hist_length;i++) {
+            hist->data[i] = history[i];
         }
+//        Engine::PrintDoubleArray(hist->data, hist_length, "hist value");
+//        Engine::PrintString("Engine Debug", "emxArray hist assignment success!");
+
+        recalibrateHistory(hist, 1.0, engine->last_waveform, engine->resp_waveform, hist_out, is_body_moving,waveform,&new_waveform,&resp_freq_);
+//        Engine::PrintString("Engine Debug", "Recalibration success!");
+        for(int ti = 0; ti < hist_length; ti++){
+            is_body_moving_[ti] = is_body_moving->data[ti];
+            history[ti] = hist_out->data[ti];
+        }
+//        Engine::PrintString("Engine Debug", "emxArray output assignment success!");
         *is_new_waveform = new_waveform;
         *resp_freq = resp_freq_;
         for(int ti = 0; ti < 100; ti ++){
             next_waveform[ti] = waveform[ti];
             resp_wave[ti] = engine->resp_waveform[ti];
         }
+        emxDestroyArray_real_T(hist);
+        emxDestroyArray_real_T(hist_out);
+        emxDestroyArray_boolean_T(is_body_moving);
+//        Engine::PrintString("Engine Debug", "emxArray destroy success!");
     }
 
 }
@@ -319,6 +347,58 @@ void Engine::reset_results() {
         instance2->postprocessor_->reset_results();
     }
 
+}
+
+void Engine::PrintString(string val, string name) {
+    ostringstream strs;
+    strs << val << endl;
+    string message=strs.str();
+    LOGD((name+" %s").c_str(),message.c_str());
+}
+
+void Engine::PrintDoubleArray(double* farray, int n, string name) {
+    ostringstream strs;
+    int numPerLine = 10;
+    for (int i=0; i<n; i++) {
+        strs << farray[i] << " ";
+        if ((i%numPerLine) == numPerLine-1) {
+            strs << endl;
+        }
+    }
+    string message=strs.str();
+    LOGD((name+" %s").c_str(),message.c_str());
+}
+
+void Engine::PrintIntArray(int* farray, int n, string name) {
+    ostringstream strs;
+    int numPerLine = 10;
+    for (int i=0; i<n; i++) {
+        strs << farray[i] << " ";
+        if ((i%numPerLine) == numPerLine-1) {
+            strs << endl;
+        }
+    }
+    string message=strs.str();
+    LOGD((name+" %s").c_str(),message.c_str());
+}
+
+emxArray_real_T* Engine::argInit_Unboundedx1_real_T(int len)
+{
+    emxArray_real_T *result;
+    double *result_data;
+    const int i = len;
+    int idx0;
+    /* Set the size of the array.
+  Change this size to the value that the application requires. */
+    result = emxCreateND_real_T(1, &i);
+    result_data = result->data;
+    /* Loop over the array to initialize each element. */
+    for (idx0 = 0; idx0 < result->size[0U]; idx0++) {
+        /* Set the value of the array element.
+    Change this value to the value that the application requires. */
+        result_data[idx0] = 0.0;
+    }
+    return result;
 }
 
 void Engine::genZC(int N_ZC, int N_ZC_UP, int U, int FC, int SAMPLE_RATE, const bool* SPEAKER_CHANNEL, bool USE_WINDOW,double SCALE, vector<vector<double>> & TX_SEQ) {

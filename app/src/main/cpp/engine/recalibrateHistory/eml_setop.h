@@ -5,13 +5,14 @@
  * File: eml_setop.h
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 02-Dec-2022 11:02:26
+ * C/C++ source code generated on  : 02-Dec-2022 12:50:48
  */
 
 #ifndef EML_SETOP_H
 #define EML_SETOP_H
 
 /* Include Files */
+#include "recalibrateHistory_types.h"
 #include "rtwtypes.h"
 #include <stddef.h>
 #include <stdlib.h>
@@ -21,13 +22,13 @@ extern "C" {
 #endif
 
 /* Function Declarations */
-void b_do_vectors(const int a_data[], int a_size, const int b_data[],
-                  int b_size, int c_data[], int *c_size, int ia_data[],
-                  int *ia_size, int ib_data[], int *ib_size);
+void b_do_vectors(const emxArray_int32_T *a, const emxArray_int32_T *b,
+                  emxArray_int32_T *c, emxArray_int32_T *ia,
+                  emxArray_int32_T *ib);
 
-void do_vectors(const int a_data[], int a_size, const int b_data[], int b_size,
-                int c_data[], int *c_size, int ia_data[], int *ia_size,
-                int ib_data[], int *ib_size);
+void do_vectors(const emxArray_int32_T *a, const emxArray_int32_T *b,
+                emxArray_int32_T *c, emxArray_int32_T *ia,
+                emxArray_int32_T *ib);
 
 #ifdef __cplusplus
 }

@@ -5,27 +5,25 @@
  * File: interp1.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 02-Dec-2022 11:02:26
+ * C/C++ source code generated on  : 02-Dec-2022 12:50:48
  */
 
 /* Include Files */
 #include "interp1.h"
+#include "recalibrateHistory_emxutil.h"
+#include "recalibrateHistory_types.h"
 #include "rt_nonfinite.h"
 #include "rt_nonfinite.h"
-#include <string.h>
 
 /* Function Definitions */
 /*
- * Arguments    : const double varargin_1_data[]
- *                const int varargin_1_size[2]
- *                const double varargin_2_data[]
- *                int varargin_2_size
+ * Arguments    : const emxArray_real_T *varargin_1
+ *                const emxArray_real_T *varargin_2
  *                double Vq[100]
  * Return Type  : void
  */
-void interp1(const double varargin_1_data[], const int varargin_1_size[2],
-             const double varargin_2_data[], int varargin_2_size,
-             double Vq[100])
+void interp1(const emxArray_real_T *varargin_1,
+             const emxArray_real_T *varargin_2, double Vq[100])
 {
   static const double dv[100] = {0.0,
                                  0.010101010101010102,
@@ -127,24 +125,39 @@ void interp1(const double varargin_1_data[], const int varargin_1_size[2],
                                  0.97979797979797989,
                                  0.98989898989899,
                                  1.0};
-  double x_data[4096];
-  double y_data[4096];
-  int high_i;
+  emxArray_real_T *x;
+  emxArray_real_T *y;
+  const double *varargin_1_data;
+  const double *varargin_2_data;
+  double *x_data;
+  double *y_data;
   int k;
+  int low_i;
   int mid_i;
+  int n;
   int nx;
-  int x_size_idx_1;
-  if (varargin_2_size - 1 >= 0) {
-    memcpy(&y_data[0], &varargin_2_data[0],
-           (unsigned int)varargin_2_size * sizeof(double));
+  varargin_2_data = varargin_2->data;
+  varargin_1_data = varargin_1->data;
+  emxInit_real_T(&y, 1);
+  mid_i = y->size[0];
+  y->size[0] = varargin_2->size[0];
+  emxEnsureCapacity_real_T(y, mid_i);
+  y_data = y->data;
+  n = varargin_2->size[0];
+  for (mid_i = 0; mid_i < n; mid_i++) {
+    y_data[mid_i] = varargin_2_data[mid_i];
   }
-  x_size_idx_1 = varargin_1_size[1];
-  high_i = varargin_1_size[1];
-  if (high_i - 1 >= 0) {
-    memcpy(&x_data[0], &varargin_1_data[0],
-           (unsigned int)high_i * sizeof(double));
+  emxInit_real_T(&x, 2);
+  mid_i = x->size[0] * x->size[1];
+  x->size[0] = 1;
+  x->size[1] = varargin_1->size[1];
+  emxEnsureCapacity_real_T(x, mid_i);
+  x_data = x->data;
+  n = varargin_1->size[1];
+  for (mid_i = 0; mid_i < n; mid_i++) {
+    x_data[mid_i] = varargin_1_data[mid_i];
   }
-  nx = varargin_1_size[1] - 1;
+  nx = varargin_1->size[1] - 1;
   k = 0;
   int exitg1;
   do {
@@ -157,60 +170,62 @@ void interp1(const double varargin_1_data[], const int varargin_1_size[2],
       }
     } else {
       double xtmp;
-      int low_ip1;
       if (varargin_1_data[1] < varargin_1_data[0]) {
-        low_ip1 = (nx + 1) >> 1;
-        for (mid_i = 0; mid_i < low_ip1; mid_i++) {
-          xtmp = x_data[mid_i];
-          high_i = nx - mid_i;
-          x_data[mid_i] = x_data[high_i];
-          x_data[high_i] = xtmp;
+        mid_i = (nx + 1) >> 1;
+        for (low_i = 0; low_i < mid_i; low_i++) {
+          xtmp = x_data[low_i];
+          n = nx - low_i;
+          x_data[low_i] = x_data[n];
+          x_data[n] = xtmp;
         }
-        if (varargin_2_size > 1) {
-          low_ip1 = varargin_2_size >> 1;
-          for (k = 0; k < low_ip1; k++) {
+        if (varargin_2->size[0] > 1) {
+          n = varargin_2->size[0] - 1;
+          nx = varargin_2->size[0] >> 1;
+          for (k = 0; k < nx; k++) {
             xtmp = y_data[k];
-            high_i = (varargin_2_size - k) - 1;
-            y_data[k] = y_data[high_i];
-            y_data[high_i] = xtmp;
+            low_i = n - k;
+            y_data[k] = y_data[low_i];
+            y_data[low_i] = xtmp;
           }
         }
       }
       for (k = 0; k < 100; k++) {
         Vq[k] = rtNaN;
         xtmp = dv[k];
-        if ((!(xtmp > x_data[x_size_idx_1 - 1])) && (!(xtmp < x_data[0]))) {
-          high_i = x_size_idx_1;
-          nx = 1;
-          low_ip1 = 2;
-          while (high_i > low_ip1) {
-            mid_i = (nx >> 1) + (high_i >> 1);
-            if (((nx & 1) == 1) && ((high_i & 1) == 1)) {
+        if ((!(xtmp > x_data[x->size[1] - 1])) && (!(xtmp < x_data[0]))) {
+          n = x->size[1];
+          low_i = 1;
+          nx = 2;
+          while (n > nx) {
+            mid_i = (low_i >> 1) + (n >> 1);
+            if (((low_i & 1) == 1) && ((n & 1) == 1)) {
               mid_i++;
             }
             if (dv[k] >= x_data[mid_i - 1]) {
-              nx = mid_i;
-              low_ip1 = mid_i + 1;
+              low_i = mid_i;
+              nx = mid_i + 1;
             } else {
-              high_i = mid_i;
+              n = mid_i;
             }
           }
-          xtmp = x_data[nx - 1];
-          xtmp = (dv[k] - xtmp) / (x_data[nx] - xtmp);
+          xtmp = x_data[low_i - 1];
+          xtmp = (dv[k] - xtmp) / (x_data[low_i] - xtmp);
           if (xtmp == 0.0) {
-            Vq[k] = y_data[nx - 1];
+            Vq[k] = y_data[low_i - 1];
           } else if (xtmp == 1.0) {
-            Vq[k] = y_data[nx];
-          } else if (y_data[nx - 1] == y_data[nx]) {
-            Vq[k] = y_data[nx - 1];
+            Vq[k] = y_data[low_i];
+          } else if (y_data[low_i - 1] == y_data[low_i]) {
+            Vq[k] = y_data[low_i - 1];
           } else {
-            Vq[k] = (1.0 - xtmp) * y_data[nx - 1] + xtmp * y_data[nx];
+            Vq[k] = (1.0 - xtmp) * y_data[low_i - 1] + xtmp * y_data[low_i];
           }
         }
       }
       exitg1 = 1;
     }
   } while (exitg1 == 0);
+  emxFree_real_T(&x);
+  emxFree_real_T(&y);
 }
 
 /*

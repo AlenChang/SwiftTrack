@@ -2,14 +2,14 @@
  * Academic License - for use in teaching, academic research, and meeting
  * course requirements at degree granting institutions only.  Not for
  * government, commercial, or other organizational use.
- * File: findpeaks.h
+ * File: eml_mtimes_helper.h
  *
  * MATLAB Coder version            : 5.5
  * C/C++ source code generated on  : 02-Dec-2022 12:50:48
  */
 
-#ifndef FINDPEAKS_H
-#define FINDPEAKS_H
+#ifndef EML_MTIMES_HELPER_H
+#define EML_MTIMES_HELPER_H
 
 /* Include Files */
 #include "recalibrateHistory_types.h"
@@ -22,8 +22,13 @@ extern "C" {
 #endif
 
 /* Function Declarations */
-void findpeaks(const emxArray_real_T *Yin, emxArray_real_T *Ypk,
-               emxArray_real_T *Xpk);
+void c_binary_expand_op(emxArray_real_T *in1, const emxArray_real_T *in2,
+                        const emxArray_real_T *in3, const emxArray_int32_T *in4,
+                        const emxArray_int32_T *in5);
+
+void d_binary_expand_op(emxArray_real_T *in1, const emxArray_real_T *in2,
+                        const emxArray_real_T *in3, const emxArray_int32_T *in4,
+                        const emxArray_int32_T *in5);
 
 #ifdef __cplusplus
 }
@@ -31,7 +36,7 @@ void findpeaks(const emxArray_real_T *Yin, emxArray_real_T *Ypk,
 
 #endif
 /*
- * File trailer for findpeaks.h
+ * File trailer for eml_mtimes_helper.h
  *
  * [EOF]
  */

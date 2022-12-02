@@ -5,7 +5,7 @@
  * File: findExtents.h
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 02-Dec-2022 11:02:26
+ * C/C++ source code generated on  : 02-Dec-2022 12:50:48
  */
 
 #ifndef FINDEXTENTS_H
@@ -22,9 +22,9 @@ extern "C" {
 #endif
 
 /* Function Declarations */
-void findExtents(const double y[4096], int iPk_data[], int *iPk_size,
-                 const int iFin_data[], int iFin_size, const int iInf_data[],
-                 int iInf_size, const int iInflect_data[], int iInflect_size,
+void findExtents(const emxArray_real_T *y, const emxArray_real_T *x,
+                 emxArray_int32_T *iPk, const emxArray_int32_T *iFin,
+                 const emxArray_int32_T *iInf, const emxArray_int32_T *iInflect,
                  emxArray_real_T *bPk, emxArray_real_T *bxPk,
                  emxArray_real_T *byPk, emxArray_real_T *wxPk);
 

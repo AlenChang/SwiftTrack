@@ -5,13 +5,14 @@
  * File: recalibrateHistory.h
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 02-Dec-2022 11:02:26
+ * C/C++ source code generated on  : 02-Dec-2022 12:50:48
  */
 
 #ifndef RECALIBRATEHISTORY_H
 #define RECALIBRATEHISTORY_H
 
 /* Include Files */
+#include "recalibrateHistory_types.h"
 #include "rtwtypes.h"
 #include <stddef.h>
 #include <stdlib.h>
@@ -21,11 +22,12 @@ extern "C" {
 #endif
 
 /* Function Declarations */
-extern void recalibrateHistory(double hist[4096], double moving_thre,
+extern void recalibrateHistory(emxArray_real_T *hist, double moving_thre,
                                double last_tmp[100], double resp_waveform[100],
-                               double hist_out[4096],
-                               boolean_T is_body_moving[4096], double tmp[100],
-                               boolean_T *new_waveform, double *resp_freq);
+                               emxArray_real_T *hist_out,
+                               emxArray_boolean_T *is_body_moving,
+                               double tmp[100], boolean_T *new_waveform,
+                               double *resp_freq);
 
 void recalibrateHistory_init(void);
 

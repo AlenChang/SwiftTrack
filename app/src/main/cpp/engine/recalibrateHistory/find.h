@@ -5,13 +5,14 @@
  * File: find.h
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 02-Dec-2022 11:02:26
+ * C/C++ source code generated on  : 02-Dec-2022 12:50:48
  */
 
 #ifndef FIND_H
 #define FIND_H
 
 /* Include Files */
+#include "recalibrateHistory_types.h"
 #include "rtwtypes.h"
 #include <stddef.h>
 #include <stdlib.h>
@@ -21,11 +22,11 @@ extern "C" {
 #endif
 
 /* Function Declarations */
-void c_binary_expand_op(int in1_data[], int *in1_size, const double in2[4096],
-                        const int in3_data[], const int *in3_size,
-                        const double in4_data[], const int *in4_size);
+void e_binary_expand_op(emxArray_int32_T *in1, const emxArray_real_T *in2,
+                        const emxArray_int32_T *in3,
+                        const emxArray_real_T *in4);
 
-void eml_find(const boolean_T x_data[], int x_size, int i_data[], int *i_size);
+void eml_find(const emxArray_boolean_T *x, emxArray_int32_T *i);
 
 #ifdef __cplusplus
 }

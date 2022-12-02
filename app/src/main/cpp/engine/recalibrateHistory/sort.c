@@ -5,68 +5,87 @@
  * File: sort.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 02-Dec-2022 11:02:26
+ * C/C++ source code generated on  : 02-Dec-2022 12:50:48
  */
 
 /* Include Files */
 #include "sort.h"
+#include "recalibrateHistory_emxutil.h"
+#include "recalibrateHistory_types.h"
 #include "rt_nonfinite.h"
 #include "sortIdx.h"
-#include <string.h>
 
 /* Function Definitions */
 /*
- * Arguments    : int x_data[]
- *                const int *x_size
+ * Arguments    : emxArray_int32_T *x
  * Return Type  : void
  */
-void sort(int x_data[], const int *x_size)
+void sort(emxArray_int32_T *x)
 {
-  int b_iwork_data[8192];
-  int iidx_data[8192];
-  int iwork_data[8192];
-  int vwork_data[8192];
-  int xwork_data[8192];
+  emxArray_int32_T *b_iwork;
+  emxArray_int32_T *iidx;
+  emxArray_int32_T *iwork;
+  emxArray_int32_T *vwork;
+  emxArray_int32_T *xwork;
   int b;
   int b_b;
   int b_j;
   int dim;
+  int i;
   int j;
   int k;
+  int nLeft;
   int vlen;
   int vstride;
-  int vwork_size;
+  int *iidx_data;
+  int *iwork_data;
+  int *vwork_data;
+  int *x_data;
+  int *xwork_data;
+  x_data = x->data;
   dim = 0;
-  if (*x_size != 1) {
+  if (x->size[0] != 1) {
     dim = -1;
   }
   if (dim + 2 <= 1) {
-    vwork_size = *x_size;
+    i = x->size[0];
   } else {
-    vwork_size = 1;
+    i = 1;
   }
-  vlen = vwork_size - 1;
+  vlen = i - 1;
+  emxInit_int32_T(&vwork);
+  nLeft = vwork->size[0];
+  vwork->size[0] = i;
+  emxEnsureCapacity_int32_T(vwork, nLeft);
+  vwork_data = vwork->data;
   vstride = 1;
   for (k = 0; k <= dim; k++) {
-    vstride *= *x_size;
+    vstride *= x->size[0];
   }
+  emxInit_int32_T(&iidx);
+  emxInit_int32_T(&iwork);
+  emxInit_int32_T(&xwork);
+  emxInit_int32_T(&b_iwork);
   for (j = 0; j < vstride; j++) {
+    int i3;
     for (k = 0; k <= vlen; k++) {
       vwork_data[k] = x_data[j + k * vstride];
     }
-    if (vwork_size - 1 >= 0) {
-      memset(&iidx_data[0], 0, (unsigned int)vwork_size * sizeof(int));
+    i = iidx->size[0];
+    iidx->size[0] = vwork->size[0];
+    emxEnsureCapacity_int32_T(iidx, i);
+    iidx_data = iidx->data;
+    i3 = vwork->size[0];
+    for (i = 0; i < i3; i++) {
+      iidx_data[i] = 0;
     }
-    if (vwork_size != 0) {
+    if (vwork->size[0] != 0) {
+      int idx4[4];
       int x4[4];
       int b_i;
-      int i;
       int i1;
       int i2;
-      int i4;
-      int nLeft;
       int nQuartets;
-      short idx4[4];
       x4[0] = 0;
       idx4[0] = 0;
       x4[1] = 0;
@@ -75,99 +94,112 @@ void sort(int x_data[], const int *x_size)
       idx4[2] = 0;
       x4[3] = 0;
       idx4[3] = 0;
-      memset(&iwork_data[0], 0, (unsigned int)vwork_size * sizeof(int));
-      memset(&xwork_data[0], 0, (unsigned int)vwork_size * sizeof(int));
-      nQuartets = vwork_size >> 2;
+      i = iwork->size[0];
+      iwork->size[0] = vwork->size[0];
+      emxEnsureCapacity_int32_T(iwork, i);
+      iwork_data = iwork->data;
+      i3 = vwork->size[0];
+      for (i = 0; i < i3; i++) {
+        iwork_data[i] = 0;
+      }
+      i = xwork->size[0];
+      xwork->size[0] = vwork->size[0];
+      emxEnsureCapacity_int32_T(xwork, i);
+      xwork_data = xwork->data;
+      i3 = vwork->size[0];
+      for (i = 0; i < i3; i++) {
+        xwork_data[i] = 0;
+      }
+      nQuartets = vwork->size[0] >> 2;
       for (b_j = 0; b_j < nQuartets; b_j++) {
         signed char b_i1;
         signed char b_i2;
-        signed char b_i4;
-        signed char i3;
-        i = b_j << 2;
-        idx4[0] = (short)(i + 1);
-        idx4[1] = (short)(i + 2);
-        idx4[2] = (short)(i + 3);
-        idx4[3] = (short)(i + 4);
-        b_i = vwork_data[i];
-        x4[0] = b_i;
-        dim = vwork_data[i + 1];
-        x4[1] = dim;
-        i4 = vwork_data[i + 2];
-        x4[2] = i4;
-        nLeft = vwork_data[i + 3];
+        signed char b_i3;
+        signed char i4;
+        b_i = b_j << 2;
+        idx4[0] = b_i + 1;
+        idx4[1] = b_i + 2;
+        idx4[2] = b_i + 3;
+        idx4[3] = b_i + 4;
+        x4[0] = vwork_data[b_i];
+        i3 = vwork_data[b_i + 1];
+        x4[1] = i3;
+        dim = vwork_data[b_i + 2];
+        x4[2] = dim;
+        nLeft = vwork_data[b_i + 3];
         x4[3] = nLeft;
-        if (b_i <= dim) {
+        if (vwork_data[b_i] <= i3) {
           i1 = 1;
           i2 = 2;
         } else {
           i1 = 2;
           i2 = 1;
         }
-        if (i4 <= nLeft) {
-          dim = 3;
-          i4 = 4;
-        } else {
+        if (dim <= nLeft) {
+          i3 = 3;
           dim = 4;
-          i4 = 3;
+        } else {
+          i3 = 4;
+          dim = 3;
         }
-        b_i = x4[i1 - 1];
-        nLeft = x4[dim - 1];
-        if (b_i <= nLeft) {
-          b_i = x4[i2 - 1];
-          if (b_i <= nLeft) {
+        i = x4[i1 - 1];
+        nLeft = x4[i3 - 1];
+        if (i <= nLeft) {
+          i = x4[i2 - 1];
+          if (i <= nLeft) {
             b_i1 = (signed char)i1;
             b_i2 = (signed char)i2;
-            i3 = (signed char)dim;
-            b_i4 = (signed char)i4;
-          } else if (b_i <= x4[i4 - 1]) {
+            b_i3 = (signed char)i3;
+            i4 = (signed char)dim;
+          } else if (i <= x4[dim - 1]) {
             b_i1 = (signed char)i1;
-            b_i2 = (signed char)dim;
-            i3 = (signed char)i2;
-            b_i4 = (signed char)i4;
+            b_i2 = (signed char)i3;
+            b_i3 = (signed char)i2;
+            i4 = (signed char)dim;
           } else {
             b_i1 = (signed char)i1;
-            b_i2 = (signed char)dim;
-            i3 = (signed char)i4;
-            b_i4 = (signed char)i2;
+            b_i2 = (signed char)i3;
+            b_i3 = (signed char)dim;
+            i4 = (signed char)i2;
           }
         } else {
-          nLeft = x4[i4 - 1];
-          if (b_i <= nLeft) {
+          nLeft = x4[dim - 1];
+          if (i <= nLeft) {
             if (x4[i2 - 1] <= nLeft) {
-              b_i1 = (signed char)dim;
+              b_i1 = (signed char)i3;
               b_i2 = (signed char)i1;
-              i3 = (signed char)i2;
-              b_i4 = (signed char)i4;
+              b_i3 = (signed char)i2;
+              i4 = (signed char)dim;
             } else {
-              b_i1 = (signed char)dim;
+              b_i1 = (signed char)i3;
               b_i2 = (signed char)i1;
-              i3 = (signed char)i4;
-              b_i4 = (signed char)i2;
+              b_i3 = (signed char)dim;
+              i4 = (signed char)i2;
             }
           } else {
-            b_i1 = (signed char)dim;
-            b_i2 = (signed char)i4;
-            i3 = (signed char)i1;
-            b_i4 = (signed char)i2;
+            b_i1 = (signed char)i3;
+            b_i2 = (signed char)dim;
+            b_i3 = (signed char)i1;
+            i4 = (signed char)i2;
           }
         }
-        iidx_data[i] = idx4[b_i1 - 1];
-        iidx_data[i + 1] = idx4[b_i2 - 1];
-        iidx_data[i + 2] = idx4[i3 - 1];
-        iidx_data[i + 3] = idx4[b_i4 - 1];
-        vwork_data[i] = x4[b_i1 - 1];
-        vwork_data[i + 1] = x4[b_i2 - 1];
-        vwork_data[i + 2] = x4[i3 - 1];
-        vwork_data[i + 3] = x4[b_i4 - 1];
+        iidx_data[b_i] = idx4[b_i1 - 1];
+        iidx_data[b_i + 1] = idx4[b_i2 - 1];
+        iidx_data[b_i + 2] = idx4[b_i3 - 1];
+        iidx_data[b_i + 3] = idx4[i4 - 1];
+        vwork_data[b_i] = x4[b_i1 - 1];
+        vwork_data[b_i + 1] = x4[b_i2 - 1];
+        vwork_data[b_i + 2] = x4[b_i3 - 1];
+        vwork_data[b_i + 3] = x4[i4 - 1];
       }
-      i4 = nQuartets << 2;
-      nLeft = vwork_size - i4;
+      dim = nQuartets << 2;
+      nLeft = vwork->size[0] - dim;
       if (nLeft > 0) {
         signed char perm[4];
         for (k = 0; k < nLeft; k++) {
-          dim = i4 + k;
-          idx4[k] = (short)(dim + 1);
-          x4[k] = vwork_data[dim];
+          i3 = dim + k;
+          idx4[k] = i3 + 1;
+          x4[k] = vwork_data[i3];
         }
         perm[1] = 0;
         perm[2] = 0;
@@ -211,58 +243,58 @@ void sort(int x_data[], const int *x_size)
         }
         for (k = 0; k < nLeft; k++) {
           i1 = perm[k] - 1;
-          dim = i4 + k;
-          iidx_data[dim] = idx4[i1];
-          vwork_data[dim] = x4[i1];
+          i3 = dim + k;
+          iidx_data[i3] = idx4[i1];
+          vwork_data[i3] = x4[i1];
         }
       }
       dim = 2;
-      if (vwork_size > 1) {
-        if (vwork_size >= 256) {
-          nQuartets = vwork_size >> 8;
+      if (vwork->size[0] > 1) {
+        if (vwork->size[0] >= 256) {
+          nQuartets = vwork->size[0] >> 8;
           for (b = 0; b < nQuartets; b++) {
-            int xwork[256];
-            short iwork[256];
-            i = (b << 8) - 1;
+            int b_xwork[256];
+            int c_iwork[256];
+            b_i = (b << 8) - 1;
             for (b_b = 0; b_b < 6; b_b++) {
               int bLen;
               int bLen2;
               bLen = 1 << (b_b + 2);
               bLen2 = bLen << 1;
-              b_i = 256 >> (b_b + 3);
-              for (k = 0; k < b_i; k++) {
-                i4 = (i + k * bLen2) + 1;
+              i = 256 >> (b_b + 3);
+              for (k = 0; k < i; k++) {
+                i3 = (b_i + k * bLen2) + 1;
                 for (b_j = 0; b_j < bLen2; b_j++) {
-                  dim = i4 + b_j;
-                  iwork[b_j] = (short)iidx_data[dim];
-                  xwork[b_j] = vwork_data[dim];
+                  dim = i3 + b_j;
+                  c_iwork[b_j] = iidx_data[dim];
+                  b_xwork[b_j] = vwork_data[dim];
                 }
                 i2 = 0;
                 nLeft = bLen;
-                dim = i4 - 1;
+                dim = i3 - 1;
                 int exitg1;
                 do {
                   exitg1 = 0;
                   dim++;
-                  if (xwork[i2] <= xwork[nLeft]) {
-                    iidx_data[dim] = iwork[i2];
-                    vwork_data[dim] = xwork[i2];
+                  if (b_xwork[i2] <= b_xwork[nLeft]) {
+                    iidx_data[dim] = c_iwork[i2];
+                    vwork_data[dim] = b_xwork[i2];
                     if (i2 + 1 < bLen) {
                       i2++;
                     } else {
                       exitg1 = 1;
                     }
                   } else {
-                    iidx_data[dim] = iwork[nLeft];
-                    vwork_data[dim] = xwork[nLeft];
+                    iidx_data[dim] = c_iwork[nLeft];
+                    vwork_data[dim] = b_xwork[nLeft];
                     if (nLeft + 1 < bLen2) {
                       nLeft++;
                     } else {
                       dim -= i2;
                       for (b_j = i2 + 1; b_j <= bLen; b_j++) {
                         i1 = dim + b_j;
-                        iidx_data[i1] = iwork[b_j - 1];
-                        vwork_data[i1] = xwork[b_j - 1];
+                        iidx_data[i1] = c_iwork[b_j - 1];
+                        vwork_data[i1] = b_xwork[b_j - 1];
                       }
                       exitg1 = 1;
                     }
@@ -272,27 +304,43 @@ void sort(int x_data[], const int *x_size)
             }
           }
           dim = nQuartets << 8;
-          i4 = vwork_size - dim;
-          if (i4 > 0) {
-            merge_block(iidx_data, vwork_data, dim, i4, 2, iwork_data,
-                        xwork_data);
+          i3 = vwork->size[0] - dim;
+          if (i3 > 0) {
+            merge_block(iidx, vwork, dim, i3, 2, iwork, xwork);
+            xwork_data = xwork->data;
+            iwork_data = iwork->data;
           }
           dim = 8;
         }
-        if (vwork_size - 1 >= 0) {
-          memcpy(&b_iwork_data[0], &iwork_data[0],
-                 (unsigned int)vwork_size * sizeof(int));
-          memcpy(&iwork_data[0], &xwork_data[0],
-                 (unsigned int)vwork_size * sizeof(int));
+        i3 = iwork->size[0];
+        i = b_iwork->size[0];
+        b_iwork->size[0] = iwork->size[0];
+        emxEnsureCapacity_int32_T(b_iwork, i);
+        vwork_data = b_iwork->data;
+        for (i = 0; i < i3; i++) {
+          vwork_data[i] = iwork_data[i];
         }
-        merge_block(iidx_data, vwork_data, 0, vwork_size, dim, b_iwork_data,
-                    iwork_data);
+        i3 = xwork->size[0];
+        i = iwork->size[0];
+        iwork->size[0] = xwork->size[0];
+        emxEnsureCapacity_int32_T(iwork, i);
+        iwork_data = iwork->data;
+        for (i = 0; i < i3; i++) {
+          iwork_data[i] = xwork_data[i];
+        }
+        merge_block(iidx, vwork, 0, vwork->size[0], dim, b_iwork, iwork);
+        vwork_data = vwork->data;
       }
     }
     for (k = 0; k <= vlen; k++) {
       x_data[j + k * vstride] = vwork_data[k];
     }
   }
+  emxFree_int32_T(&b_iwork);
+  emxFree_int32_T(&xwork);
+  emxFree_int32_T(&iwork);
+  emxFree_int32_T(&iidx);
+  emxFree_int32_T(&vwork);
 }
 
 /*

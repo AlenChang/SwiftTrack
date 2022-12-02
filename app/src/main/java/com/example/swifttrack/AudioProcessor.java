@@ -86,7 +86,7 @@ public class AudioProcessor {
 
     private static class Engine extends Thread {
         private static final int INTERVAL = 50;
-        private static final int WINDOW_SIZE = 4096; // do not modify this
+        private static final int WINDOW_SIZE = 2048; // do not modify this
 
         private final Lock lock = new ReentrantLock();
         private final double[] frame1 = new double[FRAME_SIZE];
@@ -477,7 +477,15 @@ public class AudioProcessor {
 
                     break;
                 case ActivityID.accFragment:
-                    prepareDataForAccFragment(WINDOW_SIZE, true);
+                    int targetChannel;
+                    if (CHANNEL_MASK[inputChannel.RIGHT]) {
+                        targetChannel = inputChannel.RIGHT;
+                    } else {
+                        targetChannel = inputChannel.LEFT;
+                    }
+                    int[] length = {0};
+                    getHistoryLength(targetChannel, deployMethods.swifttrack, length);
+                    prepareDataForAccFragment(length[0], true);
                     break;
                 case ActivityID.slideFragment:
 //                    prepareDataForSlideFragment(frameCount);

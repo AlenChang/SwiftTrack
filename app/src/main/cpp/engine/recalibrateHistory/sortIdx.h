@@ -5,13 +5,14 @@
  * File: sortIdx.h
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 02-Dec-2022 11:02:26
+ * C/C++ source code generated on  : 02-Dec-2022 12:50:48
  */
 
 #ifndef SORTIDX_H
 #define SORTIDX_H
 
 /* Include Files */
+#include "recalibrateHistory_types.h"
 #include "rtwtypes.h"
 #include <stddef.h>
 #include <stdlib.h>
@@ -21,8 +22,9 @@ extern "C" {
 #endif
 
 /* Function Declarations */
-void merge_block(int idx_data[], int x_data[], int offset, int n,
-                 int preSortLevel, int iwork_data[], int xwork_data[]);
+void merge_block(emxArray_int32_T *idx, emxArray_int32_T *x, int offset, int n,
+                 int preSortLevel, emxArray_int32_T *iwork,
+                 emxArray_int32_T *xwork);
 
 #ifdef __cplusplus
 }

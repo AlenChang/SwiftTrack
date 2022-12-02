@@ -5,13 +5,14 @@
  * File: sort.h
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 02-Dec-2022 11:02:26
+ * C/C++ source code generated on  : 02-Dec-2022 12:50:48
  */
 
 #ifndef SORT_H
 #define SORT_H
 
 /* Include Files */
+#include "recalibrateHistory_types.h"
 #include "rtwtypes.h"
 #include <stddef.h>
 #include <stdlib.h>
@@ -21,7 +22,7 @@ extern "C" {
 #endif
 
 /* Function Declarations */
-void sort(int x_data[], const int *x_size);
+void sort(emxArray_int32_T *x);
 
 #ifdef __cplusplus
 }

@@ -6,11 +6,18 @@
 #include "preprocessor.h"
 #include "filter_util.hpp"
 #include "matrix_util.hpp"
+#include <android/log.h>
+#include <jni.h>
 //#include "processFramePipe.h"
 //#include "processFramePipe_terminate.h"
 //#include "coder_array.h"
 //#include "detrend_alg.h"
 #include "fftw3.h"
+#include "recalibrateHistory.h"
+#include "recalibrateHistory_emxAPI.h"
+#include "recalibrateHistory_terminate.h"
+#include "recalibrateHistory_types.h"
+#include "rt_nonfinite.h"
 
 
 #define REAL 0
@@ -19,6 +26,9 @@
 #ifndef M_PI
 #define M_PI acos(-1)*1.0
 #endif
+
+#define  LOG_TAG    "NDKOutput"
+#define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
 
 class Engine {
 public:
@@ -46,6 +56,11 @@ public:
     static void getTime(int id, double* time);
 
     static int GetHistoryLength(int id, int history_id);
+
+    static void PrintString(string val, string name);
+    static void PrintDoubleArray(double* farray, int n, string name);
+    static void PrintIntArray(int* farray, int n, string name);
+    static emxArray_real_T* argInit_Unboundedx1_real_T(int len);
 //    static void detrend_frames(double *data);
 
     static void reset_results(void);

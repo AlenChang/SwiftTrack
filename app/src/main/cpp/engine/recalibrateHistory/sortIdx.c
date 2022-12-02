@@ -5,32 +5,43 @@
  * File: sortIdx.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 02-Dec-2022 11:02:26
+ * C/C++ source code generated on  : 02-Dec-2022 12:50:48
  */
 
 /* Include Files */
 #include "sortIdx.h"
+#include "recalibrateHistory_types.h"
 #include "rt_nonfinite.h"
 
 /* Function Declarations */
-static void merge(int idx_data[], int x_data[], int offset, int np, int nq,
-                  int iwork_data[], int xwork_data[]);
+static void merge(emxArray_int32_T *idx, emxArray_int32_T *x, int offset,
+                  int np, int nq, emxArray_int32_T *iwork,
+                  emxArray_int32_T *xwork);
 
 /* Function Definitions */
 /*
- * Arguments    : int idx_data[]
- *                int x_data[]
+ * Arguments    : emxArray_int32_T *idx
+ *                emxArray_int32_T *x
  *                int offset
  *                int np
  *                int nq
- *                int iwork_data[]
- *                int xwork_data[]
+ *                emxArray_int32_T *iwork
+ *                emxArray_int32_T *xwork
  * Return Type  : void
  */
-static void merge(int idx_data[], int x_data[], int offset, int np, int nq,
-                  int iwork_data[], int xwork_data[])
+static void merge(emxArray_int32_T *idx, emxArray_int32_T *x, int offset,
+                  int np, int nq, emxArray_int32_T *iwork,
+                  emxArray_int32_T *xwork)
 {
   int j;
+  int *idx_data;
+  int *iwork_data;
+  int *x_data;
+  int *xwork_data;
+  xwork_data = xwork->data;
+  iwork_data = iwork->data;
+  x_data = x->data;
+  idx_data = idx->data;
   if (nq != 0) {
     int iout;
     int n_tmp;
@@ -77,46 +88,43 @@ static void merge(int idx_data[], int x_data[], int offset, int np, int nq,
 }
 
 /*
- * Arguments    : int idx_data[]
- *                int x_data[]
+ * Arguments    : emxArray_int32_T *idx
+ *                emxArray_int32_T *x
  *                int offset
  *                int n
  *                int preSortLevel
- *                int iwork_data[]
- *                int xwork_data[]
+ *                emxArray_int32_T *iwork
+ *                emxArray_int32_T *xwork
  * Return Type  : void
  */
-void merge_block(int idx_data[], int x_data[], int offset, int n,
-                 int preSortLevel, int iwork_data[], int xwork_data[])
+void merge_block(emxArray_int32_T *idx, emxArray_int32_T *x, int offset, int n,
+                 int preSortLevel, emxArray_int32_T *iwork,
+                 emxArray_int32_T *xwork)
 {
   int bLen;
-  int k;
   int nPairs;
+  int nTail;
   nPairs = n >> preSortLevel;
   bLen = 1 << preSortLevel;
   while (nPairs > 1) {
-    int nTail;
     int tailOffset;
     if ((nPairs & 1) != 0) {
       nPairs--;
       tailOffset = bLen * nPairs;
       nTail = n - tailOffset;
       if (nTail > bLen) {
-        merge(idx_data, x_data, offset + tailOffset, bLen, nTail - bLen,
-              iwork_data, xwork_data);
+        merge(idx, x, offset + tailOffset, bLen, nTail - bLen, iwork, xwork);
       }
     }
     tailOffset = bLen << 1;
     nPairs >>= 1;
-    nTail = (unsigned short)nPairs;
-    for (k = 0; k < nTail; k++) {
-      merge(idx_data, x_data, offset + k * tailOffset, bLen, bLen, iwork_data,
-            xwork_data);
+    for (nTail = 0; nTail < nPairs; nTail++) {
+      merge(idx, x, offset + nTail * tailOffset, bLen, bLen, iwork, xwork);
     }
     bLen = tailOffset;
   }
   if (n > bLen) {
-    merge(idx_data, x_data, offset, bLen, n - bLen, iwork_data, xwork_data);
+    merge(idx, x, offset, bLen, n - bLen, iwork, xwork);
   }
 }
 
