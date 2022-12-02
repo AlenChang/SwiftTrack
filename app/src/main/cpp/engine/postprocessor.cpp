@@ -457,6 +457,10 @@ void Postprocessor::GetHistoryData(double *history, int n, Histories &history_ty
     }
 }
 
+int Postprocessor::GetHistoryLength(Histories &history_type){
+    return history_type.getLength();
+}
+
 double Postprocessor::bandpassfilter_resp(double x, double xtmp[respfilter_len], double ytmp[respfilter_len]) {
     // bandpass filter
 //    double b[9] = {0.00010958156812944314171653220624236,0,-0.00043832627251777256686612882496945,0,0.00065748940877665882319413892531657,0,-0.00043832627251777256686612882496945,0,0.00010958156812944314171653220624236};;

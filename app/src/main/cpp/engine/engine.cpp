@@ -146,6 +146,12 @@ void Engine::ProcessFrame_02(int id, const double *data, int n, int N, int FC, i
 //    engine->ProcessFrameUpsample(rx_signal);
 }
 
+int Engine::GetHistoryLength(int id, int history_id) {
+    Engine *engine = Engine::GetInstance(id);
+    Histories history_profile = engine->postprocessor_->GetHistories(history_id);
+    return engine->postprocessor_->GetHistoryLength(history_profile);
+}
+
 void Engine::GetHistoryData(int id, double *history, double *next_waveform, double *resp_wave, bool *is_body_moving_, bool *is_new_waveform, double *resp_freq, int n, int history_id, int history_type){
 //    if(ifExpiry) {return;}
     Engine *engine = Engine::GetInstance(id);

@@ -45,6 +45,7 @@ public:
 
     static void getTime(int id, double* time);
 
+    static int GetHistoryLength(int id, int history_id);
 //    static void detrend_frames(double *data);
 
     static void reset_results(void);

@@ -54,7 +54,7 @@ public:
 
     void check_size(){
         int len;
-        int max_len = 4096;
+        int max_len = 40960;
         len = phase_history_.size();
         while(len > max_len){
             phase_history_.pop_front();

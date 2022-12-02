@@ -204,17 +204,6 @@ public class AudioProcessor {
             Log.d("respiration freq", resp_freq[0] + "");
             AccViewModel.setLineData(xWindow0, next_waveform, resp_waveform, is_new_waveform[0], AccViewModel.OutTypes.velocity2dist);
             getHistoryData(targetChannel, xWindow1, next_waveform, resp_waveform, is_new_waveform, is_body_moving, resp_freq, winLen, deployMethods.swifttrack, HistoryType.time_stamp);
-//            getHistoryData(targetChannel, xWindow1, next_waveform, resp_waveform, is_new_waveform,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.velocity_);
-//            AccViewModel.setLineData(xWindow1, AccViewModel.OutTypes.velocity);
-//
-//            getHistoryData(targetChannel, xWindow2, next_waveform, resp_waveform, is_new_waveform,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.acceleration_);
-//            AccViewModel.setLineData(xWindow2, AccViewModel.OutTypes.acceleration);
-//
-//            getHistoryData(targetChannel, xWindow3, next_waveform, resp_waveform, is_new_waveform,is_body_moving, winLen, deployMethods.swifttrack, HistoryType.velocity_a);
-//            AccViewModel.setLineData(xWindow3, AccViewModel.OutTypes.acceleration2velocity);
-//
-//            getHistoryData(targetChannel, xWindow4, next_waveform, resp_waveform, is_new_waveform,is_body_moving, winLen, deployMethods.strata, HistoryType.dist_v);
-//            AccViewModel.setLineData(xWindow4, AccViewModel.OutTypes.acceleration2dist);
 
             if(needSave){
                 double[][] result = new double[winLen][2];
@@ -233,6 +222,10 @@ public class AudioProcessor {
             double[] thre = {0.0};
             getThre(targetChannel, thre);
             Log.d("swifttrack_Thre", ""+thre[0]);
+
+            int[] length = {0};
+            getHistoryLength(targetChannel, deployMethods.swifttrack, length);
+            Log.d("profile_length", ""+length[0]);
         }
 
 //        private void prepareDataForSlideFragment(int winLen){
@@ -610,6 +603,8 @@ public class AudioProcessor {
     private static native void reset(int id, int N_ZC_UP, int FC, int BW);
 
     private static native void getHistoryData(int id, double[] history,double[] next_waveform, double[] resp_wave, boolean[] is_new_waveform, boolean[] is_body_moving, double[] resp_freq, int n, int history_id, int history_type);
+
+    private static native void getHistoryLength(int id, int history_id, int[] length);
 
     private static native void getTime(int id, double[] time_count);
 

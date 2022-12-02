@@ -30,6 +30,8 @@ public:
 
     void GetHistoryData(double *history, int n, Histories &history_type, HistoryType h_type);
 
+    int GetHistoryLength(Histories &history_type);
+
     void reset_results(void);
 
 private:
@@ -50,6 +52,8 @@ private:
     void MotionCoeff2(complex<double> beta);
 
     void get_history(double *history, int n, list<double> & profiles);
+
+
 
     void PaddingZero(Histories &history_type);
 

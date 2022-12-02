@@ -118,6 +118,21 @@ Java_com_example_swifttrack_AudioProcessor_detrend(
     env->ReleaseDoubleArrayElements(data, history_, 0);
 }
 
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_swifttrack_AudioProcessor_getHistoryLength(
+        JNIEnv *env, jobject thiz, jint id, jint history_id, jintArray length
+) {
+    jint *length_ = (env)->GetIntArrayElements(length, nullptr);
+//    Engine::detrend_frames(history_);
+    if (Engine::GetInstance(id) != nullptr) {
+        *length_ = Engine::GetHistoryLength(id, history_id);
+    }
+    env->ReleaseIntArrayElements(length, length_, 0);
+}
+
+
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_swifttrack_AudioProcessor_resetResults(
