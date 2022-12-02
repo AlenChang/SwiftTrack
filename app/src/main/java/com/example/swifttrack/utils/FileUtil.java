@@ -179,7 +179,11 @@ public class FileUtil {
 
         try {
             for (double[] sample : result) {
-                String line = sample[0] + " " + sample[1] + " " + sample[2] + " " + sample[3] + "\n";
+                String line = "";
+                for(double item : sample){
+                    line += item + " ";
+                }
+                line += "\n";
                 writer.write(line);
             }
         } catch (IOException e) {

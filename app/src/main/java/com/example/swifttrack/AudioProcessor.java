@@ -217,13 +217,10 @@ public class AudioProcessor {
 //            AccViewModel.setLineData(xWindow4, AccViewModel.OutTypes.acceleration2dist);
 
             if(needSave){
-                double[][] result = new double[winLen][5];
+                double[][] result = new double[winLen][2];
                 for (int i = 0; i < winLen; i++) {
                     result[i][0] = xWindow0[i];
                     result[i][1] = xWindow1[i];
-                    result[i][2] = xWindow2[i];
-                    result[i][3] = xWindow3[i];
-                    result[i][4] = xWindow4[i];
 
                 }
                 FileUtil.streamWriteResult(bufferedWriter, result);
