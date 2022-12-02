@@ -157,7 +157,7 @@ int Engine::GetHistoryLength(int id, int history_id) {
     return engine->postprocessor_->GetHistoryLength(history_profile);
 }
 
-void Engine::GetHistoryData(int id, double *history, double *next_waveform, double *resp_wave, bool *is_body_moving_, bool *is_new_waveform, double *resp_freq, int n, int history_id, int history_type){
+void Engine::GetHistoryData(int id, double *history, int n, int history_id, int history_type){
 //    if(ifExpiry) {return;}
     Engine *engine = Engine::GetInstance(id);
     Histories history_profile = engine->postprocessor_->GetHistories(history_id);
@@ -191,53 +191,56 @@ void Engine::GetHistoryData(int id, double *history, double *next_waveform, doub
             break;
     }
 
-    const int hist_length = n;
-    if(history_type != 7){
-        emxArray_boolean_T *is_body_moving;
-        emxArray_real_T *hist;
-        emxArray_real_T *hist_out;
+}
 
-        hist = Engine::argInit_Unboundedx1_real_T(hist_length);
+void Engine::reCalibrate(int id, double* history, int n, double *next_waveform, double *resp_wave, bool *is_body_moving_, bool *is_new_waveform, double *resp_freq){
+    Engine *engine = Engine::GetInstance(id);
+    const int hist_length = n;
+
+    emxArray_boolean_T *is_body_moving;
+    emxArray_real_T *hist;
+    emxArray_real_T *hist_out;
+
+    hist = Engine::argInit_Unboundedx1_real_T(hist_length);
 //        hist_out = Engine::argInit_Unboundedx1_real_T(hist_length);
 //        is_body_moving = Engine::argInit_Unboundedx1_real_T(hist_length);
 
-        Engine::PrintString("Engine Debug", "emxArray define success!");
+    Engine::PrintString("Engine Debug", "emxArray define success!");
 
 //        emxInitArray_real_T(&hist, 1);
-        emxInitArray_real_T(&hist_out, 1);
-        emxInitArray_boolean_T(&is_body_moving, 1);
-        Engine::PrintString("Engine Debug", "emxArray initialize success!");
+    emxInitArray_real_T(&hist_out, 1);
+    emxInitArray_boolean_T(&is_body_moving, 1);
+    Engine::PrintString("Engine Debug", "emxArray initialize success!");
 //        double hist_in[hist_length];
 //        boolean_T is_body_moving[hist_length];
 
-        double waveform[100];
-        double resp_freq_ = 0;
-        boolean_T new_waveform = false;
+    double waveform[100];
+    double resp_freq_ = 0;
+    boolean_T new_waveform = false;
 //        Engine::PrintDoubleArray(hist->data, 100, "hist value");
-        for(int i=0;i<hist_length;i++) {
-            hist->data[i] = history[i];
-        }
+    for(int i=0;i<hist_length;i++) {
+        hist->data[i] = history[i];
+    }
 //        Engine::PrintDoubleArray(hist->data, hist_length, "hist value");
 //        Engine::PrintString("Engine Debug", "emxArray hist assignment success!");
 
-        recalibrateHistory(hist, 1.0, engine->last_waveform, engine->resp_waveform, hist_out, is_body_moving,waveform,&new_waveform,&resp_freq_);
+    recalibrateHistory(hist, 1.0, engine->last_waveform, engine->resp_waveform, hist_out, is_body_moving,waveform,&new_waveform,&resp_freq_);
 //        Engine::PrintString("Engine Debug", "Recalibration success!");
-        for(int ti = 0; ti < hist_length; ti++){
-            is_body_moving_[ti] = is_body_moving->data[ti];
-            history[ti] = hist_out->data[ti];
-        }
-//        Engine::PrintString("Engine Debug", "emxArray output assignment success!");
-        *is_new_waveform = new_waveform;
-        *resp_freq = resp_freq_;
-        for(int ti = 0; ti < 100; ti ++){
-            next_waveform[ti] = waveform[ti];
-            resp_wave[ti] = engine->resp_waveform[ti];
-        }
-        emxDestroyArray_real_T(hist);
-        emxDestroyArray_real_T(hist_out);
-        emxDestroyArray_boolean_T(is_body_moving);
-//        Engine::PrintString("Engine Debug", "emxArray destroy success!");
+    for(int ti = 0; ti < hist_length; ti++){
+        is_body_moving_[ti] = is_body_moving->data[ti];
+        history[ti] = hist_out->data[ti];
     }
+//        Engine::PrintString("Engine Debug", "emxArray output assignment success!");
+    *is_new_waveform = new_waveform;
+    *resp_freq = resp_freq_;
+    for(int ti = 0; ti < 100; ti ++){
+        next_waveform[ti] = waveform[ti];
+        resp_wave[ti] = engine->resp_waveform[ti];
+    }
+    emxDestroyArray_real_T(hist);
+    emxDestroyArray_real_T(hist_out);
+    emxDestroyArray_boolean_T(is_body_moving);
+//        Engine::PrintString("Engine Debug", "emxArray destroy success!");
 
 }
 

@@ -67,12 +67,6 @@ public:
             len--;
         }
 
-//        len = dist_history_.size();
-//        while(len > max_len){
-//            dist_history_.pop_front();
-//            len--;
-//        }
-
         len = acc_history_.size();
         while(len > max_len){
             acc_history_.pop_front();

@@ -295,7 +295,6 @@ public class AccFragment extends Fragment {
                     if(toast_flag != abnormal_flag){
                         toast_flag = abnormal_flag;
                     }
-                    AudioProcessor.detrend(y);
                     for(int ti = 0; ti < lineDataSet.getEntryCount(); ti++){
                         lineDataSet.getEntryForIndex(ti).setY((float) y[ti]);
                     }

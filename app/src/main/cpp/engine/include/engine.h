@@ -49,13 +49,15 @@ public:
 
     static void Reset(int id, int N, int FC, int BW);
 
-    static void GetHistoryData(int id, double *history, double *next_waveform, double *resp_wave, bool *is_body_moving_, bool *is_new_waveform, double *resp_freq, int n, int history_id, int history_type);
+    static void GetHistoryData(int id, double *history, int n, int history_id, int history_type);
 
     void setup(int N, int FC, int BW);
 
     static void getTime(int id, double* time);
 
     static int GetHistoryLength(int id, int history_id);
+
+    static void reCalibrate(int id, double* history, int n, double *next_waveform, double *resp_wave, bool *is_body_moving_, bool *is_new_waveform, double *resp_freq);
 
     static void PrintString(string val, string name);
     static void PrintDoubleArray(double* farray, int n, string name);

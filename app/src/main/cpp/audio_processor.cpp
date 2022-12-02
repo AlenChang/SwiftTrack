@@ -40,7 +40,20 @@ Java_com_example_swifttrack_AudioProcessor_getTime(
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_swifttrack_AudioProcessor_getHistoryData(
-        JNIEnv *env, jobject thiz, jint id, jdoubleArray history, jdoubleArray next_waveform, jdoubleArray resp_wave, jbooleanArray is_new_waveform, jbooleanArray is_body_moving, jdoubleArray resp_freq, jint n, jint history_id, jint history_type
+        JNIEnv *env, jobject thiz, jint id, jdoubleArray history, jint n, jint history_id, jint history_type
+) {
+    jdouble *history_ = (env)->GetDoubleArrayElements(history, nullptr);
+
+    if (Engine::GetInstance(id) != nullptr) {
+        Engine::GetHistoryData(id, history_, n, history_id, history_type);
+    }
+    env->ReleaseDoubleArrayElements(history, history_, 0);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_swifttrack_AudioProcessor_recalibrate(
+        JNIEnv *env, jobject thiz, jint id, jdoubleArray history, jdoubleArray next_waveform, jdoubleArray resp_wave, jbooleanArray is_new_waveform, jbooleanArray is_body_moving, jdoubleArray resp_freq, jint n
 ) {
     jdouble *history_ = (env)->GetDoubleArrayElements(history, nullptr);
     jdouble *next_waveform_ = (env)->GetDoubleArrayElements(next_waveform, nullptr);
@@ -51,10 +64,9 @@ Java_com_example_swifttrack_AudioProcessor_getHistoryData(
 
     bool moving_flag[n];
     bool is_new_waveform__ = false;
-//    double resp_freq_ = 0.0;
 
     if (Engine::GetInstance(id) != nullptr) {
-        Engine::GetHistoryData(id, history_,next_waveform_,resp_wave_, moving_flag, &is_new_waveform__, resp_freq_, n, history_id, history_type);
+        Engine::reCalibrate(id, history_, n, next_waveform_,resp_wave_, moving_flag, &is_new_waveform__, resp_freq_);
     }
 
     for(int ti = 0; ti < n; ti ++){
@@ -108,15 +120,7 @@ Java_com_example_swifttrack_AudioProcessor_getThre(
     env->ReleaseDoubleArrayElements(thre, history_, 0);
 }
 
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_example_swifttrack_AudioProcessor_detrend(
-        JNIEnv *env, jobject thiz, jdoubleArray data
-) {
-    jdouble *history_ = (env)->GetDoubleArrayElements(data, nullptr);
-//    Engine::detrend_frames(history_);
-    env->ReleaseDoubleArrayElements(data, history_, 0);
-}
+
 
 
 extern "C"
