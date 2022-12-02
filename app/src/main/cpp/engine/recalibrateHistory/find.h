@@ -5,7 +5,7 @@
  * File: find.h
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 25-Nov-2022 15:54:38
+ * C/C++ source code generated on  : 02-Dec-2022 11:02:26
  */
 
 #ifndef FIND_H
@@ -21,7 +21,7 @@ extern "C" {
 #endif
 
 /* Function Declarations */
-void c_binary_expand_op(int in1_data[], int *in1_size, const double in2[2048],
+void c_binary_expand_op(int in1_data[], int *in1_size, const double in2[4096],
                         const int in3_data[], const int *in3_size,
                         const double in4_data[], const int *in4_size);
 

@@ -5,7 +5,7 @@
  * File: findpeaks.h
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 25-Nov-2022 15:54:38
+ * C/C++ source code generated on  : 02-Dec-2022 11:02:26
  */
 
 #ifndef FINDPEAKS_H
@@ -21,7 +21,7 @@ extern "C" {
 #endif
 
 /* Function Declarations */
-void findpeaks(const double Yin[2048], double Ypk_data[], int *Ypk_size,
+void findpeaks(const double Yin[4096], double Ypk_data[], int *Ypk_size,
                double Xpk_data[], int *Xpk_size);
 
 #ifdef __cplusplus

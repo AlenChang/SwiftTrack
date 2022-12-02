@@ -5,7 +5,7 @@
  * File: recalibrateHistory_emxutil.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 25-Nov-2022 15:54:38
+ * C/C++ source code generated on  : 02-Dec-2022 11:02:26
  */
 
 /* Include Files */
@@ -76,20 +76,21 @@ void emxFree_real_T(emxArray_real_T **pEmxArray)
 
 /*
  * Arguments    : emxArray_real_T **pEmxArray
+ *                int numDimensions
  * Return Type  : void
  */
-void emxInit_real_T(emxArray_real_T **pEmxArray)
+void emxInit_real_T(emxArray_real_T **pEmxArray, int numDimensions)
 {
   emxArray_real_T *emxArray;
   int i;
   *pEmxArray = (emxArray_real_T *)malloc(sizeof(emxArray_real_T));
   emxArray = *pEmxArray;
   emxArray->data = (double *)NULL;
-  emxArray->numDimensions = 2;
-  emxArray->size = (int *)malloc(sizeof(int) * 2U);
+  emxArray->numDimensions = numDimensions;
+  emxArray->size = (int *)malloc(sizeof(int) * (unsigned int)numDimensions);
   emxArray->allocatedSize = 0;
   emxArray->canFreeData = true;
-  for (i = 0; i < 2; i++) {
+  for (i = 0; i < numDimensions; i++) {
     emxArray->size[i] = 0;
   }
 }

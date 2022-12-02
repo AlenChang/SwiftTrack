@@ -49,7 +49,7 @@ Java_com_example_swifttrack_AudioProcessor_getHistoryData(
     jdouble *resp_freq_ = (env)->GetDoubleArrayElements(resp_freq, nullptr);
     jboolean *is_new_waveform_ = (env)->GetBooleanArrayElements(is_new_waveform, nullptr);
 
-    bool moving_flag[2048];
+    bool moving_flag[n];
     bool is_new_waveform__ = false;
 //    double resp_freq_ = 0.0;
 

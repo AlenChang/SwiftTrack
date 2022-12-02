@@ -86,7 +86,7 @@ public class AudioProcessor {
 
     private static class Engine extends Thread {
         private static final int INTERVAL = 50;
-        private static final int WINDOW_SIZE = 2048; // do not modify this
+        private static final int WINDOW_SIZE = 4096; // do not modify this
 
         private final Lock lock = new ReentrantLock();
         private final double[] frame1 = new double[FRAME_SIZE];
@@ -484,7 +484,7 @@ public class AudioProcessor {
 
                     break;
                 case ActivityID.accFragment:
-                    prepareDataForAccFragment(2048, true);
+                    prepareDataForAccFragment(WINDOW_SIZE, true);
                     break;
                 case ActivityID.slideFragment:
 //                    prepareDataForSlideFragment(frameCount);

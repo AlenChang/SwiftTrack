@@ -5,7 +5,7 @@
  * File: findExtents.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 25-Nov-2022 15:54:38
+ * C/C++ source code generated on  : 02-Dec-2022 11:02:26
  */
 
 /* Include Files */
@@ -21,15 +21,191 @@
 #include <string.h>
 
 /* Function Declarations */
-static void getLeftBase(const double yTemp[2048], const int iPeak_data[],
+static void combineFullPeaks(const double y[4096], const int iPk_data[],
+                             int iPk_size, const double bPk_data[],
+                             int bPk_size, const int iLBw_data[], int iLBw_size,
+                             const int iRBw_data[], int iRBw_size,
+                             const emxArray_real_T *wPk, const int iInf_data[],
+                             int iInf_size, int iPkOut_data[], int *iPkOut_size,
+                             emxArray_real_T *bPkOut, emxArray_real_T *bxPkOut,
+                             emxArray_real_T *byPkOut,
+                             emxArray_real_T *wxPkOut);
+
+static void getLeftBase(const double yTemp[4096], const int iPeak_data[],
                         int iPeak_size, const int iFinite_data[],
                         int iFinite_size, const int iInflect_data[],
                         int iBase_data[], int *iBase_size, int iSaddle_data[],
                         int *iSaddle_size);
 
+static void getPeakBase(const double yTemp[4096], const int iPk_data[],
+                        int iPk_size, const int iFin_data[], int iFin_size,
+                        const int iInflect_data[], int iInflect_size,
+                        double peakBase_data[], int *peakBase_size,
+                        int iLeftSaddle_data[], int *iLeftSaddle_size,
+                        int iRightSaddle_data[], int *iRightSaddle_size);
+
 /* Function Definitions */
 /*
- * Arguments    : const double yTemp[2048]
+ * Arguments    : const double y[4096]
+ *                const int iPk_data[]
+ *                int iPk_size
+ *                const double bPk_data[]
+ *                int bPk_size
+ *                const int iLBw_data[]
+ *                int iLBw_size
+ *                const int iRBw_data[]
+ *                int iRBw_size
+ *                const emxArray_real_T *wPk
+ *                const int iInf_data[]
+ *                int iInf_size
+ *                int iPkOut_data[]
+ *                int *iPkOut_size
+ *                emxArray_real_T *bPkOut
+ *                emxArray_real_T *bxPkOut
+ *                emxArray_real_T *byPkOut
+ *                emxArray_real_T *wxPkOut
+ * Return Type  : void
+ */
+static void combineFullPeaks(const double y[4096], const int iPk_data[],
+                             int iPk_size, const double bPk_data[],
+                             int bPk_size, const int iLBw_data[], int iLBw_size,
+                             const int iRBw_data[], int iRBw_size,
+                             const emxArray_real_T *wPk, const int iInf_data[],
+                             int iInf_size, int iPkOut_data[], int *iPkOut_size,
+                             emxArray_real_T *bPkOut, emxArray_real_T *bxPkOut,
+                             emxArray_real_T *byPkOut, emxArray_real_T *wxPkOut)
+{
+  const double *wPk_data;
+  double *bPkOut_data;
+  int c_data[4096];
+  int iFinite_data[4096];
+  int iInfL_data[4096];
+  int iInfR_data[4096];
+  int c_size;
+  int i;
+  int iInfL_size;
+  int iInfR_size;
+  wPk_data = wPk->data;
+  do_vectors(iPk_data, iPk_size, iInf_data, iInf_size, iPkOut_data, iPkOut_size,
+             iInfL_data, &iInfL_size, iInfR_data, &iInfR_size);
+  b_do_vectors(iPkOut_data, *iPkOut_size, iPk_data, iPk_size, c_data, &c_size,
+               iInfL_data, &iInfL_size, iInfR_data, &iInfR_size);
+  if (iInfL_size - 1 >= 0) {
+    memcpy(&iFinite_data[0], &iInfL_data[0],
+           (unsigned int)iInfL_size * sizeof(int));
+  }
+  b_do_vectors(iPkOut_data, *iPkOut_size, iInf_data, iInf_size, c_data, &c_size,
+               iInfL_data, &iInfL_size, iInfR_data, &iInfR_size);
+  if (iInfL_size - 1 >= 0) {
+    memcpy(&c_data[0], &iInfL_data[0], (unsigned int)iInfL_size * sizeof(int));
+  }
+  i = bPkOut->size[0];
+  bPkOut->size[0] = *iPkOut_size;
+  emxEnsureCapacity_real_T(bPkOut, i);
+  bPkOut_data = bPkOut->data;
+  for (i = 0; i < *iPkOut_size; i++) {
+    bPkOut_data[i] = 0.0;
+  }
+  for (i = 0; i < bPk_size; i++) {
+    bPkOut_data[iFinite_data[i] - 1] = bPk_data[i];
+  }
+  for (i = 0; i < iInfL_size; i++) {
+    bPkOut_data[iInfL_data[i] - 1] = 0.0;
+  }
+  for (i = 0; i < iInf_size; i++) {
+    iInfR_size = iInf_data[i] - 1;
+    if (iInfR_size < 1) {
+      iInfR_size = 1;
+    }
+    iInfL_data[i] = iInfR_size;
+  }
+  for (i = 0; i < iInf_size; i++) {
+    iInfR_size = iInf_data[i] + 1;
+    if (iInfR_size > 4096) {
+      iInfR_data[i] = 4096;
+    } else {
+      iInfR_data[i] = iInfR_size;
+    }
+  }
+  i = bxPkOut->size[0] * bxPkOut->size[1];
+  bxPkOut->size[0] = *iPkOut_size;
+  bxPkOut->size[1] = 2;
+  emxEnsureCapacity_real_T(bxPkOut, i);
+  bPkOut_data = bxPkOut->data;
+  iInfR_size = *iPkOut_size << 1;
+  for (i = 0; i < iInfR_size; i++) {
+    bPkOut_data[i] = 0.0;
+  }
+  for (i = 0; i < iLBw_size; i++) {
+    bPkOut_data[iFinite_data[i] - 1] = (short)((short)(iLBw_data[i] - 1) + 1);
+  }
+  for (i = 0; i < iRBw_size; i++) {
+    bPkOut_data[(iFinite_data[i] + bxPkOut->size[0]) - 1] =
+        (short)((short)(iRBw_data[i] - 1) + 1);
+  }
+  for (i = 0; i < iInf_size; i++) {
+    bPkOut_data[c_data[i] - 1] =
+        0.5 * (double)(short)((short)((short)(iInf_data[i] - 1) +
+                                      (short)(iInfL_data[i] - 1)) +
+                              2);
+  }
+  for (i = 0; i < iInf_size; i++) {
+    bPkOut_data[(c_data[i] + bxPkOut->size[0]) - 1] =
+        0.5 * (double)(short)((short)((short)(iInf_data[i] - 1) +
+                                      (short)(iInfR_data[i] - 1)) +
+                              2);
+  }
+  i = byPkOut->size[0] * byPkOut->size[1];
+  byPkOut->size[0] = *iPkOut_size;
+  byPkOut->size[1] = 2;
+  emxEnsureCapacity_real_T(byPkOut, i);
+  bPkOut_data = byPkOut->data;
+  for (i = 0; i < iInfR_size; i++) {
+    bPkOut_data[i] = 0.0;
+  }
+  for (i = 0; i < iLBw_size; i++) {
+    bPkOut_data[iFinite_data[i] - 1] = y[iLBw_data[i] - 1];
+  }
+  for (i = 0; i < iRBw_size; i++) {
+    bPkOut_data[(iFinite_data[i] + byPkOut->size[0]) - 1] = y[iRBw_data[i] - 1];
+  }
+  for (i = 0; i < iInf_size; i++) {
+    bPkOut_data[c_data[i] - 1] = y[iInfL_data[i] - 1];
+  }
+  for (i = 0; i < iInf_size; i++) {
+    bPkOut_data[(c_data[i] + byPkOut->size[0]) - 1] = y[iInfR_data[i] - 1];
+  }
+  i = wxPkOut->size[0] * wxPkOut->size[1];
+  wxPkOut->size[0] = *iPkOut_size;
+  wxPkOut->size[1] = 2;
+  emxEnsureCapacity_real_T(wxPkOut, i);
+  bPkOut_data = wxPkOut->data;
+  for (i = 0; i < iInfR_size; i++) {
+    bPkOut_data[i] = 0.0;
+  }
+  iInfR_size = wPk->size[0];
+  for (i = 0; i < 2; i++) {
+    for (c_size = 0; c_size < iInfR_size; c_size++) {
+      bPkOut_data[(iFinite_data[c_size] + wxPkOut->size[0] * i) - 1] =
+          wPk_data[c_size + wPk->size[0] * i];
+    }
+  }
+  for (i = 0; i < iInf_size; i++) {
+    bPkOut_data[c_data[i] - 1] =
+        0.5 * (double)(short)((short)((short)(iInf_data[i] - 1) +
+                                      (short)(iInfL_data[i] - 1)) +
+                              2);
+  }
+  for (i = 0; i < iInf_size; i++) {
+    bPkOut_data[(c_data[i] + wxPkOut->size[0]) - 1] =
+        0.5 * (double)(short)((short)((short)(iInf_data[i] - 1) +
+                                      (short)(iInfR_data[i] - 1)) +
+                              2);
+  }
+}
+
+/*
+ * Arguments    : const double yTemp[4096]
  *                const int iPeak_data[]
  *                int iPeak_size
  *                const int iFinite_data[]
@@ -41,16 +217,16 @@ static void getLeftBase(const double yTemp[2048], const int iPeak_data[],
  *                int *iSaddle_size
  * Return Type  : void
  */
-static void getLeftBase(const double yTemp[2048], const int iPeak_data[],
+static void getLeftBase(const double yTemp[4096], const int iPeak_data[],
                         int iPeak_size, const int iFinite_data[],
                         int iFinite_size, const int iInflect_data[],
                         int iBase_data[], int *iBase_size, int iSaddle_data[],
                         int *iSaddle_size)
 {
-  double peak_data[2048];
-  double valley_data[2048];
+  static double peak_data[4096];
+  static double valley_data[4096];
   double v;
-  int iValley_data[2048];
+  int iValley_data[4096];
   int i;
   int iv;
   int j;
@@ -125,7 +301,111 @@ static void getLeftBase(const double yTemp[2048], const int iPeak_data[],
 }
 
 /*
- * Arguments    : const double y[2048]
+ * Arguments    : const double yTemp[4096]
+ *                const int iPk_data[]
+ *                int iPk_size
+ *                const int iFin_data[]
+ *                int iFin_size
+ *                const int iInflect_data[]
+ *                int iInflect_size
+ *                double peakBase_data[]
+ *                int *peakBase_size
+ *                int iLeftSaddle_data[]
+ *                int *iLeftSaddle_size
+ *                int iRightSaddle_data[]
+ *                int *iRightSaddle_size
+ * Return Type  : void
+ */
+static void getPeakBase(const double yTemp[4096], const int iPk_data[],
+                        int iPk_size, const int iFin_data[], int iFin_size,
+                        const int iInflect_data[], int iInflect_size,
+                        double peakBase_data[], int *peakBase_size,
+                        int iLeftSaddle_data[], int *iLeftSaddle_size,
+                        int iRightSaddle_data[], int *iRightSaddle_size)
+{
+  static double varargin_1_data[4096];
+  static double varargin_2_data[4096];
+  int b_x_data[4096];
+  int c_x_data[4096];
+  int iLeftBase_data[4096];
+  int iRightBase_data[4096];
+  int x_data[4096];
+  int b_i;
+  int i;
+  int iLeftBase_size;
+  int iRightBase_size;
+  int x_tmp;
+  int xtmp;
+  getLeftBase(yTemp, iPk_data, iPk_size, iFin_data, iFin_size, iInflect_data,
+              iLeftBase_data, &iLeftBase_size, iLeftSaddle_data,
+              iLeftSaddle_size);
+  if (iPk_size - 1 >= 0) {
+    memcpy(&x_data[0], &iPk_data[0], (unsigned int)iPk_size * sizeof(int));
+  }
+  i = iPk_size >> 1;
+  for (b_i = 0; b_i < i; b_i++) {
+    xtmp = x_data[b_i];
+    x_tmp = (iPk_size - b_i) - 1;
+    x_data[b_i] = x_data[x_tmp];
+    x_data[x_tmp] = xtmp;
+  }
+  if (iFin_size - 1 >= 0) {
+    memcpy(&b_x_data[0], &iFin_data[0], (unsigned int)iFin_size * sizeof(int));
+  }
+  i = iFin_size >> 1;
+  for (b_i = 0; b_i < i; b_i++) {
+    xtmp = b_x_data[b_i];
+    x_tmp = (iFin_size - b_i) - 1;
+    b_x_data[b_i] = b_x_data[x_tmp];
+    b_x_data[x_tmp] = xtmp;
+  }
+  if (iInflect_size - 1 >= 0) {
+    memcpy(&c_x_data[0], &iInflect_data[0],
+           (unsigned int)iInflect_size * sizeof(int));
+  }
+  i = iInflect_size >> 1;
+  for (b_i = 0; b_i < i; b_i++) {
+    xtmp = c_x_data[b_i];
+    x_tmp = (iInflect_size - b_i) - 1;
+    c_x_data[b_i] = c_x_data[x_tmp];
+    c_x_data[x_tmp] = xtmp;
+  }
+  getLeftBase(yTemp, x_data, iPk_size, b_x_data, iFin_size, c_x_data,
+              iRightBase_data, &iRightBase_size, iRightSaddle_data,
+              iRightSaddle_size);
+  i = iRightBase_size >> 1;
+  for (b_i = 0; b_i < i; b_i++) {
+    xtmp = iRightBase_data[b_i];
+    x_tmp = (iRightBase_size - b_i) - 1;
+    iRightBase_data[b_i] = iRightBase_data[x_tmp];
+    iRightBase_data[x_tmp] = xtmp;
+  }
+  i = *iRightSaddle_size >> 1;
+  for (b_i = 0; b_i < i; b_i++) {
+    xtmp = iRightSaddle_data[b_i];
+    x_tmp = (*iRightSaddle_size - b_i) - 1;
+    iRightSaddle_data[b_i] = iRightSaddle_data[x_tmp];
+    iRightSaddle_data[x_tmp] = xtmp;
+  }
+  for (i = 0; i < iLeftBase_size; i++) {
+    varargin_1_data[i] = yTemp[iLeftBase_data[i] - 1];
+  }
+  for (i = 0; i < iRightBase_size; i++) {
+    varargin_2_data[i] = yTemp[iRightBase_data[i] - 1];
+  }
+  if (iLeftBase_size == iRightBase_size) {
+    *peakBase_size = iLeftBase_size;
+    for (i = 0; i < iLeftBase_size; i++) {
+      peakBase_data[i] = fmax(varargin_1_data[i], varargin_2_data[i]);
+    }
+  } else {
+    expand_max(varargin_1_data, iLeftBase_size, varargin_2_data,
+               iRightBase_size, peakBase_data, peakBase_size);
+  }
+}
+
+/*
+ * Arguments    : const double y[4096]
  *                int iPk_data[]
  *                int *iPk_size
  *                const int iFin_data[]
@@ -134,405 +414,233 @@ static void getLeftBase(const double yTemp[2048], const int iPeak_data[],
  *                int iInf_size
  *                const int iInflect_data[]
  *                int iInflect_size
- *                double bPk_data[]
- *                int *bPk_size
+ *                emxArray_real_T *bPk
  *                emxArray_real_T *bxPk
  *                emxArray_real_T *byPk
  *                emxArray_real_T *wxPk
  * Return Type  : void
  */
-void findExtents(const double y[2048], int iPk_data[], int *iPk_size,
+void findExtents(const double y[4096], int iPk_data[], int *iPk_size,
                  const int iFin_data[], int iFin_size, const int iInf_data[],
                  int iInf_size, const int iInflect_data[], int iInflect_size,
-                 double bPk_data[], int *bPk_size, emxArray_real_T *bxPk,
+                 emxArray_real_T *bPk, emxArray_real_T *bxPk,
                  emxArray_real_T *byPk, emxArray_real_T *wxPk)
 {
-  static double d_bPk_data[4096];
-  static double w_data[4096];
-  static double b_bPk_data[2048];
-  static double base_data[2048];
-  static double varargin_2_data[2048];
-  static double yFinite[2048];
-  static int tmp_data[4096];
+  static double bPk_data[4096];
+  static double base_data[4096];
+  static double yFinite[4096];
+  static int b_iPk_data[8192];
+  emxArray_real_T *b_bPk;
   emxArray_real_T *b_bxPk;
-  double c_bPk_data[2048];
-  double d;
-  double *b_bxPk_data;
+  emxArray_real_T *b_wxPk;
+  emxArray_real_T *w;
+  double *b_bPk_data;
   double *bxPk_data;
   double *byPk_data;
+  double *c_bPk_data;
+  double *w_data;
   double *wxPk_data;
-  int c_iPk_data[4096];
-  int b_iPk_data[2048];
-  int iInfL_data[2048];
-  int iInfR_data[2048];
-  int iLeftSaddle_data[2048];
-  int iRightBase_data[2048];
-  int iRightSaddle_data[2048];
-  int x_data[2048];
+  int iLB_data[4096];
+  int iLBh_data[4096];
+  int iRB_data[4096];
+  int bPk_size;
   int b_i;
   int i;
-  int iInfL_size;
-  int iPk_tmp;
-  int iRightSaddle_size;
-  int m;
-  int w_size;
-  int xtmp;
-  short idx_size_idx_0;
-  boolean_T yFinite_data[2048];
-  memcpy(&yFinite[0], &y[0], 2048U * sizeof(double));
+  int i1;
+  int iLB_size;
+  int iLBh_size;
+  int iLeft;
+  int iRB_size;
+  int loop_ub;
+  memcpy(&yFinite[0], &y[0], 4096U * sizeof(double));
   for (i = 0; i < iInf_size; i++) {
     yFinite[iInf_data[i] - 1] = rtNaN;
   }
-  m = *iPk_size;
-  if (m - 1 >= 0) {
-    memcpy(&b_iPk_data[0], &iPk_data[0], (unsigned int)m * sizeof(int));
-  }
-  getLeftBase(yFinite, iPk_data, *iPk_size, iFin_data, iFin_size, iInflect_data,
-              iInfL_data, &iInfL_size, iLeftSaddle_data, &xtmp);
-  m = *iPk_size - 1;
-  i = *iPk_size >> 1;
-  for (b_i = 0; b_i < i; b_i++) {
-    xtmp = b_iPk_data[b_i];
-    iPk_tmp = m - b_i;
-    b_iPk_data[b_i] = b_iPk_data[iPk_tmp];
-    b_iPk_data[iPk_tmp] = xtmp;
-  }
-  if (iFin_size - 1 >= 0) {
-    memcpy(&iInfR_data[0], &iFin_data[0],
-           (unsigned int)iFin_size * sizeof(int));
-  }
-  i = iFin_size >> 1;
-  for (b_i = 0; b_i < i; b_i++) {
-    xtmp = iInfR_data[b_i];
-    m = (iFin_size - b_i) - 1;
-    iInfR_data[b_i] = iInfR_data[m];
-    iInfR_data[m] = xtmp;
-  }
-  if (iInflect_size - 1 >= 0) {
-    memcpy(&x_data[0], &iInflect_data[0],
-           (unsigned int)iInflect_size * sizeof(int));
-  }
-  i = iInflect_size >> 1;
-  for (b_i = 0; b_i < i; b_i++) {
-    xtmp = x_data[b_i];
-    m = (iInflect_size - b_i) - 1;
-    x_data[b_i] = x_data[m];
-    x_data[m] = xtmp;
-  }
-  getLeftBase(yFinite, b_iPk_data, *iPk_size, iInfR_data, iFin_size, x_data,
-              iRightBase_data, &iPk_tmp, iRightSaddle_data, &iRightSaddle_size);
-  i = iPk_tmp >> 1;
-  for (b_i = 0; b_i < i; b_i++) {
-    xtmp = iRightBase_data[b_i];
-    m = (iPk_tmp - b_i) - 1;
-    iRightBase_data[b_i] = iRightBase_data[m];
-    iRightBase_data[m] = xtmp;
-  }
-  i = iRightSaddle_size >> 1;
-  for (b_i = 0; b_i < i; b_i++) {
-    xtmp = iRightSaddle_data[b_i];
-    m = (iRightSaddle_size - b_i) - 1;
-    iRightSaddle_data[b_i] = iRightSaddle_data[m];
-    iRightSaddle_data[m] = xtmp;
-  }
-  for (i = 0; i < iInfL_size; i++) {
-    base_data[i] = yFinite[iInfL_data[i] - 1];
-  }
-  for (i = 0; i < iPk_tmp; i++) {
-    varargin_2_data[i] = yFinite[iRightBase_data[i] - 1];
-  }
-  if (iInfL_size == iPk_tmp) {
-    *bPk_size = iInfL_size;
-    for (i = 0; i < iInfL_size; i++) {
-      b_bPk_data[i] = fmax(base_data[i], varargin_2_data[i]);
-    }
-  } else {
-    expand_max(base_data, iInfL_size, varargin_2_data, iPk_tmp, b_bPk_data,
-               bPk_size);
-  }
-  if (*iPk_size == *bPk_size) {
+  getPeakBase(yFinite, iPk_data, *iPk_size, iFin_data, iFin_size, iInflect_data,
+              iInflect_size, base_data, &iLeft, iLB_data, &iLB_size, iRB_data,
+              &iRB_size);
+  if (*iPk_size == iLeft) {
+    boolean_T yFinite_data[4096];
     for (i = 0; i < *iPk_size; i++) {
-      yFinite_data[i] = (yFinite[iPk_data[i] - 1] - b_bPk_data[i] >= 0.1);
+      yFinite_data[i] = (yFinite[iPk_data[i] - 1] - base_data[i] >= 0.1);
     }
-    eml_find(yFinite_data, *iPk_size, tmp_data, &iPk_tmp);
+    eml_find(yFinite_data, *iPk_size, b_iPk_data, &iRB_size);
   } else {
-    c_binary_expand_op(tmp_data, &iPk_tmp, yFinite, iPk_data, iPk_size,
-                       b_bPk_data, bPk_size);
+    c_binary_expand_op(b_iPk_data, &iRB_size, yFinite, iPk_data, iPk_size,
+                       base_data, &iLeft);
   }
-  w_size = iPk_tmp;
-  for (i = 0; i < iPk_tmp; i++) {
-    w_data[i] = tmp_data[i];
+  emxInit_real_T(&w, 1);
+  i = w->size[0];
+  w->size[0] = iRB_size;
+  emxEnsureCapacity_real_T(w, i);
+  w_data = w->data;
+  for (i = 0; i < iRB_size; i++) {
+    w_data[i] = b_iPk_data[i];
   }
-  if (*iPk_size == *bPk_size) {
-    for (i = 0; i < *iPk_size; i++) {
-      yFinite_data[i] = (yFinite[iPk_data[i] - 1] - b_bPk_data[i] >= 0.1);
-    }
-    eml_find(yFinite_data, *iPk_size, tmp_data, &iPk_tmp);
+  bPk_size = w->size[0];
+  loop_ub = w->size[0];
+  for (i = 0; i < loop_ub; i++) {
+    bPk_data[i] = base_data[(int)w_data[i] - 1];
+  }
+  if (w->size[0] == 0) {
+    iLBh_size = 0;
+    iLB_size = 0;
   } else {
-    c_binary_expand_op(tmp_data, &iPk_tmp, yFinite, iPk_data, iPk_size,
-                       b_bPk_data, bPk_size);
-  }
-  idx_size_idx_0 = (short)iPk_tmp;
-  for (i = 0; i < w_size; i++) {
-    b_iPk_data[i] = iPk_data[(int)w_data[i] - 1];
-  }
-  for (i = 0; i < w_size; i++) {
-    c_bPk_data[i] = b_bPk_data[(int)w_data[i] - 1];
-  }
-  for (i = 0; i < w_size; i++) {
-    iInfL_data[i] = iLeftSaddle_data[(int)w_data[i] - 1];
-  }
-  xtmp = w_size;
-  if (w_size - 1 >= 0) {
-    memcpy(&iLeftSaddle_data[0], &iInfL_data[0],
-           (unsigned int)w_size * sizeof(int));
-  }
-  for (i = 0; i < w_size; i++) {
-    iInfL_data[i] = iRightSaddle_data[(int)w_data[i] - 1];
-  }
-  iRightSaddle_size = w_size;
-  if (w_size - 1 >= 0) {
-    memcpy(&iRightSaddle_data[0], &iInfL_data[0],
-           (unsigned int)w_size * sizeof(int));
-  }
-  if (*iPk_size == *bPk_size) {
-    for (i = 0; i < *iPk_size; i++) {
-      yFinite_data[i] = (yFinite[iPk_data[i] - 1] - b_bPk_data[i] >= 0.1);
+    if (bPk_size - 1 >= 0) {
+      memcpy(&base_data[0], &bPk_data[0],
+             (unsigned int)bPk_size * sizeof(double));
     }
-    eml_find(yFinite_data, *iPk_size, tmp_data, &iPk_tmp);
-  } else {
-    c_binary_expand_op(tmp_data, &iPk_tmp, yFinite, iPk_data, iPk_size,
-                       b_bPk_data, bPk_size);
-  }
-  for (i = 0; i < iPk_tmp; i++) {
-    c_iPk_data[i] = iPk_data[tmp_data[i] - 1];
-  }
-  *iPk_size = iPk_tmp;
-  if (iPk_tmp - 1 >= 0) {
-    memcpy(&iPk_data[0], &c_iPk_data[0], (unsigned int)iPk_tmp * sizeof(int));
-  }
-  if (w_size - 1 >= 0) {
-    memcpy(&base_data[0], &c_bPk_data[0],
-           (unsigned int)w_size * sizeof(double));
-  }
-  if (idx_size_idx_0 == 0) {
-    xtmp = 0;
-    iRightSaddle_size = 0;
-  }
-  m = w_size << 1;
-  if (m - 1 >= 0) {
-    memset(&w_data[0], 0, (unsigned int)m * sizeof(double));
-  }
-  for (b_i = 0; b_i < w_size; b_i++) {
-    double refHeight;
-    double xc_tmp;
-    refHeight = (yFinite[iPk_data[b_i] - 1] + base_data[b_i]) / 2.0;
-    m = iPk_data[b_i];
-    while ((m >= iLeftSaddle_data[b_i]) && (yFinite[m - 1] > refHeight)) {
-      m--;
+    iLBh_size = w->size[0];
+    loop_ub = w->size[0];
+    for (i = 0; i < loop_ub; i++) {
+      iLBh_data[i] = iLB_data[(int)w_data[i] - 1];
     }
-    i = iLeftSaddle_data[b_i];
-    if (m < i) {
-      w_data[b_i] = ((double)i - 1.0) + 1.0;
-    } else {
-      xc_tmp = yFinite[m - 1];
-      d = base_data[b_i];
-      xc_tmp = (((double)m - 1.0) + 1.0) +
-               (0.5 * (yFinite[b_iPk_data[b_i] - 1] + d) - xc_tmp) /
-                   (yFinite[m] - xc_tmp);
-      if (rtIsNaN(xc_tmp)) {
-        if (rtIsInf(d)) {
-          xc_tmp = 0.5 * (double)((m + m) + 1);
-        } else {
-          xc_tmp = (double)m + 1.0;
-        }
-      }
-      w_data[b_i] = xc_tmp;
-    }
-    m = iPk_data[b_i];
-    while ((m <= iRightSaddle_data[b_i]) && (yFinite[m - 1] > refHeight)) {
-      m++;
-    }
-    i = iRightSaddle_data[b_i];
-    if (m > i) {
-      w_data[b_i + w_size] = ((double)i - 1.0) + 1.0;
-    } else {
-      xc_tmp = yFinite[m - 1];
-      d = base_data[b_i];
-      xc_tmp = (((double)m - 1.0) + 1.0) +
-               -(0.5 * (yFinite[b_iPk_data[b_i] - 1] + d) - xc_tmp) /
-                   (yFinite[m - 2] - xc_tmp);
-      if (rtIsNaN(xc_tmp)) {
-        if (rtIsInf(d)) {
-          xc_tmp = 0.5 * (double)((m + m) - 1);
-        } else {
-          xc_tmp = ((double)m - 2.0) + 1.0;
-        }
-      }
-      w_data[b_i + w_size] = xc_tmp;
+    iLB_size = w->size[0];
+    loop_ub = w->size[0];
+    for (i = 0; i < loop_ub; i++) {
+      iLB_data[i] = iRB_data[(int)w_data[i] - 1];
     }
   }
-  do_vectors(b_iPk_data, w_size, iInf_data, iInf_size, iPk_data, iPk_size,
-             iInfL_data, &iInfL_size, iInfR_data, &m);
-  b_do_vectors(iPk_data, *iPk_size, b_iPk_data, w_size, x_data, &iPk_tmp,
-               iInfL_data, &iInfL_size, iInfR_data, &m);
-  for (i = 0; i < iInfL_size; i++) {
-    base_data[i] = iInfL_data[i];
-  }
-  b_do_vectors(iPk_data, *iPk_size, iInf_data, iInf_size, x_data, &iPk_tmp,
-               iInfL_data, &iInfL_size, iInfR_data, &m);
-  for (i = 0; i < iInfL_size; i++) {
-    varargin_2_data[i] = iInfL_data[i];
-  }
-  idx_size_idx_0 = (short)*iPk_size;
-  *bPk_size = idx_size_idx_0;
-  m = idx_size_idx_0;
-  if (m - 1 >= 0) {
-    memset(&bPk_data[0], 0, (unsigned int)m * sizeof(double));
-  }
-  for (i = 0; i < w_size; i++) {
-    bPk_data[(int)base_data[i] - 1] = c_bPk_data[i];
-  }
-  for (i = 0; i < iInfL_size; i++) {
-    iInfL_data[i] = (int)varargin_2_data[i];
-  }
-  for (i = 0; i < iInfL_size; i++) {
-    bPk_data[iInfL_data[i] - 1] = 0.0;
-  }
-  for (i = 0; i < iInf_size; i++) {
-    m = iInf_data[i] - 1;
-    if (m < 1) {
-      m = 1;
-    }
-    iInfL_data[i] = m;
-  }
-  for (i = 0; i < iInf_size; i++) {
-    m = iInf_data[i] + 1;
-    if (m > 2048) {
-      iInfR_data[i] = 2048;
-    } else {
-      iInfR_data[i] = m;
-    }
-  }
-  i = bxPk->size[0] * bxPk->size[1];
-  bxPk->size[0] = *iPk_size;
-  bxPk->size[1] = 2;
-  emxEnsureCapacity_real_T(bxPk, i);
-  bxPk_data = bxPk->data;
-  m = *iPk_size << 1;
-  for (i = 0; i < m; i++) {
-    bxPk_data[i] = 0.0;
-  }
-  for (i = 0; i < xtmp; i++) {
-    bxPk_data[(int)base_data[i] - 1] =
-        (short)((short)(iLeftSaddle_data[i] - 1) + 1);
-  }
-  for (i = 0; i < iRightSaddle_size; i++) {
-    bxPk_data[((int)base_data[i] + bxPk->size[0]) - 1] =
-        (short)((short)(iRightSaddle_data[i] - 1) + 1);
-  }
-  for (i = 0; i < iInf_size; i++) {
-    bxPk_data[(int)varargin_2_data[i] - 1] =
-        0.5 * (double)(short)((short)((short)(iInf_data[i] - 1) +
-                                      (short)(iInfL_data[i] - 1)) +
-                              2);
-  }
-  for (i = 0; i < iInf_size; i++) {
-    bxPk_data[((int)varargin_2_data[i] + bxPk->size[0]) - 1] =
-        0.5 * (double)(short)((short)((short)(iInf_data[i] - 1) +
-                                      (short)(iInfR_data[i] - 1)) +
-                              2);
-  }
-  i = byPk->size[0] * byPk->size[1];
-  byPk->size[0] = *iPk_size;
-  byPk->size[1] = 2;
-  emxEnsureCapacity_real_T(byPk, i);
-  byPk_data = byPk->data;
-  for (i = 0; i < m; i++) {
-    byPk_data[i] = 0.0;
-  }
-  for (i = 0; i < xtmp; i++) {
-    byPk_data[(int)base_data[i] - 1] = y[iLeftSaddle_data[i] - 1];
-  }
-  for (i = 0; i < iRightSaddle_size; i++) {
-    byPk_data[((int)base_data[i] + byPk->size[0]) - 1] =
-        y[iRightSaddle_data[i] - 1];
-  }
-  for (i = 0; i < iInf_size; i++) {
-    byPk_data[(int)varargin_2_data[i] - 1] = y[iInfL_data[i] - 1];
-  }
-  for (i = 0; i < iInf_size; i++) {
-    byPk_data[((int)varargin_2_data[i] + byPk->size[0]) - 1] =
-        y[iInfR_data[i] - 1];
-  }
-  i = wxPk->size[0] * wxPk->size[1];
-  wxPk->size[0] = *iPk_size;
-  wxPk->size[1] = 2;
-  emxEnsureCapacity_real_T(wxPk, i);
-  wxPk_data = wxPk->data;
-  for (i = 0; i < m; i++) {
+  emxInit_real_T(&b_wxPk, 2);
+  i = b_wxPk->size[0] * b_wxPk->size[1];
+  b_wxPk->size[0] = w->size[0];
+  b_wxPk->size[1] = 2;
+  emxEnsureCapacity_real_T(b_wxPk, i);
+  wxPk_data = b_wxPk->data;
+  loop_ub = w->size[0] << 1;
+  for (i = 0; i < loop_ub; i++) {
     wxPk_data[i] = 0.0;
   }
-  for (i = 0; i < 2; i++) {
-    for (m = 0; m < w_size; m++) {
-      wxPk_data[((int)base_data[m] + wxPk->size[0] * i) - 1] =
-          w_data[m + w_size * i];
+  i = w->size[0];
+  for (b_i = 0; b_i < i; b_i++) {
+    double refHeight;
+    double refHeight_tmp;
+    double xc_tmp;
+    iRB_size = (int)w_data[b_i] - 1;
+    loop_ub = iPk_data[iRB_size] - 1;
+    refHeight_tmp = yFinite[loop_ub] + base_data[b_i];
+    refHeight = refHeight_tmp / 2.0;
+    iLeft = iPk_data[iRB_size];
+    while ((iLeft >= iLBh_data[b_i]) && (yFinite[iLeft - 1] > refHeight)) {
+      iLeft--;
+    }
+    i1 = iLBh_data[b_i];
+    if (iLeft < i1) {
+      wxPk_data[b_i] = ((double)i1 - 1.0) + 1.0;
+    } else {
+      xc_tmp = yFinite[iLeft - 1];
+      refHeight_tmp =
+          (((double)iLeft - 1.0) + 1.0) +
+          (0.5 * refHeight_tmp - xc_tmp) / (yFinite[iLeft] - xc_tmp);
+      if (rtIsNaN(refHeight_tmp)) {
+        if (rtIsInf(base_data[b_i])) {
+          refHeight_tmp = 0.5 * (double)((iLeft + iLeft) + 1);
+        } else {
+          refHeight_tmp = (double)iLeft + 1.0;
+        }
+      }
+      wxPk_data[b_i] = refHeight_tmp;
+    }
+    iLeft = iPk_data[iRB_size];
+    while ((iLeft <= iLB_data[b_i]) && (yFinite[iLeft - 1] > refHeight)) {
+      iLeft++;
+    }
+    i1 = iLB_data[b_i];
+    if (iLeft > i1) {
+      wxPk_data[b_i + b_wxPk->size[0]] = ((double)i1 - 1.0) + 1.0;
+    } else {
+      xc_tmp = yFinite[iLeft - 1];
+      refHeight = base_data[b_i];
+      refHeight_tmp = (((double)iLeft - 1.0) + 1.0) +
+                      -(0.5 * (yFinite[loop_ub] + refHeight) - xc_tmp) /
+                          (yFinite[iLeft - 2] - xc_tmp);
+      if (rtIsNaN(refHeight_tmp)) {
+        if (rtIsInf(refHeight)) {
+          refHeight_tmp = 0.5 * (double)((iLeft + iLeft) - 1);
+        } else {
+          refHeight_tmp = ((double)iLeft - 2.0) + 1.0;
+        }
+      }
+      wxPk_data[b_i + b_wxPk->size[0]] = refHeight_tmp;
     }
   }
-  for (i = 0; i < iInf_size; i++) {
-    wxPk_data[(int)varargin_2_data[i] - 1] =
-        0.5 * (double)(short)((short)((short)(iInf_data[i] - 1) +
-                                      (short)(iInfL_data[i] - 1)) +
-                              2);
+  iRB_size = w->size[0];
+  loop_ub = w->size[0];
+  for (i = 0; i < loop_ub; i++) {
+    iRB_data[i] = iPk_data[(int)w_data[i] - 1];
   }
-  for (i = 0; i < iInf_size; i++) {
-    wxPk_data[((int)varargin_2_data[i] + wxPk->size[0]) - 1] =
-        0.5 * (double)(short)((short)((short)(iInf_data[i] - 1) +
-                                      (short)(iInfR_data[i] - 1)) +
-                              2);
-  }
+  combineFullPeaks(y, iRB_data, iRB_size, bPk_data, bPk_size, iLBh_data,
+                   iLBh_size, iLB_data, iLB_size, b_wxPk, iInf_data, iInf_size,
+                   iPk_data, iPk_size, bPk, bxPk, byPk, wxPk);
+  wxPk_data = wxPk->data;
+  byPk_data = byPk->data;
+  bxPk_data = bxPk->data;
+  b_bPk_data = bPk->data;
+  emxFree_real_T(&b_wxPk);
   if (*iPk_size != 0) {
-    boolean_T b_w_data[4096];
-    w_size = wxPk->size[0];
+    boolean_T b_w_data[8192];
+    i = w->size[0];
+    w->size[0] = wxPk->size[0];
+    emxEnsureCapacity_real_T(w, i);
+    w_data = w->data;
     if (wxPk->size[0] != 0) {
-      m = wxPk->size[0];
-      for (iPk_tmp = 0; iPk_tmp < m; iPk_tmp++) {
-        w_data[iPk_tmp] = wxPk_data[iPk_tmp + m] - wxPk_data[iPk_tmp];
+      iLeft = wxPk->size[0];
+      for (iRB_size = 0; iRB_size < iLeft; iRB_size++) {
+        w_data[iRB_size] = wxPk_data[iRB_size + iLeft] - wxPk_data[iRB_size];
       }
     }
-    for (i = 0; i < w_size; i++) {
-      d = w_data[i];
-      b_w_data[i] = ((d >= 20.0) && (d <= rtInf));
+    iLeft = w->size[0];
+    loop_ub = w->size[0];
+    for (i = 0; i < loop_ub; i++) {
+      b_w_data[i] = ((w_data[i] >= 20.0) && (w_data[i] <= rtInf));
     }
-    eml_find(b_w_data, w_size, tmp_data, &iPk_tmp);
-    for (i = 0; i < iPk_tmp; i++) {
-      w_data[i] = tmp_data[i];
+    eml_find(b_w_data, iLeft, b_iPk_data, &iRB_size);
+    i = w->size[0];
+    w->size[0] = iRB_size;
+    emxEnsureCapacity_real_T(w, i);
+    w_data = w->data;
+    for (i = 0; i < iRB_size; i++) {
+      w_data[i] = b_iPk_data[i];
     }
-    for (i = 0; i < iPk_tmp; i++) {
-      c_iPk_data[i] = iPk_data[(int)w_data[i] - 1];
+    iRB_size = w->size[0];
+    loop_ub = w->size[0];
+    for (i = 0; i < loop_ub; i++) {
+      b_iPk_data[i] = iPk_data[(int)w_data[i] - 1];
     }
-    *iPk_size = iPk_tmp;
-    if (iPk_tmp - 1 >= 0) {
-      memcpy(&iPk_data[0], &c_iPk_data[0], (unsigned int)iPk_tmp * sizeof(int));
+    *iPk_size = iRB_size;
+    if (iRB_size - 1 >= 0) {
+      memcpy(&iPk_data[0], &b_iPk_data[0],
+             (unsigned int)iRB_size * sizeof(int));
     }
-    for (i = 0; i < iPk_tmp; i++) {
-      d_bPk_data[i] = bPk_data[(int)w_data[i] - 1];
+    emxInit_real_T(&b_bPk, 1);
+    i = b_bPk->size[0];
+    b_bPk->size[0] = w->size[0];
+    emxEnsureCapacity_real_T(b_bPk, i);
+    c_bPk_data = b_bPk->data;
+    loop_ub = w->size[0];
+    for (i = 0; i < loop_ub; i++) {
+      c_bPk_data[i] = b_bPk_data[(int)w_data[i] - 1];
     }
-    *bPk_size = iPk_tmp;
-    if (iPk_tmp - 1 >= 0) {
-      memcpy(&bPk_data[0], &d_bPk_data[0],
-             (unsigned int)iPk_tmp * sizeof(double));
+    i = bPk->size[0];
+    bPk->size[0] = b_bPk->size[0];
+    emxEnsureCapacity_real_T(bPk, i);
+    b_bPk_data = bPk->data;
+    loop_ub = b_bPk->size[0];
+    for (i = 0; i < loop_ub; i++) {
+      b_bPk_data[i] = c_bPk_data[i];
     }
-    emxInit_real_T(&b_bxPk);
+    emxFree_real_T(&b_bPk);
+    emxInit_real_T(&b_bxPk, 2);
     i = b_bxPk->size[0] * b_bxPk->size[1];
-    b_bxPk->size[0] = iPk_tmp;
+    b_bxPk->size[0] = w->size[0];
     b_bxPk->size[1] = 2;
     emxEnsureCapacity_real_T(b_bxPk, i);
-    b_bxPk_data = b_bxPk->data;
+    b_bPk_data = b_bxPk->data;
+    loop_ub = w->size[0];
     for (i = 0; i < 2; i++) {
-      for (m = 0; m < iPk_tmp; m++) {
-        b_bxPk_data[m + b_bxPk->size[0] * i] =
-            bxPk_data[((int)w_data[m] + bxPk->size[0] * i) - 1];
+      for (i1 = 0; i1 < loop_ub; i1++) {
+        b_bPk_data[i1 + b_bxPk->size[0] * i] =
+            bxPk_data[((int)w_data[i1] + bxPk->size[0] * i) - 1];
       }
     }
     i = bxPk->size[0] * bxPk->size[1];
@@ -540,19 +648,20 @@ void findExtents(const double y[2048], int iPk_data[], int *iPk_size,
     bxPk->size[1] = 2;
     emxEnsureCapacity_real_T(bxPk, i);
     bxPk_data = bxPk->data;
-    m = b_bxPk->size[0] * 2;
-    for (i = 0; i < m; i++) {
-      bxPk_data[i] = b_bxPk_data[i];
+    loop_ub = b_bxPk->size[0] * 2;
+    for (i = 0; i < loop_ub; i++) {
+      bxPk_data[i] = b_bPk_data[i];
     }
     i = b_bxPk->size[0] * b_bxPk->size[1];
-    b_bxPk->size[0] = iPk_tmp;
+    b_bxPk->size[0] = w->size[0];
     b_bxPk->size[1] = 2;
     emxEnsureCapacity_real_T(b_bxPk, i);
-    b_bxPk_data = b_bxPk->data;
+    b_bPk_data = b_bxPk->data;
+    loop_ub = w->size[0];
     for (i = 0; i < 2; i++) {
-      for (m = 0; m < iPk_tmp; m++) {
-        b_bxPk_data[m + b_bxPk->size[0] * i] =
-            byPk_data[((int)w_data[m] + byPk->size[0] * i) - 1];
+      for (i1 = 0; i1 < loop_ub; i1++) {
+        b_bPk_data[i1 + b_bxPk->size[0] * i] =
+            byPk_data[((int)w_data[i1] + byPk->size[0] * i) - 1];
       }
     }
     i = byPk->size[0] * byPk->size[1];
@@ -560,19 +669,20 @@ void findExtents(const double y[2048], int iPk_data[], int *iPk_size,
     byPk->size[1] = 2;
     emxEnsureCapacity_real_T(byPk, i);
     byPk_data = byPk->data;
-    m = b_bxPk->size[0] * 2;
-    for (i = 0; i < m; i++) {
-      byPk_data[i] = b_bxPk_data[i];
+    loop_ub = b_bxPk->size[0] * 2;
+    for (i = 0; i < loop_ub; i++) {
+      byPk_data[i] = b_bPk_data[i];
     }
     i = b_bxPk->size[0] * b_bxPk->size[1];
-    b_bxPk->size[0] = iPk_tmp;
+    b_bxPk->size[0] = w->size[0];
     b_bxPk->size[1] = 2;
     emxEnsureCapacity_real_T(b_bxPk, i);
-    b_bxPk_data = b_bxPk->data;
+    b_bPk_data = b_bxPk->data;
+    loop_ub = w->size[0];
     for (i = 0; i < 2; i++) {
-      for (m = 0; m < iPk_tmp; m++) {
-        b_bxPk_data[m + b_bxPk->size[0] * i] =
-            wxPk_data[((int)w_data[m] + wxPk->size[0] * i) - 1];
+      for (i1 = 0; i1 < loop_ub; i1++) {
+        b_bPk_data[i1 + b_bxPk->size[0] * i] =
+            wxPk_data[((int)w_data[i1] + wxPk->size[0] * i) - 1];
       }
     }
     i = wxPk->size[0] * wxPk->size[1];
@@ -580,12 +690,13 @@ void findExtents(const double y[2048], int iPk_data[], int *iPk_size,
     wxPk->size[1] = 2;
     emxEnsureCapacity_real_T(wxPk, i);
     wxPk_data = wxPk->data;
-    m = b_bxPk->size[0] * 2;
-    for (i = 0; i < m; i++) {
-      wxPk_data[i] = b_bxPk_data[i];
+    loop_ub = b_bxPk->size[0] * 2;
+    for (i = 0; i < loop_ub; i++) {
+      wxPk_data[i] = b_bPk_data[i];
     }
     emxFree_real_T(&b_bxPk);
   }
+  emxFree_real_T(&w);
 }
 
 /*

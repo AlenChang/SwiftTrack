@@ -5,7 +5,7 @@
  * File: find.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 25-Nov-2022 15:54:38
+ * C/C++ source code generated on  : 02-Dec-2022 11:02:26
  */
 
 /* Include Files */
@@ -16,14 +16,14 @@
 /*
  * Arguments    : int in1_data[]
  *                int *in1_size
- *                const double in2[2048]
+ *                const double in2[4096]
  *                const int in3_data[]
  *                const int *in3_size
  *                const double in4_data[]
  *                const int *in4_size
  * Return Type  : void
  */
-void c_binary_expand_op(int in1_data[], int *in1_size, const double in2[2048],
+void c_binary_expand_op(int in1_data[], int *in1_size, const double in2[4096],
                         const int in3_data[], const int *in3_size,
                         const double in4_data[], const int *in4_size)
 {
@@ -31,7 +31,7 @@ void c_binary_expand_op(int in1_data[], int *in1_size, const double in2[2048],
   int loop_ub;
   int stride_0_0;
   int stride_1_0;
-  boolean_T in2_data[2048];
+  boolean_T in2_data[4096];
   stride_0_0 = (*in3_size != 1);
   stride_1_0 = (*in4_size != 1);
   if (*in4_size == 1) {

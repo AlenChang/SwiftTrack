@@ -5,7 +5,7 @@
  * File: recalibrateHistory_emxutil.h
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 25-Nov-2022 15:54:38
+ * C/C++ source code generated on  : 02-Dec-2022 11:02:26
  */
 
 #ifndef RECALIBRATEHISTORY_EMXUTIL_H
@@ -26,7 +26,7 @@ extern void emxEnsureCapacity_real_T(emxArray_real_T *emxArray, int oldNumel);
 
 extern void emxFree_real_T(emxArray_real_T **pEmxArray);
 
-extern void emxInit_real_T(emxArray_real_T **pEmxArray);
+extern void emxInit_real_T(emxArray_real_T **pEmxArray, int numDimensions);
 
 #ifdef __cplusplus
 }

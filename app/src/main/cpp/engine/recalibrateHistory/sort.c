@@ -5,7 +5,7 @@
  * File: sort.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 25-Nov-2022 15:54:38
+ * C/C++ source code generated on  : 02-Dec-2022 11:02:26
  */
 
 /* Include Files */
@@ -22,11 +22,11 @@
  */
 void sort(int x_data[], const int *x_size)
 {
-  int b_iwork_data[4096];
-  int iidx_data[4096];
-  int iwork_data[4096];
-  int vwork_data[4096];
-  int xwork_data[4096];
+  int b_iwork_data[8192];
+  int iidx_data[8192];
+  int iwork_data[8192];
+  int vwork_data[8192];
+  int xwork_data[8192];
   int b;
   int b_b;
   int b_j;

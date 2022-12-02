@@ -182,27 +182,19 @@ void Engine::GetHistoryData(int id, double *history, double *next_waveform, doub
 //    fftw_complex a;
 //    a[REAL] = 1;
 //    a[IMAG] = 2;
+    const int hist_length = 4096;
     if(history_type != 7){
-        double hist_in[2048];
-        boolean_T is_body_moving[2048];
+        double hist_in[hist_length];
+        boolean_T is_body_moving[hist_length];
 
         double waveform[100];
         double resp_freq_ = 0;
         boolean_T new_waveform = false;
 
-        for(int i=0;i<2048;i++) hist_in[i] = history[i];
-//    double * pks_data = (double *) malloc(sizeof(double) * 2048);
-//    double * locs_data = (double *) malloc(sizeof(double) * 2048);
-//    int *pks_size = (int *) malloc(sizeof(int));
-//    int *locs_size = (int *) malloc(sizeof(int));
-
-//    (double hist[2048], double moving_thre,
-//            double last_tmp[100], double resp_waveform[100],
-//            double hist_out[2048], boolean_T is_body_moving[2048],
-//            double tmp[100], boolean_T *new_waveform)
+        for(int i=0;i<hist_length;i++) hist_in[i] = history[i];
 
         recalibrateHistory(hist_in, 1.0, engine->last_waveform, engine->resp_waveform, history, is_body_moving,waveform,&new_waveform,&resp_freq_);
-        for(int ti = 0; ti < 2048; ti++){
+        for(int ti = 0; ti < hist_length; ti++){
             is_body_moving_[ti] = is_body_moving[ti];
         }
         *is_new_waveform = new_waveform;

@@ -5,7 +5,7 @@
  * File: recalibrateHistory.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 25-Nov-2022 15:54:38
+ * C/C++ source code generated on  : 02-Dec-2022 11:02:26
  */
 
 /* Include Files */
@@ -24,13 +24,13 @@
 static double counter;
 
 /* Function Declarations */
-static void b_binary_expand_op(double in1[2048], int in2, int in3, int in4,
+static void b_binary_expand_op(double in1[4096], int in2, int in3, int in4,
                                int in5, const double in6_data[],
                                const int *in6_size);
 
 /* Function Definitions */
 /*
- * Arguments    : double in1[2048]
+ * Arguments    : double in1[4096]
  *                int in2
  *                int in3
  *                int in4
@@ -39,11 +39,11 @@ static void b_binary_expand_op(double in1[2048], int in2, int in3, int in4,
  *                const int *in6_size
  * Return Type  : void
  */
-static void b_binary_expand_op(double in1[2048], int in2, int in3, int in4,
+static void b_binary_expand_op(double in1[4096], int in2, int in3, int in4,
                                int in5, const double in6_data[],
                                const int *in6_size)
 {
-  double in1_data[2048];
+  double in1_data[4096];
   int i;
   int stride_0_1;
   int stride_1_1;
@@ -60,28 +60,28 @@ static void b_binary_expand_op(double in1[2048], int in2, int in3, int in4,
 }
 
 /*
- * Arguments    : double hist[2048]
+ * Arguments    : double hist[4096]
  *                double moving_thre
  *                double last_tmp[100]
  *                double resp_waveform[100]
- *                double hist_out[2048]
- *                boolean_T is_body_moving[2048]
+ *                double hist_out[4096]
+ *                boolean_T is_body_moving[4096]
  *                double tmp[100]
  *                boolean_T *new_waveform
  *                double *resp_freq
  * Return Type  : void
  */
-void recalibrateHistory(double hist[2048], double moving_thre,
+void recalibrateHistory(double hist[4096], double moving_thre,
                         double last_tmp[100], double resp_waveform[100],
-                        double hist_out[2048], boolean_T is_body_moving[2048],
+                        double hist_out[4096], boolean_T is_body_moving[4096],
                         double tmp[100], boolean_T *new_waveform,
                         double *resp_freq)
 {
-  static double locs_data[2048];
-  static double pks_data[2048];
-  static double t2_data[2048];
-  static double b_drift_data[2047];
-  static double drift_data[2047];
+  static double locs_data[4096];
+  static double pks_data[4096];
+  static double t2_data[4096];
+  static double b_drift_data[4095];
+  static double drift_data[4095];
   double d1;
   double delta1;
   double delta2;
@@ -180,14 +180,14 @@ void recalibrateHistory(double hist[2048], double moving_thre,
         b_binary_expand_op(hist, k, i, b_i, i1 - 1, b_drift_data,
                            &drift_size_idx_1);
       }
-      if (n_tmp + 1.0 > 2048.0) {
+      if (n_tmp + 1.0 > 4096.0) {
         b_i = 1;
         i1 = -1;
         k = -1;
       } else {
         b_i = (int)(n_tmp + 1.0);
         i1 = (int)(n_tmp + 1.0) - 2;
-        k = 2047;
+        k = 4095;
       }
       i = k - i1;
       for (k = 0; k < i; k++) {
@@ -199,7 +199,7 @@ void recalibrateHistory(double hist[2048], double moving_thre,
     }
   }
   /*  hist_out = wdenoise(hist); */
-  for (i = 0; i < 2048; i++) {
+  for (i = 0; i < 4096; i++) {
     hist_out[i] = hist[i];
     is_body_moving[i] = false;
   }
