@@ -6,8 +6,8 @@
 #include "preprocessor.h"
 #include "filter_util.hpp"
 #include "matrix_util.hpp"
-#include <android/log.h>
-#include <jni.h>
+// #include <android/log.h>
+// #include <jni.h>
 //#include "processFramePipe.h"
 //#include "processFramePipe_terminate.h"
 //#include "coder_array.h"
@@ -59,9 +59,9 @@ public:
 
     static void reCalibrate(int id, double* history, int n, double *next_waveform, double *resp_wave, bool *is_body_moving_, bool *is_new_waveform, double *resp_freq);
 
-    static void PrintString(string val, string name);
-    static void PrintDoubleArray(double* farray, int n, string name);
-    static void PrintIntArray(int* farray, int n, string name);
+    // static void PrintString(string val, string name);
+    // static void PrintDoubleArray(double* farray, int n, string name);
+    // static void PrintIntArray(int* farray, int n, string name);
     static emxArray_real_T* argInit_Unboundedx1_real_T(int len);
 //    static void detrend_frames(double *data);
 

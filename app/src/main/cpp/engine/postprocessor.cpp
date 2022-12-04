@@ -381,10 +381,11 @@ void Postprocessor::PaddingZero(Histories &history_type){
     history_type.time_stamp.push_back(0.0);
 }
 
-void Postprocessor::get_history(double *history, int n, list<double> & profiles){
+void Postprocessor::get_history(double *history, int n, deque<double> & profiles){
     int l = (int) profiles.size();
 
     if (n >= l) {
+        
         auto iter = profiles.begin();
         for (int i = 0; i < l; i++) {
             *(history + i) = *iter;

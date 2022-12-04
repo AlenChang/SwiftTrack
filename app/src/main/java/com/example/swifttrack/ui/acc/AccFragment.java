@@ -287,13 +287,13 @@ public class AccFragment extends Fragment {
 
             lineData.getDataSetByIndex(0).calcMinMax();
             lineData.notifyDataChanged();
-            if(setRange && AudioProcessor.getRunnningStatus()){
+            if(setRange){
                 chart.setVisibleXRange(0, AudioProcessor.WIN_LENGTH);
             }
 
-            if(setRange && !AudioProcessor.getRunnningStatus()){
-                chart.setVisibleXRange(0, new_num);
-            }
+//            if(setRange && !AudioProcessor.getRunnningStatus()){
+//                chart.setVisibleXRange(0, new_num);
+//            }
 
             chart.notifyDataSetChanged();
             chart.invalidate();

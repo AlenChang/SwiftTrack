@@ -205,12 +205,12 @@ void Engine::reCalibrate(int id, double* history, int n, double *next_waveform, 
 //        hist_out = Engine::argInit_Unboundedx1_real_T(hist_length);
 //        is_body_moving = Engine::argInit_Unboundedx1_real_T(hist_length);
 
-    Engine::PrintString("Engine Debug", "emxArray define success!");
+    // Engine::PrintString("Engine Debug", "emxArray define success!");
 
 //        emxInitArray_real_T(&hist, 1);
     emxInitArray_real_T(&hist_out, 1);
     emxInitArray_boolean_T(&is_body_moving, 1);
-    Engine::PrintString("Engine Debug", "emxArray initialize success!");
+    // Engine::PrintString("Engine Debug", "emxArray initialize success!");
 //        double hist_in[hist_length];
 //        boolean_T is_body_moving[hist_length];
 
@@ -256,7 +256,9 @@ void Engine::GetCIR(int id, double *cir_abs, int n){
 void Engine::GetThreshold(int id, double *thre){
     Engine *engine = Engine::GetInstance(id);
     if(engine->denoiser_->GetStatus() == Denoiser::CALI_SUCCESS){
-        *thre = engine->denoiser_->moving_threshold_;
+        *(thre) = engine->denoiser_->moving_threshold_;
+        *(thre+1) = engine->denoiser_->max_diff;
+        *(thre+2) = engine->denoiser_->max_diff / engine->denoiser_->moving_threshold_;
     }
 }
 
@@ -352,38 +354,38 @@ void Engine::reset_results() {
 
 }
 
-void Engine::PrintString(string val, string name) {
-    ostringstream strs;
-    strs << val << endl;
-    string message=strs.str();
-    LOGD((name+" %s").c_str(),message.c_str());
-}
+// void Engine::PrintString(string val, string name) {
+//     ostringstream strs;
+//     strs << val << endl;
+//     string message=strs.str();
+//     LOGD((name+" %s").c_str(),message.c_str());
+// }
 
-void Engine::PrintDoubleArray(double* farray, int n, string name) {
-    ostringstream strs;
-    int numPerLine = 10;
-    for (int i=0; i<n; i++) {
-        strs << farray[i] << " ";
-        if ((i%numPerLine) == numPerLine-1) {
-            strs << endl;
-        }
-    }
-    string message=strs.str();
-    LOGD((name+" %s").c_str(),message.c_str());
-}
+// void Engine::PrintDoubleArray(double* farray, int n, string name) {
+//     ostringstream strs;
+//     int numPerLine = 10;
+//     for (int i=0; i<n; i++) {
+//         strs << farray[i] << " ";
+//         if ((i%numPerLine) == numPerLine-1) {
+//             strs << endl;
+//         }
+//     }
+//     string message=strs.str();
+//     LOGD((name+" %s").c_str(),message.c_str());
+// }
 
-void Engine::PrintIntArray(int* farray, int n, string name) {
-    ostringstream strs;
-    int numPerLine = 10;
-    for (int i=0; i<n; i++) {
-        strs << farray[i] << " ";
-        if ((i%numPerLine) == numPerLine-1) {
-            strs << endl;
-        }
-    }
-    string message=strs.str();
-    LOGD((name+" %s").c_str(),message.c_str());
-}
+// void Engine::PrintIntArray(int* farray, int n, string name) {
+//     ostringstream strs;
+//     int numPerLine = 10;
+//     for (int i=0; i<n; i++) {
+//         strs << farray[i] << " ";
+//         if ((i%numPerLine) == numPerLine-1) {
+//             strs << endl;
+//         }
+//     }
+//     string message=strs.str();
+//     LOGD((name+" %s").c_str(),message.c_str());
+// }
 
 emxArray_real_T* Engine::argInit_Unboundedx1_real_T(int len)
 {

@@ -1,5 +1,6 @@
 #ifndef HISTORIES_H
 #define HISTORIES_H
+#include <queue>
 
 enum HistoryType{
         phase_v,
@@ -43,14 +44,14 @@ public:
 
     };
     ~Histories(){};
-    list<double> phase_history_;
-    list<double> velocity_history_;
-    list<double> dist_history_;
-    list<double> acc_history_;
-    list<double> acc2velocity_history_;
-    list<double> acc2dist_history_;
-    list<double> acc_phase_history_;
-    list<double> time_stamp;
+    deque<double> phase_history_;
+    deque<double> velocity_history_;
+    deque<double> dist_history_;
+    deque<double> acc_history_;
+    deque<double> acc2velocity_history_;
+    deque<double> acc2dist_history_;
+    deque<double> acc_phase_history_;
+    deque<double> time_stamp;
 
     void check_size(){
         int len;
@@ -111,6 +112,7 @@ public:
         acc_phase_history_.clear();
         dist_history_.clear();
         time_stamp.clear();
+
 
     }
 

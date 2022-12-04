@@ -16,6 +16,7 @@ Denoiser::Denoiser(int N_ZC_UP_) {
 
     calibration_1_frame_count_ = 0;
     moving_threshold_ = 0.0;
+    // online_cir_history.size();
 
     // median filter initialization
     mvMedian_iter = 0;
@@ -96,7 +97,7 @@ void Denoiser::compute_thre(){
 //    compute_thre_taps[compute_thre_iter] = abs(signa_diff(selected_tap_for_thresholding));
     compute_thre_taps[compute_thre_iter] = MaxDiff(signal_, prev_signal_);
     compute_thre_iter++;
-    cout << "compute_thre_iter = " << compute_thre_iter << endl;
+    // cout << "compute_thre_iter = " << compute_thre_iter << endl;
 
     if(compute_thre_iter >= CALI_1_FRAMES){
         // compute mean values
@@ -272,13 +273,13 @@ void Denoiser::OnlineRemoveStaticSignal() {
 
 // * pass
 void Denoiser::CheckMoving() {
-    double max_diff = MaxDiff(prev_signal_, signal_);
+    max_diff = MaxDiff(prev_signal_, signal_);
 //    double max_diff = TapDiff(prev_signal_, signal_);
 
-    double max_diff_update_factore = 0.04;
+    double max_diff_update_factore = 0.2;
     max_diff_histry = max_diff_histry * (1-max_diff_update_factore) + max_diff_update_factore * max_diff;
 
-
+//    max_diff = max_diff_histry;
     is_moving_ = max_diff > moving_threshold_;
 
     if (is_moving_) {
@@ -289,7 +290,12 @@ void Denoiser::CheckMoving() {
         minimum_update = max_diff_histry * thresholding_factor * thresholding_update;
     }
     double ave_update = max_diff_histry * ave_update_factor;
-    moving_threshold_ = moving_threshold_ * (1 - ave_update_factor - thresholding_update) + ave_update + minimum_update;
+//    if(is_moving_){
+//        moving_threshold_ = moving_threshold_ * (1 - ave_update_factor - thresholding_update) + ave_update + minimum_update;
+//    }
+    // moving_threshold_ = moving_threshold_ * (1 - ave_update_factor - thresholding_update) + ave_update + minimum_update;
+
+//    moving_threshold_ = 0.01;
 }
 
 // * pass

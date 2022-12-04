@@ -22,7 +22,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
@@ -49,7 +51,8 @@ public class AudioProcessor {
     private int fragID;
     private static int moving_counter = 0;
     public static int WIN_LENGTH = 2048;
-    AccViewModel accViewModel;
+
+    private static List<double[]> threlist = new ArrayList<>();
 
 
     public static class deployMethods{
@@ -166,12 +169,27 @@ public class AudioProcessor {
             AccViewModel.setLineData(xWindow2, length[0], next_waveform, resp_waveform, is_new_waveform[0]);
             getHistoryData(targetChannel, xWindow1, winLen, deployMethods.swifttrack, HistoryType.time_stamp);
 
+            double[] thre = new double[3];
+            getThre(targetChannel, thre);
+            threlist.add(thre);
+            Log.d("swifttrack_Thre", ""+String.format("%.4f", thre[0]) + " " + String.format("%.4f", thre[1]) + " " + (thre[2] > 1));
+
             if(needSave){
-                double[][] result = new double[winLen][3];
+                double[][] result = new double[winLen][5];
+                int listsize = threlist.size();
                 for (int i = 0; i < winLen; i++) {
                     result[i][0] = xWindow1[i];
                     result[i][1] = xWindow0[i];
                     result[i][2] = xWindow2[i];
+                    if(i < listsize){
+                        double[] threitem = threlist.get(i);
+                        result[i][3] = threitem[1];
+                        result[i][4] = threitem[0];
+                    }else{
+                        result[i][3] = 0;
+                        result[i][4] = 0;
+                    }
+
                 }
                 FileUtil.streamWriteResult(bufferedWriter, result);
             }
@@ -180,9 +198,7 @@ public class AudioProcessor {
             getTime(targetChannel, time_count);
             Log.d("C_TIME_COUNT", ""+time_count[0]);
 
-            double[] thre = {0.0};
-            getThre(targetChannel, thre);
-            Log.d("swifttrack_Thre", ""+thre[0]);
+
 
 
         }
@@ -347,6 +363,7 @@ public class AudioProcessor {
 
     public void stop() {
         engine.terminate();
+        threlist.clear();
 
         try {
             bufferedWriter.close();

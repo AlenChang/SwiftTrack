@@ -60,11 +60,16 @@ public class AccViewModel extends ViewModel {
 
     public static void setLineData(double[] values, int valid_length, double[] next_waveform, double[] resp_waveform, boolean is_new_waveform) {
 
-        if(valid_length > AudioProcessor.WIN_LENGTH && AudioProcessor.getRunnningStatus()){
+        double[] valid_values;
+        if(valid_length > AudioProcessor.WIN_LENGTH){
             valid_length = AudioProcessor.WIN_LENGTH;
+            valid_values = new double[valid_length];
+            System.arraycopy(values, values.length - valid_length, valid_values, 0, valid_length);
+        }else{
+            valid_values = new double[valid_length];
+            System.arraycopy(values, 0, valid_values, 0, valid_length);
         }
-        double[] valid_values = new double[valid_length];
-        System.arraycopy(values, 0, valid_values, 0, valid_length);
+
         getLiveLineData(3).postValue(PlotUtil.getLineDataSet(valid_values, "Distance change of chest caused by respiration", Color.BLUE));
 //        if(is_new_waveform){
         if(is_new_waveform){

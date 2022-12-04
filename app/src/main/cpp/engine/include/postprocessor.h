@@ -51,7 +51,7 @@ private:
 
     void MotionCoeff2(complex<double> beta);
 
-    void get_history(double *history, int n, list<double> & profiles);
+    void get_history(double *history, int n, deque<double> & profiles);
 
 
 

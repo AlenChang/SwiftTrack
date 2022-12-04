@@ -9,14 +9,15 @@ add_subdirectory(util)
 add_subdirectory(recalibrateHistory)
 add_subdirectory(fftw-3.3.10)
 #add_subdirectory(generated)
-find_library( # Sets the name of the path variable.
-        log-lib
+# find_library( # Sets the name of the path variable.
+#         log-lib
 
-        # Specifies the name of the NDK library that
-        # you want CMake to locate.
-        log )
+#         # Specifies the name of the NDK library that
+#         # you want CMake to locate.
+#         log )
 add_library(
         ${TARGET}
+        STATIC
         engine.cpp
         preprocessor.cpp
         denoiser.cpp
@@ -28,5 +29,5 @@ target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} include 
 
 #target_link_libraries(${TARGET} util recalibrate)
 
-target_link_libraries(${TARGET} util recalibrate fftw3 log)
+target_link_libraries(${TARGET} util recalibrate fftw3)
 
