@@ -96,6 +96,11 @@ public class AudioProcessor {
         private final double[] frame1 = new double[FRAME_SIZE];
         private final double[] frame2 = new double[FRAME_SIZE];
 
+        private double[] distance = new double[10*60*MainActivity.FS/MainActivity.N_ZC_UP];
+        private double[] time_stamps = new double[10*60*MainActivity.FS/MainActivity.N_ZC_UP];
+        private int distance_length = distance.length;
+        private int distance_counter = 0;
+
         private int frameCount;
         private boolean running;
 
@@ -139,6 +144,19 @@ public class AudioProcessor {
             getHistoryLength(targetChannel, deployMethods.swifttrack, length);
             Log.d("profile_length", ""+length[0]);
             getHistoryData(targetChannel, xWindow0, winLen, deployMethods.swifttrack, HistoryType.dist_v);
+            getHistoryData(targetChannel, xWindow1, winLen, deployMethods.swifttrack, HistoryType.time_stamp);
+
+            if(distance_counter < distance_length){
+                if(length[0] < winLen){
+                    distance[distance_counter] = xWindow0[length[0]-1];
+                    time_stamps[distance_counter] = xWindow1[length[0]-1];
+                }else{
+                    distance[distance_counter] = xWindow0[winLen-1];
+                    time_stamps[distance_counter] = xWindow1[winLen-1];
+                }
+
+                distance_counter++;
+            }
 
             if(length[0] < winLen){
                 for(int i = length[0]; i < winLen; i++){
@@ -167,7 +185,7 @@ public class AudioProcessor {
             }
             Log.d("respiration freq", resp_freq[0] + "");
             AccViewModel.setLineData(xWindow2, length[0], next_waveform, resp_waveform, is_new_waveform[0]);
-            getHistoryData(targetChannel, xWindow1, winLen, deployMethods.swifttrack, HistoryType.time_stamp);
+
 
             double[] thre = new double[3];
             getThre(targetChannel, thre);
@@ -175,21 +193,12 @@ public class AudioProcessor {
             Log.d("swifttrack_Thre", ""+String.format("%.4f", thre[0]) + " " + String.format("%.4f", thre[1]) + " " + (thre[2] > 1));
 
             if(needSave){
-                double[][] result = new double[winLen][5];
-                int listsize = threlist.size();
-                for (int i = 0; i < winLen; i++) {
-                    result[i][0] = xWindow1[i];
-                    result[i][1] = xWindow0[i];
-                    result[i][2] = xWindow2[i];
-                    if(i < listsize){
-                        double[] threitem = threlist.get(i);
-                        result[i][3] = threitem[1];
-                        result[i][4] = threitem[0];
-                    }else{
-                        result[i][3] = 0;
-                        result[i][4] = 0;
-                    }
-
+                recalibrate(targetChannel, distance, next_waveform, resp_waveform, is_new_waveform, is_body_moving, resp_freq, distance_counter);
+                double[][] result = new double[distance_counter][2];
+//                int listsize = threlist.size();
+                for (int i = 0; i < distance_counter; i++) {
+                    result[i][0] = time_stamps[i];
+                    result[i][1] = distance[i];
                 }
                 FileUtil.streamWriteResult(bufferedWriter, result);
             }
