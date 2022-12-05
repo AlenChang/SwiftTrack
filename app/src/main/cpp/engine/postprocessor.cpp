@@ -124,7 +124,8 @@ void Postprocessor::MotionCoeff2(complex<double> beta){
     double phase_diff, phase_unwrapped, acc, velocity, dist;
     if(abs(prev_beta) != 0 & abs(beta) != 0){
         double phase_prev_motion2 = arg(prev_motion2);
-        complex<double> motion2 = beta / prev_beta;
+        complex<double> motion2;
+        motion2 = beta * conj(prev_beta);
         prev_motion2 = motion2;
 
         //* phase unwrapping
@@ -181,7 +182,7 @@ complex<double> Postprocessor::LeastSquare(){
     beta1 = MatrixUtil::DotSum(prev_irs_signal_.conjugate(), irs_signal_);
     beta2 = MatrixUtil::DotSum(prev_irs_signal_.conjugate(), prev_irs_signal_);
 
-    complex<double> beta = beta1 / beta2;
+    complex<double> beta = beta1 * conj(beta2);
     if(isnan(beta.real())){
         beta = complex<double>(0, 0);
     }

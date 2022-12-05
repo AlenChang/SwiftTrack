@@ -184,6 +184,12 @@ void Denoiser::ProcessCalibration2() {
 
 void Denoiser::ProcessCalibrationSuccess() {
     // cout << moving_frames_ << endl;
+    online_cir_history.push_back(signal_);
+    if(online_cir_history.size() > 500){
+        online_cir_history.pop_front();
+    }
+    // cout << "size of online_cir_history is: " << online_cir_history.size() << endl;
+    // cout << "Memory of online_cir_history is: " << sizeof(deque<MatrixX<complex<double>>>) + online_cir_history.size() * sizeof(MatrixX<complex<double>>) << endl;
 
     CheckMoving();
 
@@ -191,6 +197,7 @@ void Denoiser::ProcessCalibrationSuccess() {
         // mean vector of cir in moving periods
         updated_static_signal_ = (signal_ + (moving_frames_ - 1) * updated_static_signal_) / (moving_frames_);
     }
+    
 //    updated_static_signal_ = (signal_ + (moving_frames_ - 1) * updated_static_signal_) / (moving_frames_);
 
     // if need updating

@@ -108,7 +108,7 @@ private:
     int calibration_2_moving_periods_;
     vector<MatrixX<complex<double>>> calibration_2_signal_history_;
     vector<MatrixX<complex<double>>> calibration_1_singal_history_;
-    queue<MatrixX<complex<double>>> online_cir_history;
+    deque<MatrixX<complex<double>>> online_cir_history;
     // const int 
     vector<MatrixX<complex<double>>> offline_denoise_signals_;
 

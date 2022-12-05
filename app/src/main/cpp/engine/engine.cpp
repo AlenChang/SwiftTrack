@@ -258,7 +258,12 @@ void Engine::GetThreshold(int id, double *thre){
     if(engine->denoiser_->GetStatus() == Denoiser::CALI_SUCCESS){
         *(thre) = engine->denoiser_->moving_threshold_;
         *(thre+1) = engine->denoiser_->max_diff;
-        *(thre+2) = engine->denoiser_->max_diff / engine->denoiser_->moving_threshold_;
+        if(engine->denoiser_->moving_threshold_ != 0){
+            *(thre+2) = engine->denoiser_->max_diff / engine->denoiser_->moving_threshold_;
+        }else{
+            *(thre+2) = engine->denoiser_->max_diff;
+        }
+        
     }
 }
 
@@ -470,6 +475,9 @@ void Engine::genZC(int N_ZC, int N_ZC_UP, int U, int FC, int SAMPLE_RATE, const 
         double imag = sin(theta);
         seqFrame[i] = output_ifft[i][REAL] * real + output_ifft[i][IMAG] * imag;
         maxValue = max(maxValue, abs(seqFrame[i]));
+        if(maxValue == 0){
+            maxValue = 1;
+        }
     }
     for (int i = 0; i < N_ZC_UP; i++) {
         if (SPEAKER_CHANNEL[0]) {
