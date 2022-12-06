@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -31,6 +32,7 @@ public class AccViewModel extends ViewModel {
     private static MutableLiveData<LineDataSet> v2d = new MutableLiveData<>();
     private static MutableLiveData<LineDataSet> waveform_chart = new MutableLiveData<>();
     private static MutableLiveData<LineDataSet> resp_chart = new MutableLiveData<>();
+    private static int LINE_COLOR = Color.parseColor("#7DB836");
 
     public static int counter = 0;
 
@@ -70,11 +72,11 @@ public class AccViewModel extends ViewModel {
             System.arraycopy(values, 0, valid_values, 0, valid_length);
         }
 
-        getLiveLineData(3).postValue(PlotUtil.getLineDataSet(valid_values, "Distance change of chest caused by respiration", Color.BLUE));
+        getLiveLineData(3).postValue(PlotUtil.getLineDataSet(valid_values, "Distance change of chest caused by respiration", LINE_COLOR));
 //        if(is_new_waveform){
         if(is_new_waveform){
-            getLiveLineData(2).postValue(PlotUtil.getLineDataSet(next_waveform, "The Last Waveform", Color.BLUE));
-            getLiveLineData(1).postValue(PlotUtil.getLineDataSet(resp_waveform, "Averaged Respiration Waveform", Color.BLUE));
+            getLiveLineData(2).postValue(PlotUtil.getLineDataSet(next_waveform, "The Last Waveform", LINE_COLOR));
+            getLiveLineData(1).postValue(PlotUtil.getLineDataSet(resp_waveform, "Averaged Respiration Waveform", LINE_COLOR));
         }
 
 //        }
