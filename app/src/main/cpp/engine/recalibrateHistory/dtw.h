@@ -5,7 +5,7 @@
  * File: dtw.h
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 02-Dec-2022 12:50:48
+ * C/C++ source code generated on  : 12-Dec-2022 19:58:02
  */
 
 #ifndef DTW_H

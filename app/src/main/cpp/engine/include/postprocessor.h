@@ -15,7 +15,7 @@ using namespace std::chrono;
 class Postprocessor {
   
 public:
-    Postprocessor(int N_ZC_UP_);
+    Postprocessor(int id, int N_ZC_UP_);
 
     ~Postprocessor();
 
@@ -67,6 +67,7 @@ private:
     const double PHASE_DIFF_2_THRESHOLD = 1.0 * M_PI;
     const double use_diff_flag = true;
     const int tail_tap = 20;
+    const int start_tap = 30;
     static const int respfilter_len = 29;
     int filter_delay_counter = 0;
     int N_ZC_UP;
@@ -76,6 +77,7 @@ private:
     bool init_velocity_flag = false;
     double ave_velocity = 0.0;
     bool reset_result_flag = false;
+    int engine_id;
 
     high_resolution_clock::time_point start_now;
 
@@ -102,6 +104,8 @@ private:
 
     complex<double> prev_motion2;
     complex<double> prev_beta;
+
+    MatrixX<double> least_square_weights;
 
 
     // For move median filter

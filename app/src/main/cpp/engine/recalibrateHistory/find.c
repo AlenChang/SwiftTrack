@@ -5,7 +5,7 @@
  * File: find.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 02-Dec-2022 12:50:48
+ * C/C++ source code generated on  : 12-Dec-2022 19:58:02
  */
 
 /* Include Files */
@@ -56,7 +56,7 @@ void e_binary_expand_op(emxArray_int32_T *in1, const emxArray_real_T *in2,
   for (i = 0; i < loop_ub; i++) {
     b_in2_data[i] =
         (in2_data[in3_data[i * stride_0_0] - 1] - in4_data[i * stride_1_0] >=
-         0.1);
+         0.0);
   }
   eml_find(b_in2, in1);
   emxFree_boolean_T(&b_in2);

@@ -40,6 +40,8 @@ public:
     static void ProcessFrame_02(int id, const double *data, int n, int N, int FC, int BW);
 
     static void GetCIR(int id, double *cir_abs, int n);
+    
+    static MatrixX<complex<double>> GetCIR_Preprocessor(int id);
 
     static void getMovingStatus(int id, bool *status);
 
@@ -51,7 +53,7 @@ public:
 
     static void GetHistoryData(int id, double *history, int n, int history_id, int history_type);
 
-    void setup(int N, int FC, int BW);
+    void setup(int id, int N, int FC, int BW);
 
     static void getTime(int id, double* time);
 

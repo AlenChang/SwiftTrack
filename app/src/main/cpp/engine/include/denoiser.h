@@ -2,7 +2,6 @@
 #define ACOUSTICTRACKER_DENOISER_H
 
 #include "matrix_util.hpp"
-#include <queue>
 //#include "NoiseSupression.h"
 //#include "logger_util.hpp"
 
@@ -16,9 +15,8 @@ public:
     };
 
     double moving_threshold_;
-    double max_diff;
 
-    Denoiser(int N_ZC_UP_);
+    Denoiser(int id, int N_ZC_UP_);
 
     ~Denoiser();
 
@@ -32,9 +30,12 @@ public:
 
     MatrixX<complex<double>> GetOnlineDenoiseSignal();
 
+    MatrixX<complex<double>> GetDiffSignal();
+
     vector<double> GetDiffHistory();
 
     bool getMovingStatus();
+    double max_diff = 0;
 
 //    void main_offerRxUpsample(void);
 //    void cdouble2creal_T(MatrixX<complex<double>> &v, creal_T R[480]);
@@ -75,6 +76,8 @@ private:
     const double std_factor = 4;
     double mean_compute_thre = 0.0;
 
+    int engine_id;
+
     int moving_frames_counter = 0;
     bool BackgroundNotRemove = true;
 
@@ -86,6 +89,8 @@ private:
 
     // Store the cur raw signal
     MatrixX<complex<double>> signal_;
+
+    MatrixX<complex<double>> signa_diff;
 
     // Store the cur denoise signal
     MatrixX<complex<double>> online_denoise_signal_;
@@ -108,8 +113,6 @@ private:
     int calibration_2_moving_periods_;
     vector<MatrixX<complex<double>>> calibration_2_signal_history_;
     vector<MatrixX<complex<double>>> calibration_1_singal_history_;
-    deque<MatrixX<complex<double>>> online_cir_history;
-    // const int 
     vector<MatrixX<complex<double>>> offline_denoise_signals_;
 
     // Variables for online update static signal
@@ -128,7 +131,7 @@ private:
     const int selected_tap_for_thresholding = 40;
     double thresholding_factor = 1.2;
     const double thresholding_update = 0.02;
-    const double ave_update_factor = 0.1;
+    const double ave_update_factor = 0.01;
     double max_diff_histry = 0.0;
 
     void compute_thre();

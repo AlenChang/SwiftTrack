@@ -1,7 +1,7 @@
 #include "include/preprocessor.h"
 
 
-Preprocessor::Preprocessor(int N_ZC_UP_, int FC_, int BW_) {
+Preprocessor::Preprocessor(int id, int N_ZC_UP_, int FC_, int BW_) {
     N_ZC_UP = N_ZC_UP_;
     FC = FC_ * 1.0;
     B = BW_ * 1.0;
@@ -10,6 +10,8 @@ Preprocessor::Preprocessor(int N_ZC_UP_, int FC_, int BW_) {
     phase_ = 0.0;
     center_tap_ = -1;
     DELTA_PHASE = -2 * M_PI * FC / FS;
+
+    engine_id = id;
 
     
 
@@ -107,4 +109,8 @@ void Preprocessor::genWindow(double win[480])
 {
   // Call the entry-point 'genWindow'.
 //  NoiseSupression::genWindow(win);
+}
+
+MatrixX<complex<double>> Preprocessor::getCIRSignal(){
+    return cir_signal_;
 }

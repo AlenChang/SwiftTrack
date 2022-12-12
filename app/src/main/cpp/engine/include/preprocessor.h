@@ -11,11 +11,12 @@
 
 class Preprocessor {
 public:
-    Preprocessor(int N_ZC_UP_, int FC_, int BW_);
+    Preprocessor(int id, int N_ZC_UP_, int FC_, int BW_);
 
     ~Preprocessor();
 
     MatrixX<complex<double>> GenerateCIRSignal(const MatrixX<double> &rx_signal);
+    MatrixX<complex<double>> getCIRSignal();
 
 private:
     void GenerateRefSignal();
@@ -35,7 +36,8 @@ private:
     double B;
     double FS = 48000.0;
     double DELTA_PHASE;
-
+    
+    int engine_id;
 
     double phase_;
     int center_tap_;

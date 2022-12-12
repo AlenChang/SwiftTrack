@@ -1,11 +1,12 @@
 #include "postprocessor.h"
 #include <stdio.h>
 
-Postprocessor::Postprocessor(int N_ZC_UP_) {
+Postprocessor::Postprocessor(int id, int N_ZC_UP_) {
     N_ZC_UP = N_ZC_UP_;
     T = N_ZC_UP / FS;
-    if(N_ZC_UP > 150){
-        N_IRS = 150;
+    engine_id = id;
+    if(N_ZC_UP > 200){
+        N_IRS = 200;
     }else{
         N_IRS = N_ZC_UP;
     }
@@ -25,6 +26,8 @@ Postprocessor::Postprocessor(int N_ZC_UP_) {
     // prev_irs_signal_diff = MatrixX<complex<double>>::Constant(1, N_IRS, complex<double>(0, 0));
     irs_signal_ = MatrixX<complex<double>>::Constant(1, N_IRS, complex<double>(0, 0));
     irs_signal_diff = MatrixX<complex<double>>::Constant(1, N_IRS, complex<double>(0, 0));
+
+    least_square_weights = MatrixX<double>::Constant(1, N_IRS, double(0.0));
 
     cout << "Postprocessor was initiated." << endl;
 //    time(&start_now);
@@ -57,12 +60,12 @@ double Postprocessor::ProcessCIRSignal(const MatrixX<complex<double>> &cir_signa
 //* Preprocessing
 void Postprocessor::CutOffCIRSignal(const MatrixX<complex<double>> &cir_signal) {
     //* tap clipping
-    for (int i = - tail_tap; i < N_IRS - tail_tap; i++) {
-        irs_signal_(0, i + tail_tap) = cir_signal(0, (N_ZC_UP + i) % N_ZC_UP);
+    for (int i = start_tap; i < N_IRS; i++) {
+        irs_signal_(0, i) = cir_signal(0, i);
     }
 
     //* compute diff signal for tap selection
-    for (int i = 0; i < N_IRS; i++) {
+    for (int i = start_tap; i < N_IRS; i++) {
         irs_signal_diff(0, i) = irs_signal_(0, i) - prev_irs_signal_(0, i);
     }
 
@@ -179,8 +182,41 @@ complex<double> Postprocessor::LeastSquare(){
     complex<double> beta2;
 
     // regression to estimate first motion coefficients
-    beta1 = MatrixUtil::DotSum(prev_irs_signal_.conjugate(), irs_signal_);
-    beta2 = MatrixUtil::DotSum(prev_irs_signal_.conjugate(), prev_irs_signal_);
+    MatrixX<complex<double>> tmp_signal_ = prev_irs_signal_.conjugate();
+    
+    bool add_least_square_weights = false;
+    if(add_least_square_weights){
+        MatrixX<double> coeffs = MatrixX<double>::Constant(1, N_IRS, double(0));
+        double coeffs_sum = 0.0;
+        for(int ti = start_tap; ti < N_IRS; ti ++){
+            coeffs(0, ti) = abs(irs_signal_diff(0, ti));
+            coeffs_sum += coeffs(0, ti);
+        }
+        double up_date_rate = 0.01;
+        double weights_sum = 0.0;
+        if(coeffs_sum != 0){
+            for(int ti = start_tap; ti < N_IRS; ti++){
+                least_square_weights(0, ti) = least_square_weights(0, ti) * (1 - up_date_rate) + up_date_rate * coeffs(0, ti) / coeffs_sum;
+                weights_sum += least_square_weights(0, ti);
+            }
+            for(int ti = start_tap; ti < N_IRS; ti++){
+                least_square_weights(0, ti) = least_square_weights(0, ti) / weights_sum;
+            }
+        }
+        
+        
+        for(int ti = start_tap; ti < N_IRS; ti++){
+            tmp_signal_(0, ti) = tmp_signal_(0, ti) * least_square_weights(0, ti);
+            // cout << least_square_weights(0, ti) << " ";
+        }
+        // cout << endl;
+        // cout << coeffs_sum << " " << weights_sum << endl;
+        
+    }
+    
+
+    beta1 = MatrixUtil::DotSum(tmp_signal_, irs_signal_);
+    beta2 = MatrixUtil::DotSum(tmp_signal_, prev_irs_signal_);
 
     complex<double> beta = beta1 * conj(beta2);
     if(isnan(beta.real())){

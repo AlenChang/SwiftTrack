@@ -5,7 +5,7 @@
  * File: findExtents.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 02-Dec-2022 12:50:48
+ * C/C++ source code generated on  : 12-Dec-2022 19:58:02
  */
 
 /* Include Files */
@@ -361,7 +361,7 @@ void findExtents(const emxArray_real_T *y, const emxArray_real_T *x,
     md2 = iPk->size[0];
     for (xtmp = 0; xtmp < md2; xtmp++) {
       b_yFinite_data[xtmp] =
-          (yFinite_data[iPk_data[xtmp] - 1] - bPk_data[xtmp] >= 0.1);
+          (yFinite_data[iPk_data[xtmp] - 1] - bPk_data[xtmp] >= 0.0);
     }
     eml_find(b_yFinite, iInfL);
     iInfL_data = iInfL->data;

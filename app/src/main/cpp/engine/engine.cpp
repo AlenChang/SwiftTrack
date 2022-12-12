@@ -47,7 +47,7 @@ Engine::Engine() {
 
 }
 
-void Engine::setup(int N, int FC, int BW){
+void Engine::setup(int id, int N, int FC, int BW){
     if(ifExpiry) {return;}
     N_ZC_UP_ = N;
     FC_ = FC;
@@ -56,15 +56,15 @@ void Engine::setup(int N, int FC, int BW){
     time_count = 0;
     // from real-valued audio signal to complex-valued cir
     // methods irrelevant
-    preprocessor_ = new Preprocessor(N_ZC_UP_, FC_, BW_);
+    preprocessor_ = new Preprocessor(id, N_ZC_UP_, FC_, BW_);
 
     // remove background noise
     // two different approaches - DDBR or our method
-    denoiser_ = new Denoiser(N_ZC_UP_);
+    denoiser_ = new Denoiser(id, N_ZC_UP_);
     
     // deploy different methods
     // Four different approaches - ToF, Strata, SwiftTrack w/o TOF, SwiftTrack
-    postprocessor_ = new Postprocessor(N_ZC_UP_);
+    postprocessor_ = new Postprocessor(id, N_ZC_UP_);
 
 //    processFramePipe_init();
 }
@@ -85,7 +85,7 @@ Engine* Engine::GetInstance(int id, int N, int FC, int BW) {
     if (id == 0) {
         if (instance1 == nullptr) {
             instance1 = new Engine();
-            instance1->setup(N, FC, BW);
+            instance1->setup(id, N, FC, BW);
 //            LoggerUtil::Log("in_c_test", "initialize left channel success.");
         }
 //        LoggerUtil::Log("in_c_test", "return instance 1.");
@@ -95,7 +95,7 @@ Engine* Engine::GetInstance(int id, int N, int FC, int BW) {
     if (id == 1) {
         if (instance2 == nullptr) {
             instance2 = new Engine();
-            instance2->setup(N, FC, BW);
+            instance2->setup(id, N, FC, BW);
 //            LoggerUtil::Log("in_c_test", "initialize right channel success.");
         }
 //        LoggerUtil::Log("in_c_test", "return instance 2.");
@@ -267,6 +267,11 @@ void Engine::GetThreshold(int id, double *thre){
     }
 }
 
+MatrixX<complex<double>> Engine::GetCIR_Preprocessor(int id){
+    Engine *engine = Engine::GetInstance(id);
+    return engine->preprocessor_->getCIRSignal();
+}
+
 void Engine::getMovingStatus(int id, bool *status){
 //    if(ifExpiry) {return;}
     Engine *engine = Engine::GetInstance(id);
@@ -291,7 +296,7 @@ void Engine::Reset(int id, int N, int FC, int BW) {
     if (id == 0) {
         delete instance1;
         instance1 = new Engine();
-        instance1->setup(N, FC, BW);
+        instance1->setup(id, N, FC, BW);
 //         LoggerUtil::Log("in_c_test", "Reset instance1 OK.");
         return;
     }
@@ -299,7 +304,7 @@ void Engine::Reset(int id, int N, int FC, int BW) {
     if (id == 1) {
         delete instance2;
         instance2 = new Engine();
-        instance2->setup(N, FC, BW);
+        instance2->setup(id, N, FC, BW);
 //         LoggerUtil::Log("in_c_test", "Reset instance2 OK.");
         return;
     }
