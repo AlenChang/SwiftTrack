@@ -5,50 +5,66 @@
  * File: minOrMax.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 18-Nov-2022 20:27:15
+ * C/C++ source code generated on  : 13-Dec-2022 11:27:48
  */
 
 /* Include Files */
 #include "minOrMax.h"
+#include "recalibrateHistory_types.h"
 #include "rt_nonfinite.h"
 #include "rt_nonfinite.h"
 
 /* Function Definitions */
 /*
- * Arguments    : const double x[100]
+ * Arguments    : const emxArray_real_T *x
  * Return Type  : double
  */
-double maximum(const double x[100])
+double maximum(const emxArray_real_T *x)
 {
-  double d;
+  const double *x_data;
   double ex;
-  int idx;
   int k;
-  boolean_T exitg1;
-  if (!rtIsNaN(x[0])) {
-    idx = 1;
+  int last;
+  x_data = x->data;
+  last = x->size[0];
+  if (x->size[0] <= 2) {
+    if (x->size[0] == 1) {
+      ex = x_data[0];
+    } else if ((x_data[0] < x_data[x->size[0] - 1]) ||
+               (rtIsNaN(x_data[0]) && (!rtIsNaN(x_data[x->size[0] - 1])))) {
+      ex = x_data[x->size[0] - 1];
+    } else {
+      ex = x_data[0];
+    }
   } else {
-    idx = 0;
-    k = 2;
-    exitg1 = false;
-    while ((!exitg1) && (k < 101)) {
-      if (!rtIsNaN(x[k - 1])) {
-        idx = k;
-        exitg1 = true;
-      } else {
-        k++;
+    int idx;
+    if (!rtIsNaN(x_data[0])) {
+      idx = 1;
+    } else {
+      boolean_T exitg1;
+      idx = 0;
+      k = 2;
+      exitg1 = false;
+      while ((!exitg1) && (k <= last)) {
+        if (!rtIsNaN(x_data[k - 1])) {
+          idx = k;
+          exitg1 = true;
+        } else {
+          k++;
+        }
       }
     }
-  }
-  if (idx == 0) {
-    ex = x[0];
-  } else {
-    ex = x[idx - 1];
-    idx++;
-    for (k = idx; k < 101; k++) {
-      d = x[k - 1];
-      if (ex < d) {
-        ex = d;
+    if (idx == 0) {
+      ex = x_data[0];
+    } else {
+      ex = x_data[idx - 1];
+      idx++;
+      for (k = idx; k <= last; k++) {
+        double d;
+        d = x_data[k - 1];
+        if (ex < d) {
+          ex = d;
+        }
       }
     }
   }
@@ -56,40 +72,55 @@ double maximum(const double x[100])
 }
 
 /*
- * Arguments    : const double x[100]
+ * Arguments    : const emxArray_real_T *x
  * Return Type  : double
  */
-double minimum(const double x[100])
+double minimum(const emxArray_real_T *x)
 {
-  double d;
+  const double *x_data;
   double ex;
-  int idx;
   int k;
-  boolean_T exitg1;
-  if (!rtIsNaN(x[0])) {
-    idx = 1;
+  int last;
+  x_data = x->data;
+  last = x->size[0];
+  if (x->size[0] <= 2) {
+    if (x->size[0] == 1) {
+      ex = x_data[0];
+    } else if ((x_data[0] > x_data[x->size[0] - 1]) ||
+               (rtIsNaN(x_data[0]) && (!rtIsNaN(x_data[x->size[0] - 1])))) {
+      ex = x_data[x->size[0] - 1];
+    } else {
+      ex = x_data[0];
+    }
   } else {
-    idx = 0;
-    k = 2;
-    exitg1 = false;
-    while ((!exitg1) && (k < 101)) {
-      if (!rtIsNaN(x[k - 1])) {
-        idx = k;
-        exitg1 = true;
-      } else {
-        k++;
+    int idx;
+    if (!rtIsNaN(x_data[0])) {
+      idx = 1;
+    } else {
+      boolean_T exitg1;
+      idx = 0;
+      k = 2;
+      exitg1 = false;
+      while ((!exitg1) && (k <= last)) {
+        if (!rtIsNaN(x_data[k - 1])) {
+          idx = k;
+          exitg1 = true;
+        } else {
+          k++;
+        }
       }
     }
-  }
-  if (idx == 0) {
-    ex = x[0];
-  } else {
-    ex = x[idx - 1];
-    idx++;
-    for (k = idx; k < 101; k++) {
-      d = x[k - 1];
-      if (ex > d) {
-        ex = d;
+    if (idx == 0) {
+      ex = x_data[0];
+    } else {
+      ex = x_data[idx - 1];
+      idx++;
+      for (k = idx; k <= last; k++) {
+        double d;
+        d = x_data[k - 1];
+        if (ex > d) {
+          ex = d;
+        }
       }
     }
   }

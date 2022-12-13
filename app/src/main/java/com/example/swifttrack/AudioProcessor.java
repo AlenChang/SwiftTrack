@@ -117,12 +117,11 @@ public class AudioProcessor {
 
 
         private void prepareDataForAccFragment(int winLen, boolean needSave){
-            double[] xWindow0 = new double[winLen];
-            double[] xWindow1 = new double[winLen];
-            double[] xWindow2 = new double[winLen];
-            double[] xWindow3 = new double[winLen];
-            double[] xWindow4 = new double[winLen];
-            boolean[] is_body_moving = new boolean[winLen];
+            int max_len = 4096;
+            double[] phase_hist = new double[max_len];
+            double[] time_hist = new double[max_len];
+            double[] recalibrated_phase = new double[max_len];
+            boolean[] is_body_moving = new boolean[max_len];
 
             double[] next_waveform = new double[100];
             double[] resp_waveform = new double[100];
@@ -143,35 +142,35 @@ public class AudioProcessor {
             int[] length = {0};
             getHistoryLength(targetChannel, deployMethods.swifttrack, length);
             Log.d("profile_length", ""+length[0]);
-            getHistoryData(targetChannel, xWindow0, winLen, deployMethods.swifttrack, HistoryType.dist_v);
-            getHistoryData(targetChannel, xWindow1, winLen, deployMethods.swifttrack, HistoryType.time_stamp);
+            getHistoryData(targetChannel, phase_hist, max_len, deployMethods.swifttrack, HistoryType.dist_v);
+            getHistoryData(targetChannel, time_hist, max_len, deployMethods.swifttrack, HistoryType.time_stamp);
 
             if(distance_counter < distance_length){
-                if(length[0] < winLen){
-                    distance[distance_counter] = xWindow0[length[0]-1];
-                    time_stamps[distance_counter] = xWindow1[length[0]-1];
+                if(length[0] < max_len){
+                    distance[distance_counter] = phase_hist[length[0]-1];
+                    time_stamps[distance_counter] = time_hist[length[0]-1];
                 }else{
-                    distance[distance_counter] = xWindow0[winLen-1];
-                    time_stamps[distance_counter] = xWindow1[winLen-1];
+                    distance[distance_counter] = phase_hist[max_len-1];
+                    time_stamps[distance_counter] = time_hist[max_len-1];
                 }
 
                 distance_counter++;
             }
 
-            if(length[0] < winLen){
-                for(int i = length[0]; i < winLen; i++){
-                    xWindow0[i] = xWindow0[length[0]-1];
+            if(length[0] < max_len){
+                for(int i = length[0]; i < max_len; i++){
+                    phase_hist[i] = phase_hist[length[0]-1];
                 }
             }
 
-            System.arraycopy(xWindow0, 0, xWindow2, 0, winLen);
-            recalibrate(targetChannel, xWindow2, next_waveform, resp_waveform, is_new_waveform, is_body_moving, resp_freq, winLen);
+            System.arraycopy(phase_hist, 0, recalibrated_phase, 0, max_len);
+            recalibrate(targetChannel, recalibrated_phase, next_waveform, resp_waveform, is_new_waveform, is_body_moving, resp_freq, max_len);
             int local_moving_counter = 0;
             if(containsTrue(is_body_moving)){
                 double max_value = 0.0;
                 for(int ti = 0; ti < is_body_moving.length; ti++){
                     if(is_body_moving[ti] && !is_body_moving[ti-1]){
-                        max_value = xWindow2[ti];
+                        max_value = recalibrated_phase[ti];
                         local_moving_counter += 1;
                         if(local_moving_counter > moving_counter){
                             moving_counter = local_moving_counter;
@@ -179,12 +178,21 @@ public class AudioProcessor {
 
                     }
                     if(is_body_moving[ti]){
-                        xWindow2[ti] = max_value;
+                        recalibrated_phase[ti] = max_value;
                     }
                 }
             }
             Log.d("respiration freq", resp_freq[0] + "");
-            AccViewModel.setLineData(xWindow2, length[0], next_waveform, resp_waveform, is_new_waveform[0]);
+            double[] plot_data = new double[winLen];
+            int valid_length = 0;
+            if(length[0] <= winLen){
+                System.arraycopy(recalibrated_phase, 0, plot_data, 0, winLen);
+                valid_length = length[0];
+            }else{
+                System.arraycopy(recalibrated_phase, length[0] - winLen - 1, plot_data, 0, winLen);
+                valid_length = winLen;
+            }
+            AccViewModel.setLineData(plot_data, valid_length, next_waveform, resp_waveform, is_new_waveform[0]);
 
 
             double[] thre = new double[3];

@@ -224,7 +224,7 @@ void Engine::reCalibrate(int id, double* history, int n, double *next_waveform, 
 //        Engine::PrintDoubleArray(hist->data, hist_length, "hist value");
 //        Engine::PrintString("Engine Debug", "emxArray hist assignment success!");
 
-    recalibrateHistory(hist, 1.0, engine->last_waveform, engine->resp_waveform, hist_out, is_body_moving,waveform,&new_waveform,&resp_freq_);
+    recalibrateHistory(hist, 3.0, engine->last_waveform, engine->resp_waveform, hist_out, is_body_moving,waveform,&new_waveform,&resp_freq_);
 //        Engine::PrintString("Engine Debug", "Recalibration success!");
     for(int ti = 0; ti < hist_length; ti++){
         is_body_moving_[ti] = is_body_moving->data[ti];

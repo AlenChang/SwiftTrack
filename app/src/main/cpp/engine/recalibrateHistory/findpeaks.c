@@ -5,7 +5,7 @@
  * File: findpeaks.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 12-Dec-2022 19:58:02
+ * C/C++ source code generated on  : 13-Dec-2022 11:27:48
  */
 
 /* Include Files */
