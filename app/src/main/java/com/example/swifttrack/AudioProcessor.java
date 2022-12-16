@@ -116,7 +116,7 @@ public class AudioProcessor {
         public Engine(int inFragID) {fragID = inFragID;}
 
 
-        private void prepareDataForAccFragment(int winLen, boolean needSave){
+        private void prepareDataForAccFragment(int winLen, boolean needSave, boolean need_bp){
             int max_len = 4096;
             double[] phase_hist = new double[max_len];
             double[] time_hist = new double[max_len];
@@ -164,7 +164,7 @@ public class AudioProcessor {
             }
 
             System.arraycopy(phase_hist, 0, recalibrated_phase, 0, max_len);
-            recalibrate(targetChannel, recalibrated_phase, next_waveform, resp_waveform, is_new_waveform, is_body_moving, resp_freq, max_len);
+            recalibrate(targetChannel, recalibrated_phase, next_waveform, resp_waveform, is_new_waveform, is_body_moving, resp_freq, max_len, need_bp);
             int local_moving_counter = 0;
             if(containsTrue(is_body_moving)){
                 double max_value = 0.0;
@@ -201,7 +201,7 @@ public class AudioProcessor {
             Log.d("swifttrack_Thre", ""+String.format("%.4f", thre[0]) + " " + String.format("%.4f", thre[1]) + " " + (thre[2] > 1));
 
             if(needSave){
-                recalibrate(targetChannel, distance, next_waveform, resp_waveform, is_new_waveform, is_body_moving, resp_freq, distance_counter);
+                recalibrate(targetChannel, distance, next_waveform, resp_waveform, is_new_waveform, is_body_moving, resp_freq, distance_counter, need_bp);
                 double[][] result = new double[distance_counter][2];
 //                int listsize = threlist.size();
                 for (int i = 0; i < distance_counter; i++) {
@@ -276,7 +276,7 @@ public class AudioProcessor {
                             }
 
                             frameCount += data.length / 2 / FRAME_SIZE;
-                            prepareDataForAccFragment(WINDOW_SIZE, false);
+                            prepareDataForAccFragment(WINDOW_SIZE, false, false);
                         }
 
                         lock.unlock();
@@ -305,7 +305,7 @@ public class AudioProcessor {
             int[] length = {0};
             getHistoryLength(targetChannel, deployMethods.swifttrack, length);
             int len = Math.max(length[0], WINDOW_SIZE);
-            prepareDataForAccFragment(len, true);
+            prepareDataForAccFragment(len, true, true);
 
 
 
@@ -428,7 +428,7 @@ public class AudioProcessor {
 
     private static native void getHistoryData(int id, double[] history, int n, int history_id, int history_type);
 
-    private static native void recalibrate(int id, double[] history, double[] next_waveform, double[] resp_wave, boolean[] is_new_waveform, boolean[] is_body_moving, double[] resp_freq, int n);
+    private static native void recalibrate(int id, double[] history, double[] next_waveform, double[] resp_wave, boolean[] is_new_waveform, boolean[] is_body_moving, double[] resp_freq, int n, boolean need_bp);
 
     private static native void getHistoryLength(int id, int history_id, int[] length);
 

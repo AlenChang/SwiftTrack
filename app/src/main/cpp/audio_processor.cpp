@@ -53,7 +53,7 @@ Java_com_example_swifttrack_AudioProcessor_getHistoryData(
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_swifttrack_AudioProcessor_recalibrate(
-        JNIEnv *env, jobject thiz, jint id, jdoubleArray history, jdoubleArray next_waveform, jdoubleArray resp_wave, jbooleanArray is_new_waveform, jbooleanArray is_body_moving, jdoubleArray resp_freq, jint n
+        JNIEnv *env, jobject thiz, jint id, jdoubleArray history, jdoubleArray next_waveform, jdoubleArray resp_wave, jbooleanArray is_new_waveform, jbooleanArray is_body_moving, jdoubleArray resp_freq, jint n, jboolean need_bp
 ) {
     jdouble *history_ = (env)->GetDoubleArrayElements(history, nullptr);
     jdouble *next_waveform_ = (env)->GetDoubleArrayElements(next_waveform, nullptr);
@@ -66,7 +66,7 @@ Java_com_example_swifttrack_AudioProcessor_recalibrate(
     bool is_new_waveform__ = false;
 
     if (Engine::GetInstance(id) != nullptr) {
-        Engine::reCalibrate(id, history_, n, next_waveform_,resp_wave_, moving_flag, &is_new_waveform__, resp_freq_);
+        Engine::reCalibrate(id, history_, n, next_waveform_,resp_wave_, moving_flag, &is_new_waveform__, resp_freq_, need_bp);
     }
 
     for(int ti = 0; ti < n; ti ++){

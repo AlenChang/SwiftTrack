@@ -59,7 +59,7 @@ public:
 
     static int GetHistoryLength(int id, int history_id);
 
-    static void reCalibrate(int id, double* history, int n, double *next_waveform, double *resp_wave, bool *is_body_moving_, bool *is_new_waveform, double *resp_freq);
+    static void reCalibrate(int id, double* history, int n, double *next_waveform, double *resp_wave, bool *is_body_moving_, bool *is_new_waveform, double *resp_freq, bool need_bp);
 
     // static void PrintString(string val, string name);
     // static void PrintDoubleArray(double* farray, int n, string name);

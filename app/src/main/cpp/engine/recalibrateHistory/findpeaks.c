@@ -5,7 +5,7 @@
  * File: findpeaks.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 13-Dec-2022 11:27:48
+ * C/C++ source code generated on  : 16-Dec-2022 15:26:49
  */
 
 /* Include Files */
@@ -80,7 +80,7 @@ static void binary_expand_op(emxArray_boolean_T *in1,
     in1_tmp = in2_data[i * stride_1_0];
     b_in1_data[i] =
         (in1_data[i * stride_0_0] ||
-         (((int)in1_tmp >= (int)in3_tmp - 80) && (in1_tmp <= in3_tmp + 80U)));
+         (((int)in1_tmp >= (int)in3_tmp - 30) && (in1_tmp <= in3_tmp + 30U)));
   }
   i = in1->size[0];
   in1->size[0] = b_in1->size[0];
@@ -396,8 +396,8 @@ void findpeaks(const emxArray_real_T *Yin, emxArray_real_T *Ypk,
             idelete_tmp = x_data[iPk_data[ny - 1] - 1];
             idelete_data[nInf] =
                 (idelete_data[nInf] ||
-                 (((int)locs_temp_data[nInf] >= (int)idelete_tmp - 80) &&
-                  (locs_temp_data[nInf] <= idelete_tmp + 80U)));
+                 (((int)locs_temp_data[nInf] >= (int)idelete_tmp - 30) &&
+                  (locs_temp_data[nInf] <= idelete_tmp + 30U)));
           }
         } else {
           binary_expand_op(idelete, locs_temp, x, iPk, sortIdx, b_i);
