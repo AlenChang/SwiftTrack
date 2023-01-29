@@ -5,12 +5,14 @@
  * File: sortIdx.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 16-Dec-2022 15:26:49
+ * C/C++ source code generated on  : 29-Jan-2023 18:06:51
  */
 
 /* Include Files */
 #include "sortIdx.h"
+#include "recalibrateHistory_emxutil.h"
 #include "recalibrateHistory_types.h"
+#include "rt_nonfinite.h"
 #include "rt_nonfinite.h"
 
 /* Function Declarations */
@@ -126,6 +128,106 @@ void merge_block(emxArray_int32_T *idx, emxArray_int32_T *x, int offset, int n,
   if (n > bLen) {
     merge(idx, x, offset, bLen, n - bLen, iwork, xwork);
   }
+}
+
+/*
+ * Arguments    : const emxArray_real_T *x
+ *                emxArray_int32_T *idx
+ * Return Type  : void
+ */
+void sortIdx(const emxArray_real_T *x, emxArray_int32_T *idx)
+{
+  emxArray_int32_T *iwork;
+  const double *x_data;
+  int b_i;
+  int i;
+  int k;
+  int n;
+  int pEnd;
+  int qEnd;
+  int *idx_data;
+  int *iwork_data;
+  x_data = x->data;
+  n = x->size[0] + 1;
+  i = idx->size[0];
+  idx->size[0] = x->size[0];
+  emxEnsureCapacity_int32_T(idx, i);
+  idx_data = idx->data;
+  b_i = x->size[0];
+  for (i = 0; i < b_i; i++) {
+    idx_data[i] = 0;
+  }
+  emxInit_int32_T(&iwork);
+  i = iwork->size[0];
+  iwork->size[0] = x->size[0];
+  emxEnsureCapacity_int32_T(iwork, i);
+  iwork_data = iwork->data;
+  i = x->size[0] - 1;
+  for (k = 1; k <= i; k += 2) {
+    if ((x_data[k - 1] <= x_data[k]) || rtIsNaN(x_data[k])) {
+      idx_data[k - 1] = k;
+      idx_data[k] = k + 1;
+    } else {
+      idx_data[k - 1] = k + 1;
+      idx_data[k] = k;
+    }
+  }
+  if ((x->size[0] & 1) != 0) {
+    idx_data[x->size[0] - 1] = x->size[0];
+  }
+  b_i = 2;
+  while (b_i < n - 1) {
+    int i2;
+    int j;
+    i2 = b_i << 1;
+    j = 1;
+    for (pEnd = b_i + 1; pEnd < n; pEnd = qEnd + b_i) {
+      int kEnd;
+      int p;
+      int q;
+      p = j;
+      q = pEnd - 1;
+      qEnd = j + i2;
+      if (qEnd > n) {
+        qEnd = n;
+      }
+      k = 0;
+      kEnd = qEnd - j;
+      while (k + 1 <= kEnd) {
+        double d;
+        d = x_data[idx_data[q] - 1];
+        i = idx_data[p - 1];
+        if ((x_data[i - 1] <= d) || rtIsNaN(d)) {
+          iwork_data[k] = i;
+          p++;
+          if (p == pEnd) {
+            while (q + 1 < qEnd) {
+              k++;
+              iwork_data[k] = idx_data[q];
+              q++;
+            }
+          }
+        } else {
+          iwork_data[k] = idx_data[q];
+          q++;
+          if (q + 1 == qEnd) {
+            while (p < pEnd) {
+              k++;
+              iwork_data[k] = idx_data[p - 1];
+              p++;
+            }
+          }
+        }
+        k++;
+      }
+      for (k = 0; k < kEnd; k++) {
+        idx_data[(j + k) - 1] = iwork_data[k];
+      }
+      j = qEnd;
+    }
+    b_i = i2;
+  }
+  emxFree_int32_T(&iwork);
 }
 
 /*

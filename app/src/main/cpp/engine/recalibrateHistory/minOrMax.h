@@ -5,14 +5,13 @@
  * File: minOrMax.h
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 16-Dec-2022 15:26:49
+ * C/C++ source code generated on  : 29-Jan-2023 18:06:51
  */
 
 #ifndef MINORMAX_H
 #define MINORMAX_H
 
 /* Include Files */
-#include "recalibrateHistory_types.h"
 #include "rtwtypes.h"
 #include <stddef.h>
 #include <stdlib.h>
@@ -22,9 +21,7 @@ extern "C" {
 #endif
 
 /* Function Declarations */
-double maximum(const emxArray_real_T *x);
-
-double minimum(const emxArray_real_T *x);
+double minimum(const double x[100]);
 
 #ifdef __cplusplus
 }

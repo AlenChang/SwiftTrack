@@ -5,7 +5,7 @@
  * File: sortIdx.h
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 16-Dec-2022 15:26:49
+ * C/C++ source code generated on  : 29-Jan-2023 18:06:51
  */
 
 #ifndef SORTIDX_H
@@ -25,6 +25,8 @@ extern "C" {
 void merge_block(emxArray_int32_T *idx, emxArray_int32_T *x, int offset, int n,
                  int preSortLevel, emxArray_int32_T *iwork,
                  emxArray_int32_T *xwork);
+
+void sortIdx(const emxArray_real_T *x, emxArray_int32_T *idx);
 
 #ifdef __cplusplus
 }

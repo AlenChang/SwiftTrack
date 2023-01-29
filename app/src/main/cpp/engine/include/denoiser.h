@@ -64,7 +64,7 @@ private:
 
     // const int FRAME_SIZE = 480;
     int Fs = 48e3;
-    int N_ZC_UP;
+    int N_ZC_UP = 960;
     static const int CALI_1_FRAMES = 200;
     const double thre_factor = 2;
     static const int CALI_2_PERIODS = 1;

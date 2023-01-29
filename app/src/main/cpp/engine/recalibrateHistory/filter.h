@@ -2,14 +2,14 @@
  * Academic License - for use in teaching, academic research, and meeting
  * course requirements at degree granting institutions only.  Not for
  * government, commercial, or other organizational use.
- * File: eml_setop.h
+ * File: filter.h
  *
  * MATLAB Coder version            : 5.5
  * C/C++ source code generated on  : 29-Jan-2023 18:06:51
  */
 
-#ifndef EML_SETOP_H
-#define EML_SETOP_H
+#ifndef FILTER_H
+#define FILTER_H
 
 /* Include Files */
 #include "recalibrateHistory_types.h"
@@ -22,13 +22,7 @@ extern "C" {
 #endif
 
 /* Function Declarations */
-void b_do_vectors(const emxArray_int32_T *a, const emxArray_int32_T *b,
-                  emxArray_int32_T *c, emxArray_int32_T *ia,
-                  emxArray_int32_T *ib);
-
-void do_vectors(const emxArray_int32_T *a, const emxArray_int32_T *b,
-                emxArray_int32_T *c, emxArray_int32_T *ia,
-                emxArray_int32_T *ib);
+void filter(const emxArray_real_T *x, emxArray_real_T *y);
 
 #ifdef __cplusplus
 }
@@ -36,7 +30,7 @@ void do_vectors(const emxArray_int32_T *a, const emxArray_int32_T *b,
 
 #endif
 /*
- * File trailer for eml_setop.h
+ * File trailer for filter.h
  *
  * [EOF]
  */

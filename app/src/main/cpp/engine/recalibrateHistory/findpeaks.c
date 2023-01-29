@@ -5,7 +5,7 @@
  * File: findpeaks.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 16-Dec-2022 15:26:49
+ * C/C++ source code generated on  : 29-Jan-2023 18:06:51
  */
 
 /* Include Files */
@@ -103,12 +103,12 @@ void findpeaks(const emxArray_real_T *Yin, emxArray_real_T *Ypk,
                emxArray_real_T *Xpk)
 {
   emxArray_boolean_T *idelete;
+  emxArray_int32_T *b_sortIdx;
   emxArray_int32_T *iInflect;
   emxArray_int32_T *iPk;
   emxArray_int32_T *idx;
   emxArray_int32_T *iwork;
   emxArray_int32_T *r1;
-  emxArray_int32_T *sortIdx;
   emxArray_real_T *bPk;
   emxArray_real_T *bxPk;
   emxArray_real_T *byPk;
@@ -148,11 +148,11 @@ void findpeaks(const emxArray_real_T *Yin, emxArray_real_T *Ypk,
   for (i = 0; i <= kfirst; i++) {
     x_data[i] = (unsigned int)i + 1U;
   }
-  emxInit_int32_T(&sortIdx);
-  i = sortIdx->size[0];
-  sortIdx->size[0] = Yin->size[0];
-  emxEnsureCapacity_int32_T(sortIdx, i);
-  sortIdx_data = sortIdx->data;
+  emxInit_int32_T(&b_sortIdx);
+  i = b_sortIdx->size[0];
+  b_sortIdx->size[0] = Yin->size[0];
+  emxEnsureCapacity_int32_T(b_sortIdx, i);
+  sortIdx_data = b_sortIdx->data;
   emxInit_int32_T(&idx);
   i = idx->size[0];
   idx->size[0] = Yin->size[0];
@@ -221,14 +221,14 @@ void findpeaks(const emxArray_real_T *Yin, emxArray_real_T *Ypk,
     nInflect++;
     iwork_data[nInflect] = Yin->size[0];
   }
-  i = sortIdx->size[0];
+  i = b_sortIdx->size[0];
   if (nPk < 1) {
-    sortIdx->size[0] = 0;
+    b_sortIdx->size[0] = 0;
   } else {
-    sortIdx->size[0] = nPk;
+    b_sortIdx->size[0] = nPk;
   }
-  emxEnsureCapacity_int32_T(sortIdx, i);
-  sortIdx_data = sortIdx->data;
+  emxEnsureCapacity_int32_T(b_sortIdx, i);
+  sortIdx_data = b_sortIdx->data;
   i = idx->size[0];
   if (nInf < 1) {
     idx->size[0] = 0;
@@ -246,11 +246,11 @@ void findpeaks(const emxArray_real_T *Yin, emxArray_real_T *Ypk,
   emxEnsureCapacity_int32_T(iInflect, i);
   emxInit_int32_T(&iPk);
   i = iPk->size[0];
-  iPk->size[0] = sortIdx->size[0];
+  iPk->size[0] = b_sortIdx->size[0];
   emxEnsureCapacity_int32_T(iPk, i);
   iPk_data = iPk->data;
   nPk = 0;
-  n = sortIdx->size[0];
+  n = b_sortIdx->size[0];
   for (k = 0; k < n; k++) {
     ykfirst = Yin_data[sortIdx_data[k] - 1];
     if ((ykfirst > rtMinusInf) && (ykfirst - fmax(Yin_data[sortIdx_data[k] - 2],
@@ -280,7 +280,7 @@ void findpeaks(const emxArray_real_T *Yin, emxArray_real_T *Ypk,
   emxInit_real_T(&bxPk, 2);
   emxInit_real_T(&byPk, 2);
   emxInit_real_T(&wxPk, 2);
-  findExtents(Yin, r, iPk, sortIdx, idx, iInflect, bPk, bxPk, byPk, wxPk);
+  findExtents(Yin, r, iPk, b_sortIdx, idx, iInflect, bPk, bxPk, byPk, wxPk);
   iPk_data = iPk->data;
   emxFree_real_T(&r);
   emxFree_real_T(&wxPk);
@@ -292,10 +292,10 @@ void findpeaks(const emxArray_real_T *Yin, emxArray_real_T *Ypk,
     idx->size[0] = 0;
   } else {
     n = iPk->size[0] + 1;
-    i = sortIdx->size[0];
-    sortIdx->size[0] = iPk->size[0];
-    emxEnsureCapacity_int32_T(sortIdx, i);
-    sortIdx_data = sortIdx->data;
+    i = b_sortIdx->size[0];
+    b_sortIdx->size[0] = iPk->size[0];
+    emxEnsureCapacity_int32_T(b_sortIdx, i);
+    sortIdx_data = b_sortIdx->data;
     kfirst = iPk->size[0];
     for (i = 0; i < kfirst; i++) {
       sortIdx_data[i] = 0;
@@ -369,23 +369,23 @@ void findpeaks(const emxArray_real_T *Yin, emxArray_real_T *Ypk,
     emxFree_int32_T(&iwork);
     emxInit_uint32_T(&locs_temp);
     i = locs_temp->size[0];
-    locs_temp->size[0] = sortIdx->size[0];
+    locs_temp->size[0] = b_sortIdx->size[0];
     emxEnsureCapacity_uint32_T(locs_temp, i);
     locs_temp_data = locs_temp->data;
-    kfirst = sortIdx->size[0];
+    kfirst = b_sortIdx->size[0];
     for (i = 0; i < kfirst; i++) {
       locs_temp_data[i] = (unsigned int)iPk_data[sortIdx_data[i] - 1];
     }
     emxInit_boolean_T(&idelete, 1);
     i = idelete->size[0];
-    idelete->size[0] = sortIdx->size[0];
+    idelete->size[0] = b_sortIdx->size[0];
     emxEnsureCapacity_boolean_T(idelete, i);
     idelete_data = idelete->data;
-    kfirst = sortIdx->size[0];
+    kfirst = b_sortIdx->size[0];
     for (i = 0; i < kfirst; i++) {
       idelete_data[i] = false;
     }
-    i = sortIdx->size[0];
+    i = b_sortIdx->size[0];
     for (b_i = 0; b_i < i; b_i++) {
       if (!idelete_data[b_i]) {
         if (idelete->size[0] == locs_temp->size[0]) {
@@ -400,7 +400,7 @@ void findpeaks(const emxArray_real_T *Yin, emxArray_real_T *Ypk,
                   (locs_temp_data[nInf] <= idelete_tmp + 30U)));
           }
         } else {
-          binary_expand_op(idelete, locs_temp, x, iPk, sortIdx, b_i);
+          binary_expand_op(idelete, locs_temp, x, iPk, b_sortIdx, b_i);
           idelete_data = idelete->data;
         }
         idelete_data[b_i] = false;
@@ -446,24 +446,24 @@ void findpeaks(const emxArray_real_T *Yin, emxArray_real_T *Ypk,
     emxEnsureCapacity_int32_T(idx, i);
     idx_data = idx->data;
   }
-  i = sortIdx->size[0];
-  sortIdx->size[0] = idx->size[0];
-  emxEnsureCapacity_int32_T(sortIdx, i);
-  sortIdx_data = sortIdx->data;
+  i = b_sortIdx->size[0];
+  b_sortIdx->size[0] = idx->size[0];
+  emxEnsureCapacity_int32_T(b_sortIdx, i);
+  sortIdx_data = b_sortIdx->data;
   kfirst = idx->size[0];
   for (i = 0; i < kfirst; i++) {
     sortIdx_data[i] = iPk_data[idx_data[i] - 1];
   }
   emxFree_int32_T(&idx);
   i = iPk->size[0];
-  iPk->size[0] = sortIdx->size[0];
+  iPk->size[0] = b_sortIdx->size[0];
   emxEnsureCapacity_int32_T(iPk, i);
   iPk_data = iPk->data;
-  kfirst = sortIdx->size[0];
+  kfirst = b_sortIdx->size[0];
   for (i = 0; i < kfirst; i++) {
     iPk_data[i] = sortIdx_data[i];
   }
-  emxFree_int32_T(&sortIdx);
+  emxFree_int32_T(&b_sortIdx);
   i = Ypk->size[0];
   Ypk->size[0] = iPk->size[0];
   emxEnsureCapacity_real_T(Ypk, i);
