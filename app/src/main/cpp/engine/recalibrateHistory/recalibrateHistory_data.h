@@ -5,7 +5,7 @@
  * File: recalibrateHistory_data.h
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 29-Jan-2023 18:06:51
+ * C/C++ source code generated on  : 05-Feb-2023 12:44:44
  */
 
 #ifndef RECALIBRATEHISTORY_DATA_H
@@ -15,9 +15,6 @@
 #include "rtwtypes.h"
 #include <stddef.h>
 #include <stdlib.h>
-
-/* Variable Declarations */
-extern boolean_T isInitialized_recalibrateHistory;
 
 #endif
 /*

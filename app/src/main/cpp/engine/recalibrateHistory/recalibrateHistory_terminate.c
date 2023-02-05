@@ -5,12 +5,11 @@
  * File: recalibrateHistory_terminate.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 29-Jan-2023 18:06:51
+ * C/C++ source code generated on  : 05-Feb-2023 12:44:44
  */
 
 /* Include Files */
 #include "recalibrateHistory_terminate.h"
-#include "recalibrateHistory_data.h"
 #include "rt_nonfinite.h"
 
 /* Function Definitions */
@@ -20,7 +19,6 @@
  */
 void recalibrateHistory_terminate(void)
 {
-  isInitialized_recalibrateHistory = false;
 }
 
 /*
