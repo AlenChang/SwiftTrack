@@ -5,7 +5,7 @@
  * File: recalibrateHistory.c
  *
  * MATLAB Coder version            : 5.5
- * C/C++ source code generated on  : 05-Feb-2023 12:44:44
+ * C/C++ source code generated on  : 07-Feb-2023 10:03:28
  */
 
 /* Include Files */
@@ -93,7 +93,6 @@ static void recalibrateCore(emxArray_real_T *hist2, double moving_thre,
   double amin;
   double d1_tmp;
   double delta1;
-  double time_duration;
   double *b_drift_data;
   double *drift_data;
   double *hist2_data;
@@ -126,8 +125,6 @@ static void recalibrateCore(emxArray_real_T *hist2, double moving_thre,
   /*  [~, locs2] = findpeaks(-hist, ... */
   /*      'MinPeakDistance',100, 'MinPeakWidth', 50, 'MinPeakProminence', 0.05);
    */
-  time_duration = 0.0;
-  *resp_freq = 0.0;
   emxInit_real_T(&b_drift, 2);
   drift_data = b_drift->data;
   if (locs->size[0] >= 2) {
@@ -277,32 +274,59 @@ static void recalibrateCore(emxArray_real_T *hist2, double moving_thre,
   if (locs->size[0] >= 2) {
     i = locs->size[0];
     for (ti = 0; ti <= i - 2; ti++) {
-      amin = locs_data[ti + 1];
-      if (locs_data[ti] + 1.0 > amin) {
+      d1_tmp = locs_data[ti + 1];
+      if (locs_data[ti] + 1.0 > d1_tmp) {
         i1 = 0;
         i2 = 0;
       } else {
         i1 = (int)(locs_data[ti] + 1.0) - 1;
-        i2 = (int)amin;
+        i2 = (int)d1_tmp;
       }
       last_tmp = i2 - i1;
       if (last_tmp <= 2) {
         if (last_tmp == 1) {
+          delta1 = hist2_data[i1];
           amax = hist2_data[i1];
-          d1_tmp = hist2_data[i1];
         } else {
-          amax = hist2_data[i2 - 1];
-          if ((!(hist2_data[i1] < amax)) &&
-              ((!rtIsNaN(hist2_data[i1])) || rtIsNaN(amax))) {
-            amax = hist2_data[i1];
+          delta1 = hist2_data[i2 - 1];
+          if ((!(hist2_data[i1] < delta1)) &&
+              ((!rtIsNaN(hist2_data[i1])) || rtIsNaN(delta1))) {
+            delta1 = hist2_data[i1];
           }
-          d1_tmp = hist2_data[i2 - 1];
-          if ((!(hist2_data[i1] > d1_tmp)) &&
+          amax = hist2_data[i2 - 1];
+          if ((!(hist2_data[i1] > amax)) &&
               ((!rtIsNaN(hist2_data[i1])) || rtIsNaN(hist2_data[i2 - 1]))) {
-            d1_tmp = hist2_data[i1];
+            amax = hist2_data[i1];
           }
         }
       } else {
+        if (!rtIsNaN(hist2_data[i1])) {
+          idx = 1;
+        } else {
+          idx = 0;
+          k = 2;
+          exitg1 = false;
+          while ((!exitg1) && (k <= last_tmp)) {
+            if (!rtIsNaN(hist2_data[(i1 + k) - 1])) {
+              idx = k;
+              exitg1 = true;
+            } else {
+              k++;
+            }
+          }
+        }
+        if (idx == 0) {
+          delta1 = hist2_data[i1];
+        } else {
+          delta1 = hist2_data[(i1 + idx) - 1];
+          i2 = idx + 1;
+          for (k = i2; k <= last_tmp; k++) {
+            amin = hist2_data[(i1 + k) - 1];
+            if (delta1 < amin) {
+              delta1 = amin;
+            }
+          }
+        }
         if (!rtIsNaN(hist2_data[i1])) {
           idx = 1;
         } else {
@@ -324,42 +348,15 @@ static void recalibrateCore(emxArray_real_T *hist2, double moving_thre,
           amax = hist2_data[(i1 + idx) - 1];
           i2 = idx + 1;
           for (k = i2; k <= last_tmp; k++) {
-            delta1 = hist2_data[(i1 + k) - 1];
-            if (amax < delta1) {
-              amax = delta1;
-            }
-          }
-        }
-        if (!rtIsNaN(hist2_data[i1])) {
-          idx = 1;
-        } else {
-          idx = 0;
-          k = 2;
-          exitg1 = false;
-          while ((!exitg1) && (k <= last_tmp)) {
-            if (!rtIsNaN(hist2_data[(i1 + k) - 1])) {
-              idx = k;
-              exitg1 = true;
-            } else {
-              k++;
-            }
-          }
-        }
-        if (idx == 0) {
-          d1_tmp = hist2_data[i1];
-        } else {
-          d1_tmp = hist2_data[(i1 + idx) - 1];
-          i2 = idx + 1;
-          for (k = i2; k <= last_tmp; k++) {
-            delta1 = hist2_data[(i1 + k) - 1];
-            if (d1_tmp > delta1) {
-              d1_tmp = delta1;
+            amin = hist2_data[(i1 + k) - 1];
+            if (amax > amin) {
+              amax = amin;
             }
           }
         }
       }
-      if (amax - d1_tmp > moving_thre) {
-        if (locs_data[ti] + 1.0 > amin) {
+      if (delta1 - amax > moving_thre) {
+        if (locs_data[ti] + 1.0 > d1_tmp) {
           i1 = 0;
           i2 = 0;
         } else {
@@ -371,12 +368,11 @@ static void recalibrateCore(emxArray_real_T *hist2, double moving_thre,
           is_body_moving_data[i1 + i2] = true;
         }
       }
-      time_duration = (time_duration + amin) - locs_data[ti];
-      (*resp_freq)++;
     }
   }
-  time_duration = time_duration * 960.0 / 48000.0;
-  *resp_freq = *resp_freq / time_duration * 60.0;
+  /*  time_duration = time_duration * 960 / 48e3; */
+  /*  resp_freq = resp_freq / time_duration * 60; */
+  *resp_freq = ((double)locs->size[0] - 1.0) * 60.0 / 24.0;
   if (locs->size[0] > 2) {
     if (locs_data[locs->size[0] - 2] > locs_data[locs->size[0] - 1]) {
       i = 0;
@@ -428,19 +424,19 @@ static void recalibrateCore(emxArray_real_T *hist2, double moving_thre,
       }
     }
     if (idx == 0) {
-      amax = tmp[0];
+      delta1 = tmp[0];
     } else {
-      amax = tmp[idx - 1];
+      delta1 = tmp[idx - 1];
       i = idx + 1;
       for (k = i; k < 101; k++) {
-        amin = tmp[k - 1];
-        if (amax > amin) {
-          amax = amin;
+        d1_tmp = tmp[k - 1];
+        if (delta1 > d1_tmp) {
+          delta1 = d1_tmp;
         }
       }
     }
     for (i = 0; i < 100; i++) {
-      tmp[i] -= amax;
+      tmp[i] -= delta1;
     }
     if (!rtIsNaN(tmp[0])) {
       idx = 1;
@@ -458,19 +454,19 @@ static void recalibrateCore(emxArray_real_T *hist2, double moving_thre,
       }
     }
     if (idx == 0) {
-      amax = tmp[0];
+      delta1 = tmp[0];
     } else {
-      amax = tmp[idx - 1];
+      delta1 = tmp[idx - 1];
       i = idx + 1;
       for (k = i; k < 101; k++) {
-        amin = tmp[k - 1];
-        if (amax < amin) {
-          amax = amin;
+        d1_tmp = tmp[k - 1];
+        if (delta1 < d1_tmp) {
+          delta1 = d1_tmp;
         }
       }
     }
     for (i = 0; i < 100; i++) {
-      tmp[i] /= amax;
+      tmp[i] /= delta1;
     }
     /*      if(dtw(last_tmp, tmp) > 0.1) */
     /*          last_tmp = tmp; */
