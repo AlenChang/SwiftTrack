@@ -262,12 +262,12 @@ public class AudioProcessor {
                                 }
 //                                long startTime = System.currentTimeMillis();
                                 long startTime = System.nanoTime();
-                                if (CHANNEL_MASK[inputChannel.LEFT]) {
-                                    processFrame(inputChannel.LEFT, frame1, FRAME_SIZE, AudioPlayer.N_ZC_UP, AudioPlayer.FC, AudioPlayer.BW);
-                                }
-                                if (CHANNEL_MASK[inputChannel.RIGHT]) {
-                                    processFrame(inputChannel.RIGHT, frame2, FRAME_SIZE, AudioPlayer.N_ZC_UP, AudioPlayer.FC, AudioPlayer.BW);
-                                }
+//                                if (CHANNEL_MASK[inputChannel.LEFT]) {
+//                                    processFrame(inputChannel.LEFT, frame1, FRAME_SIZE, AudioPlayer.N_ZC_UP, AudioPlayer.FC, AudioPlayer.BW);
+//                                }
+//                                if (CHANNEL_MASK[inputChannel.RIGHT]) {
+//                                    processFrame(inputChannel.RIGHT, frame2, FRAME_SIZE, AudioPlayer.N_ZC_UP, AudioPlayer.FC, AudioPlayer.BW);
+//                                }
                                 long endTime = System.nanoTime();
 //                                if( counter % 10 == 0){
                                 Log.d("TimeCount", " " + (endTime - startTime)/1000000.0 + " ms");
@@ -275,8 +275,8 @@ public class AudioProcessor {
                                 counter++;
                             }
 
-                            frameCount += data.length / 2 / FRAME_SIZE;
-                            prepareDataForAccFragment(WINDOW_SIZE, false, false);
+//                            frameCount += data.length / 2 / FRAME_SIZE;
+//                            prepareDataForAccFragment(WINDOW_SIZE, false, false);
                         }
 
                         lock.unlock();

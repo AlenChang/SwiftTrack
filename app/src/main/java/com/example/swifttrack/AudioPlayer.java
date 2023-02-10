@@ -81,7 +81,7 @@ public class AudioPlayer {
 
         @Override
         public void run() {
-            audioTrack.play();
+//            audioTrack.play();
 
             running = true;
 
@@ -89,7 +89,7 @@ public class AudioPlayer {
                 prepareBuffer();
 
                 if (lock.tryLock()) {
-                    audioTrack.write(buffer, 0, AudioPlayer.BUFFER_SIZE, AudioTrack.WRITE_BLOCKING);
+//                    audioTrack.write(buffer, 0, AudioPlayer.BUFFER_SIZE, AudioTrack.WRITE_BLOCKING);
                     FileUtil.streamWriteMusic(bufferedWriter, buffer);
                     lock.unlock();
                 } else {
@@ -104,8 +104,8 @@ public class AudioPlayer {
 
             lock.lock();
 
-            audioTrack.stop();
-            audioTrack.release();
+//            audioTrack.stop();
+//            audioTrack.release();
 
             lock.unlock();
         }
