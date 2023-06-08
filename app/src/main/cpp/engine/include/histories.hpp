@@ -104,7 +104,7 @@ public:
     // }
 
     int getLength(){
-        return time_stamp.size();
+        return phase_history_.size();
     }
 
     void clearbuff(){

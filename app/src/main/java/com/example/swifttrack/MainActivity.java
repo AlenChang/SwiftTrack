@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     public static int N_ZC_UP = 960;
     public static int FS = 48000;
     public static int FC = 20000;
-    public static int BW = 4000;
+    public static int BW = 6000;
     public static int N_ZC = N_ZC_UP * BW / FS - 1;
     public static int ZC_ROOT = (N_ZC - 1) / 2;
     public static int DOWN_SAMPLE_FACTOR = N_ZC_UP;

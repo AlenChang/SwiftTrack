@@ -101,6 +101,8 @@ public class AudioProcessor {
         private int distance_length = distance.length;
         private int distance_counter = 0;
 
+        private int approach = deployMethods.strata;
+
         private int frameCount;
         private boolean running;
 
@@ -140,10 +142,10 @@ public class AudioProcessor {
                 targetChannel = inputChannel.LEFT;
             }
             int[] length = {0};
-            getHistoryLength(targetChannel, deployMethods.swifttrack, length);
+            getHistoryLength(targetChannel, approach, length);
             Log.d("profile_length", ""+length[0]);
-            getHistoryData(targetChannel, phase_hist, max_len, deployMethods.swifttrack, HistoryType.dist_v);
-            getHistoryData(targetChannel, time_hist, max_len, deployMethods.swifttrack, HistoryType.time_stamp);
+            getHistoryData(targetChannel, phase_hist, max_len, approach, HistoryType.dist_v);
+            getHistoryData(targetChannel, time_hist, max_len, approach, HistoryType.time_stamp);
 
             if(distance_counter < distance_length){
                 if(length[0] < max_len){
@@ -262,12 +264,14 @@ public class AudioProcessor {
                                 }
 //                                long startTime = System.currentTimeMillis();
                                 long startTime = System.nanoTime();
+                                boolean[] is_moving = {false};
                                 if (CHANNEL_MASK[inputChannel.LEFT]) {
                                     processFrame(inputChannel.LEFT, frame1, FRAME_SIZE, AudioPlayer.N_ZC_UP, AudioPlayer.FC, AudioPlayer.BW);
                                 }
                                 if (CHANNEL_MASK[inputChannel.RIGHT]) {
                                     processFrame(inputChannel.RIGHT, frame2, FRAME_SIZE, AudioPlayer.N_ZC_UP, AudioPlayer.FC, AudioPlayer.BW);
                                 }
+                                Log.d("IsBodyMoving", " " + is_moving[0] + " ms");
                                 long endTime = System.nanoTime();
 //                                if( counter % 10 == 0){
                                 Log.d("TimeCount", " " + (endTime - startTime)/1000000.0 + " ms");
@@ -303,7 +307,7 @@ public class AudioProcessor {
                 targetChannel = inputChannel.LEFT;
             }
             int[] length = {0};
-            getHistoryLength(targetChannel, deployMethods.swifttrack, length);
+            getHistoryLength(targetChannel, approach, length);
             int len = Math.max(length[0], WINDOW_SIZE);
             prepareDataForAccFragment(len, true, true);
 
@@ -421,6 +425,8 @@ public class AudioProcessor {
 
 
     private static native void processFrame(int id, double[] data, int n, int N_ZC_UP, int FC, int BW);
+
+//    private static native void processFrame03(int id, double[] data, int n, int N_ZC_UP, int FC, int BW, boolean[] is_moving);
 
     private static native void getCIR(int id, double[] cir_abs, int n);
 

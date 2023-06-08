@@ -1,16 +1,20 @@
 #include "postprocessor.h"
 #include <stdio.h>
+#include "logger_util.hpp"
 
 Postprocessor::Postprocessor(int id, int N_ZC_UP_) {
     N_ZC_UP = N_ZC_UP_;
     T = N_ZC_UP / FS;
     engine_id = id;
-    if(N_ZC_UP > 200){
-        N_IRS = 200;
+
+    // CIR cutoff number
+    if(N_ZC_UP > 60){
+        N_IRS = 60; // corresponding distance is N_IRS * c / Fs / 2; N_IRS = 200 for 60cm
     }else{
         N_IRS = N_ZC_UP;
     }
-//    N_IRS = N_ZC_UP;
+
+    // initialize bandpass filter buffer
     for(int ti = 0; ti < 9; ti++){
         xtmp[ti] = 0.0;
         ytmp[ti] = 0.0;
@@ -26,16 +30,19 @@ Postprocessor::Postprocessor(int id, int N_ZC_UP_) {
     // prev_irs_signal_diff = MatrixX<complex<double>>::Constant(1, N_IRS, complex<double>(0, 0));
     irs_signal_ = MatrixX<complex<double>>::Constant(1, N_IRS, complex<double>(0, 0));
     irs_signal_diff = MatrixX<complex<double>>::Constant(1, N_IRS, complex<double>(0, 0));
-
     least_square_weights = MatrixX<double>::Constant(1, N_IRS, double(0.0));
 
-    cout << "Postprocessor was initiated." << endl;
 //    time(&start_now);
     start_now = high_resolution_clock::now();
+    double max_detection_range = N_IRS * C / FS / 2;
+    string prompt = "Maximum detection range: " + to_string(max_detection_range) + " cm";
+    LoggerUtil::Log("SwifTrackINFO", prompt.c_str());
+
+    LoggerUtil::Log("SwifTrack", "Postprocessor is constructed.");
 }
 
 Postprocessor::~Postprocessor() {
-    cout << "Postprocessor was recycled." << endl;
+    LoggerUtil::Log("SwifTrack", "Postprocessor is destructed.");
 }
 
 //* entry point
@@ -44,16 +51,19 @@ double Postprocessor::ProcessCIRSignal(const MatrixX<complex<double>> &cir_signa
     //* Preprocessing
     CutOffCIRSignal(cir_signal);
     //* swifttrack implementation
-    swifttrack();
+//    swifttrack();
+
     //* strata and tof implementation
-    TapSelectionTOF();
+//    TapSelectionTOF();
+
+    BasicChannelEstimation(0, 150);
 
     //* popout redundant data
-    swifttrack_history_.check_size();
-    TOF_history_.check_size();
+//    swifttrack_history_.check_size();
+//    TOF_history_.check_size();
     Strata_history_.check_size();
 
-    return swifttrack_history_.dist_history_.back();
+    return 1;
 }
 
 
@@ -85,7 +95,7 @@ void Postprocessor::swifttrack() {
     double phase_diff = unwrap(beta, prev_phase_in_wrap_);
 
     //* second order motion coefficient
-    MotionCoeff2(beta);
+//    MotionCoeff2(beta);
 
     double phase_unwrapped;
     if(is_moving_){
@@ -122,59 +132,6 @@ void Postprocessor::swifttrack() {
 
 }
 
-//* for motion2, the phase do not produce ambiguity
-void Postprocessor::MotionCoeff2(complex<double> beta){
-    double phase_diff, phase_unwrapped, acc, velocity, dist;
-    if(abs(prev_beta) != 0 & abs(beta) != 0){
-        double phase_prev_motion2 = arg(prev_motion2);
-        complex<double> motion2;
-        motion2 = beta * conj(prev_beta);
-        prev_motion2 = motion2;
-
-        //* phase unwrapping
-        phase_diff = unwrap(motion2, phase_prev_motion2);
-        if(is_moving_){
-            phase_unwrapped = swifttrack_history_.acc_phase_history_.back() + phase_diff;
-        }else{
-            phase_unwrapped = arg(motion2);
-        }
-        // phase_unwrapped = arg(motion2);
-        //* phase 2 acc
-        acc = - phase_unwrapped * C / (4 * M_PI * FC * T * T);
-
-        //* integrate acceleration to get velocity
-        velocity = swifttrack_history_.acc2velocity_history_.back() + acc * T;
-        if(!init_velocity_flag && init_velocity!=0){
-            velocity += init_velocity;
-            init_velocity_flag = true;
-        }
-        //* integrate velocity to get distance
-        dist = swifttrack_history_.acc2dist_history_.back() + velocity * T;
-    }else{
-        
-        phase_unwrapped = 0;
-        acc = 0;
-        velocity = 0;
-        dist = 0;
-    }
-
-    prev_beta = beta;
-    
-
-    swifttrack_history_.acc_phase_history_.push_back(phase_unwrapped);
-    swifttrack_history_.acc_history_.push_back(acc);
-    swifttrack_history_.acc2velocity_history_.push_back(velocity);
-    swifttrack_history_.acc2dist_history_.push_back(dist);
-
-//    time_t now;
-//    time(&now);                 // get current time
-    high_resolution_clock::time_point now = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds>(start_now - now);
-//    double seconds = difftime(start_now, now);
-    double seconds = duration.count();
-    swifttrack_history_.time_stamp.push_back(seconds);
-    
-}
 
 //* Least square between irs_signal_ and prev_irs_signal_
 complex<double> Postprocessor::LeastSquare(){
@@ -183,36 +140,6 @@ complex<double> Postprocessor::LeastSquare(){
 
     // regression to estimate first motion coefficients
     MatrixX<complex<double>> tmp_signal_ = prev_irs_signal_.conjugate();
-    
-    bool add_least_square_weights = false;
-    if(add_least_square_weights){
-        MatrixX<double> coeffs = MatrixX<double>::Constant(1, N_IRS, double(0));
-        double coeffs_sum = 0.0;
-        for(int ti = start_tap; ti < N_IRS; ti ++){
-            coeffs(0, ti) = abs(irs_signal_diff(0, ti));
-            coeffs_sum += coeffs(0, ti);
-        }
-        double up_date_rate = 0.01;
-        double weights_sum = 0.0;
-        if(coeffs_sum != 0){
-            for(int ti = start_tap; ti < N_IRS; ti++){
-                least_square_weights(0, ti) = least_square_weights(0, ti) * (1 - up_date_rate) + up_date_rate * coeffs(0, ti) / coeffs_sum;
-                weights_sum += least_square_weights(0, ti);
-            }
-            for(int ti = start_tap; ti < N_IRS; ti++){
-                least_square_weights(0, ti) = least_square_weights(0, ti) / weights_sum;
-            }
-        }
-        
-        
-        for(int ti = start_tap; ti < N_IRS; ti++){
-            tmp_signal_(0, ti) = tmp_signal_(0, ti) * least_square_weights(0, ti);
-            // cout << least_square_weights(0, ti) << " ";
-        }
-        // cout << endl;
-        // cout << coeffs_sum << " " << weights_sum << endl;
-        
-    }
     
 
     beta1 = MatrixUtil::DotSum(tmp_signal_, irs_signal_);
@@ -254,24 +181,7 @@ void Postprocessor::Phase2Dist() {
         init_velocity = velocity;
     }
 
-    // prev_velocity = velocity;
-
-
-    // velocity = mvMedian(velocity, mvVelocity.buffer, &mvVelocity.iter);
-    //  velocity = lowpass(velocity, lowpass_taps_v);
-
     velocity = bandpassfilter_resp(velocity, xtmp, ytmp);
-//    if(abs(velocity) < 0.02){
-//        velocity = 0;
-//    }
-//    double ave_velocity_update_factor = 0.002;
-//    ave_velocity = ave_velocity * (1 - ave_velocity_update_factor) + velocity * ave_velocity_update_factor;
-//    velocity -= ave_velocity;
-//    if(abs(ave_velocity) > 0.5){
-//        velocity -= ave_velocity;
-////        velocity = 0;
-////        ave_velocity = 0.0;
-//    }
     double dist = swifttrack_history_.dist_history_.back() + velocity * T;
     if(reset_result_flag && !is_moving_ && velocity * swifttrack_history_.velocity_history_.back() <= 0){
         velocity = 0;
@@ -292,9 +202,6 @@ void Postprocessor::Phase2Dist() {
         }
     }
     swifttrack_history_.velocity_history_.push_back(velocity);
-
-//    double dist = (1 - complementary_factor) * TOF_history_.dist_history_.back() + complementary_factor * (swifttrack_history_.dist_history_.back() + velocity * T);
-//    dist = bandpassfilter_resp(dist, xtmp, ytmp);
     swifttrack_history_.dist_history_.push_back(dist);
 
 }
@@ -350,7 +257,7 @@ void Postprocessor::TapSelectionTOF(){
         TOF_history_.dist_history_.push_back(dist);
         TOF_history_.velocity_history_.push_back(0);
         TOF_history_.phase_history_.push_back(0);
-        BasicChannelEstimation(i, tap);
+//        BasicChannelEstimation(i, tap);
 
         tap = 0;
     }
@@ -359,7 +266,13 @@ void Postprocessor::TapSelectionTOF(){
 //* Strata implementation
 void Postprocessor::BasicChannelEstimation(int rows, int tap){
 //    tap = 30;
+    tap = 30;
     complex<double> tapSel = irs_signal_(rows, tap);
+
+//    string prompt = "Selected tap, real: " + to_string(tapSel.real()) + " imag: " + to_string(tapSel.imag());
+//    LoggerUtil::Log("postprocessing", prompt.c_str());
+
+
     double phase_diff = unwrap(tapSel, Strata_pre_.pre_phase_in_wrap_);
     double phase_unwrapped = Strata_history_.phase_history_.back() + phase_diff;
     Strata_history_.phase_history_.push_back(phase_unwrapped);
@@ -372,6 +285,14 @@ void Postprocessor::BasicChannelEstimation(int rows, int tap){
     double dist = Strata_history_.dist_history_.back() + velocity * T;
     Strata_history_.dist_history_.push_back(dist);
     Strata_history_.velocity_history_.push_back(phase_diff);
+
+    //    time_t now;
+//    time(&now);                 // get current time
+    high_resolution_clock::time_point now = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(start_now - now);
+//    double seconds = difftime(start_now, now);
+    double seconds = duration.count();
+    Strata_history_.time_stamp.push_back(seconds);
 
 }
 
@@ -401,7 +322,7 @@ Histories & Postprocessor::GetHistories(int history_type){
         case 2:
             return swifttrack_history_;
         default:
-            return swifttrack_history_;
+            return Strata_history_;
 
     }
 }
@@ -421,20 +342,30 @@ void Postprocessor::PaddingZero(Histories &history_type){
 void Postprocessor::get_history(double *history, int n, deque<double> & profiles){
     int l = (int) profiles.size();
 
+    int buffer_counter = 0;
     if (n >= l) {
-        
         auto iter = profiles.begin();
         for (int i = 0; i < l; i++) {
             *(history + i) = *iter;
             iter++;
+            buffer_counter++;
         }
     } else {
         auto iter = profiles.end();
         for (int i = 0; i < n; i++) {
             iter--;
             *(history + n - 1 - i) = *iter;
+            buffer_counter++;
         }
     }
+    for(int i = 0; i < 5; i++){
+        *(history+i) = *(history+2);
+    }
+    for(int i = 0; i < buffer_counter; i++){
+        *(history+i) = *(history+i) - *(history);
+    }
+
+
 }
 
 void Postprocessor::GetCIR(double *cir_abs, int n){

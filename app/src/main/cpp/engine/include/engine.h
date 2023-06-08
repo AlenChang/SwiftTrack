@@ -37,6 +37,7 @@ public:
     static Engine* GetInstance(int id);
 
     static void ProcessFrame(int id, const double *data, int n, int N, int FC, int BW);
+//    static void ProcessFrame(int id, const double *data, int n, int N, int FC, int BW, bool *is_moving_);
     static void ProcessFrame_02(int id, const double *data, int n, int N, int FC, int BW);
 
     static void GetCIR(int id, double *cir_abs, int n);
@@ -75,6 +76,8 @@ public:
     double last_waveform[100];
     double resp_waveform[100];
 
+//    static bool is_moving;
+
 private:
     Engine();
 
@@ -90,9 +93,9 @@ private:
     // -------------------
     // expiry
     bool ifExpiry = false;
-    int expiryYear              = 2024;
-    int expiryMon               = 2;
-    int expiryDay               = 1;
+    int expiryYear              = 2023;
+    int expiryMon               = 12;
+    int expiryDay               = 30;
     time_t expiryDate;
     // -------------------
 

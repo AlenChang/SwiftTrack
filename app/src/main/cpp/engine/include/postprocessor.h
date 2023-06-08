@@ -67,7 +67,7 @@ private:
     const double PHASE_DIFF_2_THRESHOLD = 1.0 * M_PI;
     const double use_diff_flag = true;
     const int tail_tap = 20;
-    const int start_tap = 30;
+    const int start_tap = 10;
     static const int respfilter_len = 29;
     int filter_delay_counter = 0;
     int N_ZC_UP;

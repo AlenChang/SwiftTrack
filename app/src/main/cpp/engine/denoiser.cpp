@@ -1,4 +1,5 @@
 #include "include/denoiser.h"
+#include "logger_util.hpp"
 
 Denoiser::Denoiser(int id, int N_ZC_UP_) {
     // first stage calibration -> estimate threshold to determine moving period.
@@ -32,11 +33,12 @@ Denoiser::Denoiser(int id, int N_ZC_UP_) {
     updated_static_signal_ = MatrixX<complex<double>>::Constant(1, N_ZC_UP, complex<double>(0, 0));
     static_signal_ = MatrixX<complex<double>>::Constant(1, N_ZC_UP, complex<double>(0, 0));
 
-    cout << "Denoiser was initiated." << endl;
+
+    LoggerUtil::Log("SwifTrack", "Denoiser is constructed.");
 }
 
 Denoiser::~Denoiser() {
-    cout << "Denoiser was recycled." << endl;
+    LoggerUtil::Log("SwifTrack", "Denoiser is destructed.");
 }
 
 void Denoiser::GetMovingStatus(bool * status){
@@ -261,8 +263,8 @@ void Denoiser::OnlineUpdateStaticSignal() {
 
 // * pass
 void Denoiser::OnlineRemoveStaticSignal() {
-    // online_denoise_signal_ = signal_ - static_signal_;
-    online_denoise_signal_ = signal_;
+     online_denoise_signal_ = signal_ - static_signal_;
+//    online_denoise_signal_ = signal_;
 
 //    std::string s2 = std::to_string(out->size[1]);
 //    char const *pchar2 = s2.c_str();

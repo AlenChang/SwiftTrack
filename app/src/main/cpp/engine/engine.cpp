@@ -1,5 +1,5 @@
 #include "include/engine.h"
-//#include "logger_util.hpp"
+#include "logger_util.hpp"
 #include <string>
 #include "recalibrateHistory.h"
 #include "fftw3.h"
@@ -18,7 +18,6 @@ using namespace std;
 
 Engine::Engine() {
 
-//     setup();
     // --------------------------------
     // Check if SDK is expired
     time_t now;
@@ -37,17 +36,27 @@ Engine::Engine() {
     double seconds = difftime(expiryDate, now);
     if(seconds < 0) {
         ifExpiry = true;
-//        Util::showDebugMsg("[ERROR] Hauoli", "Hauoli Tracking SDK has expired");
+        LoggerUtil::Log("[ERROR] SwifTrack", "SwifTrack Tracking SDK has expired");
     }else{
         ifExpiry = false;
+        LoggerUtil::Log("SwifTrack", "SwifTrack Tracking SDK is valid");
     }
 
+    // initialize calibration status
     prev_status_ = Denoiser::CALI_1;
     cur_status_ = Denoiser::CALI_1;
+
+//    is_moving = false;
+
+    LoggerUtil::Log("SwifTrack", "SwifTrack Engine is constructed.");
 
 }
 
 void Engine::setup(int id, int N, int FC, int BW){
+    // id: audio channel
+    // N: number of samples of each period
+    // Fc: carrier frequency
+    // BW: bandwidth
     if(ifExpiry) {return;}
     N_ZC_UP_ = N;
     FC_ = FC;
@@ -67,6 +76,7 @@ void Engine::setup(int id, int N, int FC, int BW){
     postprocessor_ = new Postprocessor(id, N_ZC_UP_);
 
 //    processFramePipe_init();
+    LoggerUtil::Log("SwifTrack", "SwifTrack Engine is successfully initialized.");
 }
 
 
@@ -75,7 +85,7 @@ Engine::~Engine() {
     delete denoiser_;
     delete postprocessor_;
 
-    cout << "Engine::~Engine() Destroyed OK." << endl;
+    LoggerUtil::Log("SwifTrack", "SwifTrack Engine is destrcted.");
 }
 
 
@@ -131,15 +141,23 @@ void Engine::ProcessFrame(int id, const double *data, int n, int N, int FC, int 
     for (int i = 0; i < n; i++) {
         rx_signal(0, i) = *(data + i);
     }
-//    LoggerUtil::Log("in_c_test", "process data...");
     engine->ProcessFrameCore(rx_signal);
-
-//    double rx_signal[480];
-//    for (int i = 0; i < n; i++) {
-//        rx_signal[i] = *(data + i);
-//    }
-//    engine->ProcessFrameUpsample(rx_signal);
 }
+
+//void Engine::ProcessFrame(int id, const double *data, int n, int N, int FC, int BW, bool *is_moving_) {
+////    if(ifExpiry) {return;}
+//    Engine *engine = Engine::GetInstance(id, N, FC, BW);
+//
+//    // 把数据从double array转成eigen能处理的格式
+//    MatrixX<double> rx_signal(1, n);
+//    for (int i = 0; i < n; i++) {
+//        rx_signal(0, i) = *(data + i);
+//    }
+//    engine->ProcessFrameCore(rx_signal);
+//
+//    *is_moving_ = is_moving;
+//}
+
 
 void Engine::ProcessFrame_02(int id, const double *data, int n, int N, int FC, int BW){
 //    if(ifExpiry) {return;}

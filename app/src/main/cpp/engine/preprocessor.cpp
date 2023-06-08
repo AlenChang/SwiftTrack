@@ -1,4 +1,5 @@
 #include "include/preprocessor.h"
+#include "logger_util.hpp"
 
 
 Preprocessor::Preprocessor(int id, int N_ZC_UP_, int FC_, int BW_) {
@@ -21,13 +22,12 @@ Preprocessor::Preprocessor(int id, int N_ZC_UP_, int FC_, int BW_) {
     cir_signal_ = MatrixX<complex<double>>::Constant(1, N_ZC_UP, complex<double>(0, 0));
 
     GenerateRefSignal();
-    
 
-    cout << "Preprocessor was initiated." << endl;
+    LoggerUtil::Log("SwifTrack", "Preprocessor is constructed.");
 }
 
 Preprocessor::~Preprocessor() {
-    cout << "Preprocessor was recycled." << endl;
+    LoggerUtil::Log("SwifTrack", "Preprocessor is destructed.");
 }
 
 MatrixX<complex<double>> Preprocessor::GenerateCIRSignal(const MatrixX<double> &rx_signal) {
