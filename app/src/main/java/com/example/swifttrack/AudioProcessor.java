@@ -266,10 +266,10 @@ public class AudioProcessor {
                                 long startTime = System.nanoTime();
                                 boolean[] is_moving = {false};
                                 if (CHANNEL_MASK[inputChannel.LEFT]) {
-                                    processFrame(inputChannel.LEFT, frame1, FRAME_SIZE, AudioPlayer.N_ZC_UP, AudioPlayer.FC, AudioPlayer.BW);
+                                    processFrame03(inputChannel.LEFT, frame1, FRAME_SIZE, AudioPlayer.N_ZC_UP, AudioPlayer.FC, AudioPlayer.BW, is_moving);
                                 }
                                 if (CHANNEL_MASK[inputChannel.RIGHT]) {
-                                    processFrame(inputChannel.RIGHT, frame2, FRAME_SIZE, AudioPlayer.N_ZC_UP, AudioPlayer.FC, AudioPlayer.BW);
+                                    processFrame03(inputChannel.RIGHT, frame2, FRAME_SIZE, AudioPlayer.N_ZC_UP, AudioPlayer.FC, AudioPlayer.BW, is_moving);
                                 }
                                 Log.d("IsBodyMoving", " " + is_moving[0] + " ms");
                                 long endTime = System.nanoTime();
@@ -426,7 +426,7 @@ public class AudioProcessor {
 
     private static native void processFrame(int id, double[] data, int n, int N_ZC_UP, int FC, int BW);
 
-//    private static native void processFrame03(int id, double[] data, int n, int N_ZC_UP, int FC, int BW, boolean[] is_moving);
+    private static native void processFrame03(int id, double[] data, int n, int N_ZC_UP, int FC, int BW, boolean[] is_moving);
 
     private static native void getCIR(int id, double[] cir_abs, int n);
 

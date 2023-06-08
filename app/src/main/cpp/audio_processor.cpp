@@ -20,25 +20,25 @@ Java_com_example_swifttrack_AudioProcessor_processFrame(
     env->ReleaseDoubleArrayElements(data, data_, JNI_ABORT);
 }
 
-//extern "C"
-//JNIEXPORT void JNICALL
-//Java_com_example_swifttrack_AudioProcessor_processFrame03(
-//        JNIEnv *env, jobject thiz, jint id, jdoubleArray data, jint n, jint N_ZC_UP, jint FC, jint BW, jbooleanArray is_moving
-//) {
-//    // from java type to c type
-//    jdouble *data_ = (env)->GetDoubleArrayElements(data, nullptr);
-//    jboolean *is_moving_ = (env)->GetBooleanArrayElements(is_moving, nullptr);
-//    bool is_moving__ = false;
-//
-//    if (Engine::GetInstance(id, N_ZC_UP, FC, BW) != nullptr) {
-////        LoggerUtil::Log("in_c_test", "Ready to process data");
-//        Engine::ProcessFrame(id, data_, n, N_ZC_UP, FC, BW, &is_moving__);
-//    }
-//    *is_moving_ = is_moving__;
-//    // from c type to java type
-//    env->ReleaseDoubleArrayElements(data, data_, JNI_ABORT);
-//    env->ReleaseBooleanArrayElements(is_moving, is_moving_, 0);
-//}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_swifttrack_AudioProcessor_processFrame03(
+        JNIEnv *env, jobject thiz, jint id, jdoubleArray data, jint n, jint N_ZC_UP, jint FC, jint BW, jbooleanArray is_moving
+) {
+    // from java type to c type
+    jdouble *data_ = (env)->GetDoubleArrayElements(data, nullptr);
+    jboolean *is_moving_ = (env)->GetBooleanArrayElements(is_moving, nullptr);
+    bool is_moving__ = false;
+
+    if (Engine::GetInstance(id, N_ZC_UP, FC, BW) != nullptr) {
+//        LoggerUtil::Log("in_c_test", "Ready to process data");
+        Engine::ProcessFrame(id, data_, n, N_ZC_UP, FC, BW, &is_moving__);
+    }
+    *is_moving_ = is_moving__;
+    // from c type to java type
+    env->ReleaseDoubleArrayElements(data, data_, JNI_ABORT);
+    env->ReleaseBooleanArrayElements(is_moving, is_moving_, 0);
+}
 
 extern "C"
 JNIEXPORT void JNICALL

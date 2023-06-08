@@ -136,7 +136,6 @@ void Denoiser::compute_thre(){
 
         init1_flag = true;
 
-        cout << "Threshold is " << moving_threshold_ << endl;
 //        Log("Threshold", char *s)
     }else{
         init1_flag = false;
@@ -281,6 +280,7 @@ void Denoiser::OnlineRemoveStaticSignal() {
 
 // * pass
 void Denoiser::CheckMoving() {
+    bool update_moving_threshold = false;
     max_diff = MaxDiff(prev_signal_, signal_);
 //    double max_diff = TapDiff(prev_signal_, signal_);
 
@@ -289,17 +289,28 @@ void Denoiser::CheckMoving() {
 
 
     is_moving_ = max_diff > moving_threshold_;
+    string prompt;
+    if(is_moving_){
+        prompt = "Moving Threshold is " + to_string(moving_threshold_) + " Is Moving!";
+    }else{
+        prompt = "Moving Threshold is " + to_string(moving_threshold_) + " No motion is detected!";
+    }
+
+    LoggerUtil::Log("MovingThreshold", prompt.c_str());
 
     if (is_moving_) {
         moving_frames_++;
     }
-    double minimum_update = 0.0;
-    if(moving_threshold_ > thresholding_factor * max_diff_histry){
-        minimum_update = max_diff_histry * thresholding_factor * thresholding_update;
+
+
+    if(update_moving_threshold){
+        double minimum_update = 0.0;
+        if(moving_threshold_ > thresholding_factor * max_diff_histry){
+            minimum_update = max_diff_histry * thresholding_factor * thresholding_update;
+        }
+        double ave_update = max_diff_histry * ave_update_factor;
+        moving_threshold_ = moving_threshold_ * (1 - ave_update_factor - thresholding_update) + ave_update + minimum_update;
     }
-    double ave_update = max_diff_histry * ave_update_factor;
-    moving_threshold_ = moving_threshold_ * (1 - ave_update_factor - thresholding_update) + ave_update + minimum_update;
-    moving_threshold_ = 0;
 }
 
 // * pass

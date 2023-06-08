@@ -37,7 +37,7 @@ public:
     static Engine* GetInstance(int id);
 
     static void ProcessFrame(int id, const double *data, int n, int N, int FC, int BW);
-//    static void ProcessFrame(int id, const double *data, int n, int N, int FC, int BW, bool *is_moving_);
+    static void ProcessFrame(int id, const double *data, int n, int N, int FC, int BW, bool *is_moving_);
     static void ProcessFrame_02(int id, const double *data, int n, int N, int FC, int BW);
 
     static void GetCIR(int id, double *cir_abs, int n);
@@ -76,7 +76,7 @@ public:
     double last_waveform[100];
     double resp_waveform[100];
 
-//    static bool is_moving;
+//    bool is_moving__ = false;
 
 private:
     Engine();

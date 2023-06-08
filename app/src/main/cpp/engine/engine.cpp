@@ -46,7 +46,7 @@ Engine::Engine() {
     prev_status_ = Denoiser::CALI_1;
     cur_status_ = Denoiser::CALI_1;
 
-//    is_moving = false;
+//    is_moving__ = false;
 
     LoggerUtil::Log("SwifTrack", "SwifTrack Engine is constructed.");
 
@@ -144,19 +144,19 @@ void Engine::ProcessFrame(int id, const double *data, int n, int N, int FC, int 
     engine->ProcessFrameCore(rx_signal);
 }
 
-//void Engine::ProcessFrame(int id, const double *data, int n, int N, int FC, int BW, bool *is_moving_) {
-////    if(ifExpiry) {return;}
-//    Engine *engine = Engine::GetInstance(id, N, FC, BW);
-//
-//    // 把数据从double array转成eigen能处理的格式
-//    MatrixX<double> rx_signal(1, n);
-//    for (int i = 0; i < n; i++) {
-//        rx_signal(0, i) = *(data + i);
-//    }
-//    engine->ProcessFrameCore(rx_signal);
-//
-//    *is_moving_ = is_moving;
-//}
+void Engine::ProcessFrame(int id, const double *data, int n, int N, int FC, int BW, bool *is_moving_) {
+//    if(ifExpiry) {return;}
+    Engine *engine = Engine::GetInstance(id, N, FC, BW);
+
+    // 把数据从double array转成eigen能处理的格式
+    MatrixX<double> rx_signal(1, n);
+    for (int i = 0; i < n; i++) {
+        rx_signal(0, i) = *(data + i);
+    }
+    engine->ProcessFrameCore(rx_signal);
+
+    *is_moving_ = engine->denoiser_->getMovingStatus();
+}
 
 
 void Engine::ProcessFrame_02(int id, const double *data, int n, int N, int FC, int BW){
@@ -354,6 +354,7 @@ void Engine::ProcessFrameCore(const MatrixX<double> &rx_signal) {
     denoiser_->FeedSignal(cir_signal);
     cur_status_ = denoiser_->GetStatus();
     bool is_moving = denoiser_->getMovingStatus();
+//    is_moving__ = is_moving;
 
     if (cur_status_ == Denoiser::CALI_SUCCESS) {
         MatrixX<complex<double>> denoise_signal = denoiser_->GetOnlineDenoiseSignal();
